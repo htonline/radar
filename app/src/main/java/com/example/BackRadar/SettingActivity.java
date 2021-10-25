@@ -1166,6 +1166,9 @@ public class SettingActivity extends Activity {
         shareifbackremove = getSharedPreferences("ifbackremove", 0);
 
 
+
+        float gainCoe = shareCoeGain.getFloat("coeGain",0);
+        et_horiGain_coe.setText((String.valueOf((int)gainCoe)));
         tempGain = shareifgain.getInt("ifgain", 0);
         tempIffliter = sharemfiltermode.getInt("mfiltermode", 4);
         tempBackgrd = shareifbackremove.getInt("ifbackremove", 0);
