@@ -1,0 +1,319 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_margin="5sp"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/ibtn_wifi"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:onClick="wifiIbtn" />
+
+        <ImageButton
+            android:id="@+id/ibtn_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:onClick="settingIbtn" />
+
+        <ImageButton
+            android:id="@+id/ibtn_startAndSuspend"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:onClick="startAndSuspendIbtn" />
+
+        <ImageButton
+            android:id="@+id/ibtn_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:onClick="stopIbtn" />
+
+        <ImageButton
+            android:id="@+id/ibtn_upload"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:onClick="uploadIbtn" />
+
+        <Button
+            android:id="@+id/btn_mark"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:onClick="btnMark"
+            android:text="打标"
+            android:textSize="@dimen/textSize" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <com.example.customizingViews.MyBatterView
+                android:id="@+id/MyBatterView"
+                android:layout_width="@dimen/batteryNomalWidth"
+                android:layout_height="@dimen/batteryNomalHeight"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
+                app:mCapWidth="4dp"
+                app:showText="true"
+                app:batteryTextSize="@dimen/textSize"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="68dp"
+                android:orientation="horizontal"
+                android:visibility="invisible">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="请设置雷达主机名称"
+                    android:textSize="@dimen/textSmallSize" />
+
+                <EditText
+                    android:id="@+id/et_radarName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="WGR4002102"
+                    android:textSize="@dimen/textSmallSize" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_logo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="无线地质雷达采集系统"
+                android:textSize="@dimen/textTitleLargeSize" />
+            <LinearLayout
+                android:visibility="invisible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:id="@+id/btn_openwifi"
+                    android:gravity="center"
+                    android:textSize="@dimen/textsSmallSize"
+                    android:text="打开wifi"/>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:id="@+id/btn_connect_wifi"
+
+                    android:textSize="@dimen/textsSmallSize"
+                    android:text="自动连接雷达wifi"/>
+            </LinearLayout>
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="6"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/fl_containerLeft"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></FrameLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="存储路径:"
+                android:textSize="@dimen/textNormSize" />
+
+            <TextView
+                android:id="@+id/tv_path"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="未选择"
+                android:textSize="@dimen/textNormSize" />
+
+            <TextView
+                android:layout_width="30dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="打标数:"
+                android:textSize="@dimen/textNormSize" />
+
+            <TextView
+                android:id="@+id/tv_markNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="@dimen/textNormSize" />
+
+            <TextView
+                android:layout_width="30dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="收包数量"
+                android:textSize="@dimen/textNormSize" />
+
+            <TextView
+                android:id="@+id/tv_numberOfReceive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="@dimen/textNormSize" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="采样频率："
+                android:textSize="@dimen/textNormSize" />
+
+            <TextView
+                android:id="@+id/tv_frequency"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="@dimen/textNormSize" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Khz"
+                android:textSize="@dimen/textNormSize" />
+            <TextView
+                android:layout_width="30dp"
+                android:layout_height="wrap_content" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="采样点数:"
+                android:textSize="@dimen/textNormSize" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="512"
+                android:textSize="@dimen/textNormSize" />
+
+            <TextView
+                android:layout_width="30dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="时间窗:"
+                android:textSize="@dimen/textNormSize" />
+
+            <TextView
+                android:id="@+id/tv_timeWindow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="@dimen/textNormSize" />
+
+            <TextView
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:text="ns"
+                android:textSize="@dimen/textNormSize" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="延时:"
+                android:textSize="@dimen/textNormSize" />
+
+            <TextView
+                android:id="@+id/tv_delay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="@dimen/textNormSize" />
+
+            <TextView
+                android:layout_width="30dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="触发方式:"
+                android:textSize="@dimen/textNormSize" />
+
+            <TextView
+                android:id="@+id/tv_theWayOfTrigger"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="时间"
+                android:textSize="@dimen/textNormSize" />
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>

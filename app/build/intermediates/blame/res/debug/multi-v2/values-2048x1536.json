@@ -1,0 +1,26 @@
+{
+    "logs": [
+        {
+            "outputFile": "C:\\Users\\wuxiaoxuan\\Desktop\\android_project\\PSphoneradarPC\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-2048x1536\\values-2048x1536.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\wuxiaoxuan\\Desktop\\android_project\\PSphoneradarPC\\app\\src\\main\\res\\values-2048x1536\\dimens.xml",
+                    "from": {
+                        "startLines": "3,4,19,18,14,13,6,5,2,11,7,8,10",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "98,157,652,601,547,499,259,214,57,451,305,356,404",
+                        "endColumns": "57,55,49,49,46,46,44,43,39,44,49,44,45",
+                        "endOffsets": "151,208,697,646,589,541,299,253,92,491,350,396,445"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,113,169,219,269,316,363,408,452,492,537,587,632",
+                        "endColumns": "57,55,49,49,46,46,44,43,39,44,49,44,45",
+                        "endOffsets": "108,164,214,264,311,358,403,447,487,532,582,627,673"
+                    }
+                }
+            ]
+        }
+    ]
+}

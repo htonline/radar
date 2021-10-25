@@ -1,0 +1,714 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f3f4f1"
+    tools:context=".SettingActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:text="存储文件:"
+                android:textSize="@dimen/textSize" />
+
+            <TextView
+                android:id="@+id/tv_storeFile"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text=""
+                android:textColor="#000"
+                android:textSize="@dimen/textSize" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:onClick="btn_settingPath"
+                android:text="设置路径"
+                android:textSize="@dimen/textSize" />
+
+            <TextView
+                android:id="@+id/tv_settingPath"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/btn_creatPath"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:onClick="btn_creatPath"
+                    android:text="创建路径"
+                    android:textSize="@dimen/textSize" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_none"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:onClick="btn_sure"
+                android:text="确定"
+                android:textSize="@dimen/textSize" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="文件名:"
+                            android:textSize="@dimen/textSize" />
+
+                        <EditText
+                            android:id="@+id/et_nameOfMainFile"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi|flagNoFullscreen|actionDone"
+                            android:inputType="textPhonetic"
+                            android:text=""
+                            android:textSize="@dimen/textSize" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="序号:"
+                            android:textSize="@dimen/textSize" />
+
+                        <EditText
+                            android:id="@+id/et_serialNumberOfFile"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi|flagNoFullscreen|actionDone"
+                            android:inputType="number"
+                            android:text=""
+                            android:textSize="@dimen/textSize" />
+                        <Button
+                            android:textSize="@dimen/textSize"
+                            android:layout_weight="1"
+                            android:id="@+id/mbtn_sure_file_name"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="确定"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="采样频率"
+
+                            android:textSize="@dimen/textSize" />
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/textSize"
+                            android:layout_weight="1" />
+                        <Spinner
+                            android:id="@+id/sp_frequency"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="采样点数"
+                            android:textSize="@dimen/textSize" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/textSize"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="512"
+
+                            android:textSize="@dimen/textSize" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:gravity="center"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="时间窗-ns"
+                            android:textSize="@dimen/textSize" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1" />
+
+                        <EditText
+                            android:id="@+id/et_timeWindow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:imeOptions="flagNoExtractUi|flagNoFullscreen|actionDone"
+                            android:inputType="number"
+                            android:text="10"
+                            android:textSize="@dimen/textSize" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:gravity="center"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="延时-delay"
+                            android:textSize="@dimen/textSize" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1" />
+
+                        <EditText
+                            android:id="@+id/et_delay"
+                            android:layout_width="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_height="wrap_content"
+                            android:imeOptions="flagNoExtractUi|flagNoFullscreen|actionDone"
+                            android:inputType="number"
+                            android:saveEnabled="false"
+                            android:text="100"
+                            android:textSize="@dimen/textSize" />
+                    </LinearLayout>
+                    <Button
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:gravity="center"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:onClick="btn_automaticSetting"
+                        android:text="自动设置"
+                        android:textSize="@dimen/textSize" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <CheckBox
+                        android:checked="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/mcheckbox_saveRadarAnot"
+                        android:textSize="@dimen/textSize"
+                        android:text="同时保存雷达原始数据"/>
+
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#000"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <CheckBox
+                            android:id="@+id/checkbox_gain"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            />
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="0.8"
+                            android:layout_gravity="center"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/textSize"
+                            android:text="增益"/>
+                        <Button
+                            android:layout_gravity="center"
+                            android:id="@+id/btn_hori_gain"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:onClick="btn_horizongtalGain"
+                            android:text="水平"
+                            android:textSize="@dimen/textSize" />
+                        <Button
+                            android:layout_gravity="center"
+                            android:id="@+id/btn_stable_gain"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:onClick="btn_stableKGain"
+                            android:text="步进"
+                            android:textSize="@dimen/textSize" />
+                        <TextView
+                            android:layout_gravity="center"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/textSize"
+                            android:text="系数"/>
+
+                        <EditText
+                            android:layout_gravity="center"
+                            android:id="@+id/et_horGain_coe"
+                            android:layout_width="0dp"
+                            android:layout_weight="0.5"
+                            android:layout_height="wrap_content"
+                            android:text="1"
+                            android:textSize="@dimen/textSize"
+                            />
+                        <Button
+                            android:id="@+id/btn_gain_apply"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:onClick="btn_gain_apply"
+                            android:text="应用"
+                            android:textSize="@dimen/textSize" />
+
+                    </LinearLayout>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#000"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+                        <CheckBox
+                            android:id="@+id/checkbox_backremove"
+                            android:layout_width="0dp"
+                            android:layout_gravity="center"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.4"
+                            />
+                        <TextView
+                            android:gravity="center"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textSize="@dimen/textSize"
+                            android:text="背景去噪"/>
+                        <!--                        <TextView-->
+                        <!--                            android:layout_width="wrap_content"-->
+                        <!--                            android:layout_height="wrap_content"-->
+                        <!--                            android:textSize="8dp"-->
+                        <!--                            android:text="系数"/>-->
+
+                        <!--                        <EditText-->
+                        <!--                            android:id="@+id/et_backgrd_coe"-->
+                        <!--                            android:layout_width="wrap_content"-->
+                        <!--                            android:layout_height="35dp"-->
+                        <!--                            android:text="1"-->
+                        <!--                            android:textSize="8dp"-->
+                        <!--                            />-->
+                        <!--                        <Button-->
+                        <!--                            android:id="@+id/btn_hori_backgrd"-->
+                        <!--                            android:layout_width="40dp"-->
+                        <!--                            android:layout_height="29dp"-->
+                        <!--                            android:onClick="btn_hori_backgrd"-->
+                        <!--                            android:text="水平"-->
+                        <!--                            android:textSize="8dp" />-->
+                        <Button
+                            android:id="@+id/btn_dynamic_backgrd"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:onClick="btn_dynamic_backgrd"
+                            android:text="背景去噪"
+                            android:textSize="@dimen/textSize" />
+                        <!--                        <Button-->
+                        <!--                            android:id="@+id/btn_background_remove"-->
+                        <!--                            android:layout_width="40dp"-->
+                        <!--                            android:layout_height="29dp"-->
+                        <!--                            android:onClick="btn_background_remove"-->
+                        <!--                            android:text="应用"-->
+                        <!--                            android:textSize="8dp" />-->
+
+                    </LinearLayout>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#000"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <RadioGroup
+                            android:id="@+id/radioGroup1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal" >
+                            <CheckBox
+                                android:id="@+id/checkbox_filter"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.6"
+                                />
+
+                            <RadioButton
+                                android:id="@+id/rb_lowpassfilter"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:checked="false"
+                                android:button="@drawable/selectorradio"
+                                android:textSize="@dimen/textSize"
+                                android:text="低通" />
+                            <RadioButton
+                                android:id="@+id/rb_highpassfilter"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:button="@drawable/selectorradio"
+                                android:textSize="@dimen/textSize"
+                                android:text="高通" />
+                            <RadioButton
+                                android:id="@+id/rb_bandpassfilter"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:button="@drawable/selectorradio"
+                                android:textSize="@dimen/textSize"
+                                android:text="带通" />
+                            <RadioButton
+                                android:id="@+id/rb_fillingfilter"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:button="@drawable/selectorradio"
+                                android:textSize="@dimen/textSize"
+                                android:text="带陷" />
+                        </RadioGroup>
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="低频截止"
+                            android:textSize="@dimen/textSize"
+                            ></TextView>
+                        <EditText
+                            android:id="@+id/et_m_low_f"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textSize="@dimen/textSize"></EditText>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="高频截止"
+                            android:textSize="@dimen/textSize"></TextView>
+                        <EditText
+                            android:id="@+id/et_m_high_f"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textSize="@dimen/textSize"
+                            ></EditText>
+                        <Button
+                            android:id="@+id/btn_lowhighf_apply"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="应用"
+                            android:onClick="btn_lowhighf_apply"
+                            android:textSize="@dimen/textSize"
+                            ></Button>
+
+                    </LinearLayout>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#000"/>
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="处理恢复默认"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:textSize="@dimen/textSize"
+                        android:includeFontPadding="false"
+                        android:onClick="btn_renew_filter"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <RadioGroup
+                        android:id="@+id/rg_trigger"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <RadioButton
+                            android:id="@+id/rb_timing"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="定时器触发"
+                            android:textSize="@dimen/textSize" />
+
+                        <RadioButton
+                            android:id="@+id/rb_wheel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="测距轮触发"
+                            android:textSize="@dimen/textSize" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="30dp"
+                                android:layout_height="match_parent" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <RadioGroup
+                                    android:id="@+id/rg_direction"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <RadioButton
+                                        android:id="@+id/rb_oneWay"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="单向触发"
+                                        android:textSize="@dimen/textSize" />
+
+
+                                    <RadioButton
+                                        android:id="@+id/rb_twoWays"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="双向触发"
+                                        android:textSize="@dimen/textSize" />
+                                </RadioGroup>
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </RadioGroup>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="采样脉冲数"
+                            android:textSize="@dimen/textSize" />
+
+                        <EditText
+                            android:id="@+id/et_numberOfPulse"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:imeOptions="flagNoExtractUi|flagNoFullscreen|actionDone"
+                            android:inputType="number"
+                            android:textSize="@dimen/textSize" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="采样间隔"
+                            android:textSize="@dimen/textSize" />
+
+                        <EditText
+                            android:id="@+id/et_samplingInterval"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:imeOptions="flagNoExtractUi|flagNoFullscreen|actionDone"
+                            android:inputType="number"
+                            android:textSize="@dimen/textSize" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="单圈脉冲"
+                            android:textSize="@dimen/textSize" />
+
+                        <EditText
+                            android:id="@+id/et_singlePulse"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:imeOptions="flagNoExtractUi|flagNoFullscreen|actionDone"
+                            android:inputType="number"
+                            android:textSize="@dimen/textSize" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="单圈距离"
+                            android:textSize="@dimen/textSize" />
+
+                        <EditText
+                            android:id="@+id/et_singleDistance"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:imeOptions="flagNoExtractUi|flagNoFullscreen|actionDone"
+                            android:inputType="number"
+                            android:textSize="@dimen/textSize" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <fragment
+                android:id="@+id/fr_settingActivity_left"
+                android:name="com.example.fragments.LeftFragmentOfSettingActivity"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+            <fragment
+                android:id="@+id/fr_settingActivity_backgroundCenter"
+                android:name="com.example.fragments.MiddleBackFragmentOfSettingActivity"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+            <fragment
+                android:id="@+id/fr_settingActivity_right"
+                android:name="com.example.fragments.RightFragmentOfSettingActivity"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

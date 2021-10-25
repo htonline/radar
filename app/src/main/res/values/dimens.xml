@@ -1,0 +1,23 @@
+<resources>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="textSize">8sp</dimen>
+    <dimen name="textNormSize">10sp</dimen>
+    <dimen name="textLargeSize">10sp</dimen>
+    <dimen name="textTitleLargeSize">10sp</dimen>
+    <dimen name="textTitleSize">14sp</dimen>
+
+    <dimen name="textsSmallSize">6sp</dimen>
+    <dimen name="textSmallSize">8sp</dimen>
+
+    <dimen name="mydialogWidth">1200dp</dimen>
+    <dimen name="mydialogHeight">400dp</dimen>
+
+
+
+    <dimen name="batteryNomalWidth">170dp</dimen>
+    <dimen name="batteryNomalHeight">40dp</dimen>
+
+</resources>

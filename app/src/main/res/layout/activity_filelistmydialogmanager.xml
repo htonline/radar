@@ -1,0 +1,27 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="1200px"
+    android:layout_height="820px"
+    android:background="#ffffffff"
+    android:orientation="vertical"
+    tools:context=".MyFileManager" >
+
+        <TextView
+            android:id="@+id/tv_mPath"
+            android:layout_width="wrap_content"
+
+            android:layout_height="wrap_content"
+            android:padding="5px"
+            android:textColor="#3592CE"
+            android:textSize="18sp" >
+        </TextView>
+
+
+    <ListView
+        android:layout_gravity="center"
+        android:id="@android:id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="700px" >
+    </ListView>
+
+</LinearLayout>

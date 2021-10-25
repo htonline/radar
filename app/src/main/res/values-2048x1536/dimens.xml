@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="textSize">16sp</dimen>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="textNormSize">20sp</dimen>
+    <dimen name="textLargeSize">10sp</dimen>
+    <dimen name="textTitleLargeSize">10sp</dimen>
+    <dimen name="textTitleSize">14sp</dimen>
+
+    <dimen name="textsSmallSize">16sp</dimen>
+    <dimen name="textSmallSize">18sp</dimen>
+
+    <dimen name="mydialogWidth">1200dp</dimen>
+    <dimen name="mydialogHeight">400dp</dimen>
+
+
+
+    <dimen name="batteryNomalWidth">170dp</dimen>
+    <dimen name="batteryNomalHeight">40dp</dimen>
+</resources>
