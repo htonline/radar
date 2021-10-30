@@ -1,7 +1,9 @@
 package com.example.BackRadar;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.lang.reflect.Constructor;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -9,6 +11,8 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.example.UpLoad.MyDialogActivity;
 import com.example.UpLoad.MyDialogActivity2;
@@ -19,14 +23,15 @@ import com.example.fragments.LeftFragmentOfMainActivity;
 import com.example.fragments.RightFragmentOfMainActivity;
 import com.example.helper.Dataprocess;
 import com.example.helper.WifiTool;
+import com.example.interfaces.ShowSaveFinish;
 import com.example.ladarmonitor.R;
 import com.example.orders.NormalOrders;
 import com.example.thread.ReadThread;
-import com.example.thread.WriteThread;
+import com.example.thread.WriteBodyThread;
+import com.example.thread.WriteHeadThread;
+import com.example.thread.WriteRearThread;
 
 import android.Manifest;
-import android.content.BroadcastReceiver;
-import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
@@ -72,6 +77,17 @@ import androidx.core.content.ContextCompat;
 
 
 public class MainActivity extends Activity {
+
+    private static RandomAccessFile mrafRaw;
+    private static RandomAccessFile mrafColor;
+    private WriteBodyThread writeBodyThread;
+    private WriteRearThread writeRearThread;
+    static WriteHeadThread writeHeadThread = null;
+    private WriteBodyThread writeBodyThreadRaw;
+    private WriteRearThread writeRearThreadRaw;
+    static WriteHeadThread writeHeadThreadRaw = null;
+    static ExecutorService pool;
+    static ExecutorService poolRaw;
     //	public static final String defaultPath="/sdcard/datas";
 //	private String path=null;
     private static final String TAG = "MainActivity";
@@ -79,6 +95,7 @@ public class MainActivity extends Activity {
     private LeftFragmentOfMainActivity lFragment;
     private RightFragmentOfMainActivity rFragment;
     private ImageButton ibtn_startAndSuspend;
+//    private TextView tv_numofSave;
     private ImageButton ibtn_wifi;
     private ImageButton ibtn_setting;
     private ImageButton ibtn_stop;
@@ -117,15 +134,17 @@ public class MainActivity extends Activity {
     //发送给下位机的命令
     NormalOrders nOrders = null;
     static ReadThread readThread = null;
-    static WriteThread writeThread = null;
+//    static WriteThread writeThread = null;
 //	JudgeHaveThread judgeHaveThread=null;
 //	JudgeMetalThread judgeMetalThread=null;
+
+
 
     //判断是否点击过停止按钮，如果点击过点击开始按钮的时候弹出对话框询问是否覆盖
     boolean judge_clickStopIbtn = false;
 
     //判断是否打标
-    private boolean judge_MartOrNot = false;
+    public static boolean judge_MartOrNot = false;
     //打标数量
     private int markNumber = 0;
 
@@ -195,7 +214,8 @@ public class MainActivity extends Activity {
 
     private final String[] items = {"现场检测人员", "专业设置人员"};
     private final String[] itemsForUpload = {"扫码填写模式", "手动填写模式"};
-
+    private byte[] Rwcolorgap = new byte[Const_NumberOfVerticalDatas*2];
+    private byte[] colorgap = new byte[Const_NumberOfVerticalDatas*2];
 
     int ddi=0 ;
     //记录当前数据是第几道
@@ -208,19 +228,42 @@ public class MainActivity extends Activity {
     //判断有无物体
     private int temppnum=1;
     private int judge_haveOrNot = -1;
+    int ttti =0;
     private Handler handlerOfColour = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
                     reciveData = (short[]) msg.obj;
+                    int tempJudge = msg.arg1;
+                    if (tempJudge==1){
+                        judge_MartOrNot=true;
+                        markNumber++;
+                        tv_markNumber.setText(markNumber + "");
+                    }
                     for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
                         colorGap[i] = reciveData[i];
                         RawcolorGap[i] = reciveData[i];
+                        Rwcolorgap[2*i]=shortToByte(reciveData[i])[0];
+                        Rwcolorgap[2*i+1]=shortToByte(reciveData[i])[1];
                     }
-                    writeThread.setRAWCOLORGAP(RawcolorGap);
+                    if(judge_MartOrNot){
+                        Rwcolorgap[0]=(byte) 0xff;
+                        Rwcolorgap[1]= (byte) 0x00;
+                        Rwcolorgap[2]=(byte) 0xff;
+                        Rwcolorgap[3]=(byte) 0x00;
+                        Rwcolorgap[4]= (byte) 0xff;
+                        Rwcolorgap[5]=(byte) 0x00;
+                        Rwcolorgap[6]=(byte) 0xff;
+                        Rwcolorgap[7]=(byte) 0x00;
+                    }
+//                    if (mrafRaw == null) Log.d(TAG, "handleMessage: !!!!!!!!!!!");
+                    writeBodyThreadRaw = new WriteBodyThread(mrafRaw,Rwcolorgap);
+                    poolRaw.execute(writeBodyThreadRaw);
+//                    writeThread.setRwcolorgap(Rwcolorgap);
                     battery = reciveData[512];
-                    int mbtr_num = (battery / 100 - 20) * 10;
+//                    Log.d(TAG, "handleMessage:  --> battery --> "+battery);
+                    int mbtr_num = (int)((float)(battery / 100)*1.1 - 20) * 10;
                     myBatterView.setPro(mbtr_num);
 //				judgeHaveThread.setColorGap(colorGap);
 //				judgeMetalThread.setColorGap(colorGap);
@@ -256,15 +299,27 @@ public class MainActivity extends Activity {
                         for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
                             int color = ((colorGap[i]) / 256)+128;
                             colorList[i] = Color.rgb(color, color, color);
-                            TempColorList[i] = (short) (colorGap[i]);
+//                            TempColorList[i] = (short) (colorGap[i]);
+                            colorgap[2*i]=shortToByte(colorGap[i])[0];
+                            colorgap[2*i+1]=shortToByte(colorGap[i])[1];
                         }
                     }
-
-                    writeThread.setColorGap(TempColorList);
-                    writeThread.setJudgeIfRepeat(false);
-                    writeThread.setJudgeNumber(3);
-                    writeThread.setJudgeIfRepeat(true);
-
+                    if(judge_MartOrNot){
+                        colorgap[0]=(byte) 0xff;
+                        colorgap[1]= (byte) 0x00;
+                        colorgap[2]=(byte) 0xff;
+                        colorgap[3]=(byte) 0x00;
+                        colorgap[4]= (byte) 0xff;
+                        colorgap[5]=(byte) 0x00;
+                        colorgap[6]=(byte) 0xff;
+                        colorgap[7]=(byte) 0x00;
+                    }
+//                    writeThread.setColorgap(colorgap);
+//                    writeThread.setJudgeIfRepeat(false);
+//                    writeThread.setJudgeNumber(3);
+//                    writeThread.setJudgeIfRepeat(true);
+                    writeBodyThread = new WriteBodyThread(mrafColor,colorgap);
+                    pool.execute(writeBodyThread);
 
                     tv_numberOfReceive.setText(msg.arg2 + "");
                     lFragment.drawNewVertical(colorList);
@@ -277,7 +332,7 @@ public class MainActivity extends Activity {
                     ibtn_setting.setEnabled(true);
                     break;
                 case 3:
-                    int sum_juegeextremum7 = msg.arg1;
+//                    int sum_juegeextremum7 = msg.arg1;
 //				int sum_extremum3=msg.arg2;
 //				if (sum_extremum3>0) {
 //					if (judge_haveOrNot==1) {
@@ -314,33 +369,33 @@ public class MainActivity extends Activity {
                     //没有物体
                     judge_haveOrNot = 0;
                     break;
-                case 6:
-                    judge_MartOrNot = true;
-                    markNumber++;
-                    tv_markNumber.setText(markNumber + "");
-                    colorGap = (short[]) msg.obj;
-                    if (judge_MartOrNot) {
-                        colorGap[0] = 0xff;
-                        colorGap[1] = 0xff;
-                        colorGap[2] = 0xff;
-                        colorGap[3] = 0xff;
-                    }
-//				judgeHaveThread.setColorGap(colorGap);
-//				judgeMetalThread.setColorGap(colorGap);
-                    if (judge_MartOrNot) {
-                        for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
-                            colorList[i] = 0x0000ff;
-                            colorGap[i] = (short) (colorGap[i] / 256);
-                        }
-                    }
-                    writeThread.setColorGap(colorGap);
-                    writeThread.setJudgeIfRepeat(false);
-                    writeThread.setJudgeNumber(3);
-                    writeThread.setJudgeIfRepeat(true);
-                    lFragment.drawNewVertical(colorList);
-//				rFragment.drawRadarWave(colorGap,gainData);
-                    judge_MartOrNot = false;
-                    break;
+//                case 6:
+//                    judge_MartOrNot = true;
+//                    markNumber++;
+//                    tv_markNumber.setText(markNumber + "");
+//                    colorGap = (short[]) msg.obj;
+//                    if (judge_MartOrNot) {
+//                        colorGap[0] = 0xff;
+//                        colorGap[1] = 0xff;
+//                        colorGap[2] = 0xff;
+//                        colorGap[3] = 0xff;
+//                    }
+////				judgeHaveThread.setColorGap(colorGap);
+////				judgeMetalThread.setColorGap(colorGap);
+//                    if (judge_MartOrNot) {
+//                        for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
+//                            colorList[i] = 0x0000ff;
+//                            colorGap[i] = (short) (colorGap[i] / 256);
+//                        }
+//                    }
+////                    writeThread.setColorGap(colorGap);
+////                    writeThread.setJudgeIfRepeat(false);
+////                    writeThread.setJudgeNumber(3);
+////                    writeThread.setJudgeIfRepeat(true);
+//                    lFragment.drawNewVertical(colorList);
+////				rFragment.drawRadarWave(colorGap,gainData);
+//                    judge_MartOrNot = false;
+//                    break;
                 default:
                     break;
             }
@@ -421,7 +476,17 @@ public class MainActivity extends Activity {
                             //偶数发送基数暂停
                             //第一次点击读取数据线程启动，同时发送命令给下位机开始采集数据
                             if (counter == 0) {
-                                writeThread.setJudgeNumber(1);
+//                                writeThread.setJudgeNumber(1);
+                                writeHeadThread = new WriteHeadThread(mrafColor);
+                                writeHeadThread.setTimedelay(Short.parseShort(tv_delay.getText().toString()));
+                                writeHeadThread.setSample_wnd(Integer.parseInt(tv_timeWindow.getText().toString()));
+                                pool.execute(writeHeadThread);
+                                if (IfSaveTheRadar==1){
+                                    writeHeadThreadRaw = new WriteHeadThread(mrafRaw);
+                                    writeHeadThreadRaw.setTimedelay(Short.parseShort(tv_delay.getText().toString()));
+                                    writeHeadThreadRaw.setSample_wnd(Integer.parseInt(tv_timeWindow.getText().toString()));
+                                    poolRaw.execute(writeHeadThreadRaw);
+                                }
                                 readThread.setNumberOfReceive(0);
                                 //可以打标
                                 btn_mark.setEnabled(true);
@@ -503,7 +568,16 @@ public class MainActivity extends Activity {
                     //偶数发送基数暂停
                     //第一次点击读取数据线程启动，同时发送命令给下位机开始采集数据
                     if (counter == 0) {
-                        writeThread.setJudgeNumber(1);
+                        writeHeadThread = new WriteHeadThread(mrafColor);
+                        writeHeadThread.setTimedelay(Short.parseShort(tv_delay.getText().toString()));
+                        writeHeadThread.setSample_wnd(Integer.parseInt(tv_timeWindow.getText().toString()));
+                        pool.execute(writeHeadThread);
+                        if (IfSaveTheRadar==1){
+                            writeHeadThreadRaw = new WriteHeadThread(mrafRaw);
+                            writeHeadThreadRaw.setTimedelay(Short.parseShort(tv_delay.getText().toString()));
+                            writeHeadThreadRaw.setSample_wnd(Integer.parseInt(tv_timeWindow.getText().toString()));
+                            poolRaw.execute(writeHeadThreadRaw);
+                        }
                         readThread.setNumberOfReceive(0);
                         //可以打标
                         btn_mark.setEnabled(true);
@@ -614,7 +688,7 @@ public class MainActivity extends Activity {
         btn_mark.setEnabled(false);
         ibtn_setting.setEnabled(false);
         myBatterView = findViewById(R.id.MyBatterView);
-
+//        tv_numofSave = findViewById(R.id.tv_numofSave);
         met_radarName = findViewById(R.id.et_radarName);
 
 
@@ -715,8 +789,20 @@ public class MainActivity extends Activity {
         readThread = new ReadThread(ds);
         readThread.setHandler(handlerOfColour);
         readThread.start();
-        writeThread = new WriteThread();
-        writeThread.start();
+//        writeThread = new WriteThread();
+//        writeThread.setShowSaveNum(new ShowSaveNum() {
+//            @Override
+//            public void showsaveNum(int num) {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        tv_numofSave.setText(""+num);
+//                    }
+//                });
+//
+//            }
+//        });
+//        writeThread.start();
 
 //		judgeHaveThread=new JudgeHaveThread(this,handlerOfColour);
 //		judgeHaveThread.start();
@@ -770,9 +856,33 @@ public class MainActivity extends Activity {
 
         //判断是否点击开始暂停按钮置0
         clickOrNot = 0;
-        writeThread.setTrace_num(Integer.parseInt(tv_numberOfReceive.getText().toString()));
-        writeThread.setJudgeNumber(1);
+//        writeThread.setTrace_num(Integer.parseInt(tv_numberOfReceive.getText().toString()));
+//        writeThread.setJudgeNumber(1);
+        writeRearThread = new WriteRearThread(mrafColor);
+        writeRearThread.setShowSaveNum(new ShowSaveFinish() {
+            @Override
+            public void showsavefinish() {
+                Looper.prepare();
+                Toast.makeText(MainActivity.this,"存储完成",Toast.LENGTH_LONG).show();
+                Looper.loop();
+            }
+        });
+        pool.execute(writeRearThread);
+        if (IfSaveTheRadar==1){
+            writeRearThreadRaw = new WriteRearThread(mrafRaw);
+            writeRearThreadRaw.setShowSaveNum(new ShowSaveFinish() {
+                @Override
+                public void showsavefinish() {
+                    Looper.prepare();
+                    Toast.makeText(MainActivity.this,"原始文件存储完成",Toast.LENGTH_LONG).show();
+                    Looper.loop();
+                }
+            });
+            poolRaw.execute(writeRearThreadRaw);
+        }
 
+
+//        pool.shutdown();
 
 //		writeThread.stop();
 
@@ -988,11 +1098,23 @@ public class MainActivity extends Activity {
             tv_frequency.setText(mainPeremeterOrders.getString("frequency", "1"));
             tv_delay.setText(mainPeremeterOrders.getString("delay", "100"));
             IfSaveTheRadar = mainPeremeterOrders.getInt("saveRadar",1);
-            writeThread.setAnoStart(IfSaveTheRadar);
+//            writeThread.setAnoStart(IfSaveTheRadar);
             ibtn_startAndSuspend.setImageResource(R.drawable.startgreen2);
             readThread.setNumberOfReceive(0);
 
         }
+        try {
+            mrafColor = new RandomAccessFile(tv_path.getText().toString(), "rw");
+            pool = Executors.newFixedThreadPool(1);
+            if (IfSaveTheRadar==1){
+                mrafRaw = new RandomAccessFile(tv_path.getText().toString()+"-copy","rw");
+                poolRaw = Executors.newFixedThreadPool(1);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
         super.onResume();
     }
 
@@ -1038,9 +1160,13 @@ public class MainActivity extends Activity {
                 //线程停止
                 if (clickOrNot > 0) {
                     //没点停止按钮直接退出的情况时，写线程停止
-                    writeThread.setTrace_num(Integer.parseInt(tv_numberOfReceive.getText().toString()));
-                    writeThread.setJudgeNumber(1);
-                    writeThread.stop();
+//                    writeThread.setTrace_num(Integer.parseInt(tv_numberOfReceive.getText().toString()));
+//                    writeThread.setJudgeNumber(1);
+                    pool.execute(new WriteRearThread(mrafColor));
+                    if (IfSaveTheRadar==1){
+                        poolRaw.execute(new WriteRearThread(mrafRaw));
+                    }
+//                    writeThread.stop();
 
                 }
                 readThread.setJudge(false);
@@ -1223,6 +1349,18 @@ public class MainActivity extends Activity {
                 //MyDialog("提示", "某些权限未开启,请手动开启", 1) ;
             }
         }
+    }
+
+    public static byte[] shortToByte(short number) {
+        short temp = number;
+        byte[] b = new byte[2];
+        for (int i = 0; i < b.length; i++) {
+            b[i] = new Short((short) (temp& 0xff)).byteValue();
+//                    new Integer(temp & 0xff).byteValue();
+            //将最低位保存在最低位
+            temp = (short) (temp >> 8); // 向右移8位
+        }
+        return b;
     }
 
 

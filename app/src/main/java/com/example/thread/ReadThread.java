@@ -18,6 +18,7 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.BackRadar.MainActivity;
 import com.example.customizingViews.ColoursView;
 
 public class ReadThread implements Runnable {
@@ -63,6 +64,8 @@ public class ReadThread implements Runnable {
     byte stopCollect[] = {(byte) 0xaa, (byte) 0xaa, (byte) 0x40, 0x00};
     byte martCC[] = {(byte) 0xcc,(byte)0xcc};
     byte battery[] = {(byte) 0x99,(byte)0x99};
+
+    int tempJudge=0;
 
     int status[] = new int[10];
     int number[] = new int[10];
@@ -115,20 +118,26 @@ public class ReadThread implements Runnable {
                     } else if (Arrays.equals(receive, stopCollect)) {
                         judge_stopCollect++;
                     } else if(Arrays.equals(receiveCC,martCC)){
-                        arrayListOfColour = new short[512];
-//                        judge_cc_Mart++;
-                        message = Message.obtain();
-                        message.what = 6;
-//                        message.arg1 = judge_cc_Mart;
-                        message.obj = arrayListOfColour;
-                        handler.sendMessage(message);
+//                        MainActivity.judge_MartOrNot = true;
+//                        arrayListOfColour = new short[512];
+////                        judge_cc_Mart++;
+//                        message = Message.obtain();
+//                        message.what = 6;
+////                        message.arg1 = judge_cc_Mart;
+//                        message.obj = arrayListOfColour;
+//                        handler.sendMessage(message);
+                        tempJudge=1;
                     }
                     else //if (receive[0]==0xee&&receive[1]==0xee){
                     {
                         arrayListOfNewColour = toShortArray(Arrays.copyOfRange(b1, 10, 1036));
 //                        arrayListOfColour = toShortArray(Arrays.copyOfRange(b1, 10, 1036));
-
-                        numberOfLogo = bytesToInt(Arrays.copyOfRange(b1, 4, 8), 0);
+                        byte [] neby = new byte[2];
+                        neby = Arrays.copyOfRange(b1,1034,1036);
+                        short [] sb = new short[1];
+                        sb = toShortArray(neby);
+//                        Log.d(TAG, "run: --> "+Arrays.toString(sb));
+//                        numberOfLogo = bytesToInt(Arrays.copyOfRange(b1, 4, 8), 0);
 
 //                        if (tempnum==1){
 //                            for (int k = 0; k < Const_NEW_NUMBEROFDATA; k++) {
@@ -149,10 +158,12 @@ public class ReadThread implements Runnable {
                         numberOfReceive++;
                         message = Message.obtain();
                         message.what = 0;
-                        message.arg1 = numberOfLogo;
+//                        Log.d(TAG, "run: --> numberOfLogo --> "+ numberOfLogo);
+                        message.arg1 = tempJudge;
                         message.arg2 = numberOfReceive;
                         message.obj = arrayListOfNewColour;
                         handler.sendMessage(message);
+                        tempJudge=0;
                     }
                 } catch (IOException e1) {
                     // TODO Auto-generated catch block
@@ -335,7 +346,16 @@ public class ReadThread implements Runnable {
         suspended = false;
         notify();
     }
+    public static short[] toShortArray1(byte[] src) {
 
+        int count = src.length >> 1;
+        short[] dest = new short[count];
+        for (int i = 0; i < count; i++) {
+            dest[i] = (short) ((src[i * 2]&0xFF) << 8 | src[2 * i + 1] & 0xff);
+        }
+
+        return dest;
+    }
     public static short[] toShortArray(byte[] src) {
 
         int count = src.length >> 1;

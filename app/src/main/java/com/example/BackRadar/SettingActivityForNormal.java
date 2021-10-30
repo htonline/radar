@@ -1450,10 +1450,13 @@ public class SettingActivityForNormal extends Activity{
                                 }
                             }
                         }).start();
-                        MainActivity.writeThread.setPath(path+"/"+tv_storeFile.getText().toString());
-                        MainActivity.writeThread.setSample_wnd(Integer.parseInt("50"));
-                        MainActivity.writeThread.setTimedelay(Short.parseShort("100"));
-                        MainActivity.writeThread.setPath_ano(path+"/"+tv_storeFile.getText().toString());
+//                        MainActivity.writeThread.setPath(path+"/"+tv_storeFile.getText().toString());
+//                        MainActivity.writeThread.setSample_wnd(Integer.parseInt("50"));
+//                        MainActivity.writeThread.setTimedelay(Short.parseShort("100"));
+////                        MainActivity.writeThread.setPath_ano(path+"/"+tv_storeFile.getText().toString());
+//                        MainActivity.writeHeadThread.setSample_wnd(Integer.parseInt("50"));
+//                        MainActivity.writeHeadThread.setTimedelay(Short.parseShort("100"));
+
                         finish();
 
                     }
@@ -1546,10 +1549,14 @@ public class SettingActivityForNormal extends Activity{
                         }
                     }
                 }).start();
-                MainActivity.writeThread.setPath(path+"/"+tv_storeFile.getText().toString());
-                MainActivity.writeThread.setSample_wnd(Integer.parseInt("50"));
-                MainActivity.writeThread.setTimedelay(Short.parseShort("100"));
-                MainActivity.writeThread.setPath_ano(path+"/"+tv_storeFile.getText().toString());
+//                MainActivity.writeThread.setPath(path+"/"+tv_storeFile.getText().toString());
+//                MainActivity.writeThread.setSample_wnd(Integer.parseInt("50"));
+//                MainActivity.writeThread.setTimedelay(Short.parseShort("100"));
+////                MainActivity.writeThread.setPath_ano(path+"/"+tv_storeFile.getText().toString());
+//                MainActivity.writeHeadThread.setSample_wnd(Integer.parseInt("50"));
+//                MainActivity.writeHeadThread.setTimedelay(Short.parseShort("100"));
+
+
                 finish();
 
             }

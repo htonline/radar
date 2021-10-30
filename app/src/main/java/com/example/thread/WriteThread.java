@@ -1,20 +1,17 @@
 package com.example.thread;
 
-import java.io.BufferedOutputStream;
-import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-import android.R.integer;
-import android.util.Log;
+
 
 public class WriteThread implements Runnable {
+
+
+
     private String path_ano = null;
     public Thread t;
     private String path = null;
@@ -38,7 +35,8 @@ public class WriteThread implements Runnable {
 
     private short RAWCOLORGAP[] = new short[Const_NumberOfVerticalDatas];
 //    private short TEMPRAWCOLORGAP[] = new short[Const_NumberOfVerticalDatas];
-
+    private byte[] Rwcolorgap = new byte[Const_NumberOfVerticalDatas*2];
+    private byte[] colorgap = new byte[Const_NumberOfVerticalDatas*2];
     private int sample_wnd;
     private short timedelay;
     private int trace_num = 100;
@@ -56,6 +54,10 @@ public class WriteThread implements Runnable {
 
     public void setAnoStart(int anoStart) {
         this.anoStart = anoStart;
+    }
+
+    public void setRwcolorgap(byte[] rwcolorgap) {
+        Rwcolorgap = rwcolorgap;
     }
 
     public int getSample_wnd() {
@@ -114,6 +116,10 @@ public class WriteThread implements Runnable {
         return colorGap;
     }
 
+    public void setColorgap(byte[] colorgap) {
+        this.colorgap = colorgap;
+    }
+
     public void setColorGap(short[] colorGap) {
         this.colorGap = colorGap;
     }
@@ -134,7 +140,7 @@ public class WriteThread implements Runnable {
         this.judgeIfRepeat = judgeIfRepeat;
     }
 
-    int tempnn = 1;
+    int tempnn = 0;
 
     @Override
     public void run() {
@@ -175,6 +181,7 @@ public class WriteThread implements Runnable {
 //						// TODO Auto-generated catch block
 //						e1.printStackTrace();
 //					}
+                        tempnn = 0;
                         Arrays.fill(line_position,(byte)0xCC);
                         Arrays.fill(nouse, (byte) 0xCC);
                         if (anoStart == 1) {
@@ -245,14 +252,17 @@ public class WriteThread implements Runnable {
                     case 3:
                         if (!judgeIfRepeat) {
                             try {
-                                for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
-                                    raf.write(shortToByte(colorGap[i]));
-                                    if (anoStart == 1) {
-                                        raf2.write(shortToByte(RAWCOLORGAP[i]));
-                                    }
-                                }
+                                tempnn++;
+                                raf.write(colorgap);
+                                if (anoStart==1)raf2.write(Rwcolorgap);
+//                                for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
+//                                    raf.write(shortToByte(colorGap[i]));
+//                                    if (anoStart == 1) {
+//                                        raf2.write(shortToByte(RAWCOLORGAP[i]));
+//                                    }
+//                                }
 //								bos.flush();
-
+//                                showSaveNum.showsaveNum(tempnn);
                                 judgeIfRepeat = true;
                             } catch (IOException e) {
                                 // TODO Auto-generated catch block

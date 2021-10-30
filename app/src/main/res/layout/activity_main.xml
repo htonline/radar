@@ -309,6 +309,9 @@
                 android:layout_height="wrap_content"
                 android:text="时间"
                 android:textSize="@dimen/textNormSize" />
+            <TextView
+                android:layout_width="30dp"
+                android:layout_height="wrap_content" />
 
 
         </LinearLayout>

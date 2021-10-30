@@ -2,6 +2,7 @@ package com.example.BackRadar;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.lang.reflect.Array;
 import java.net.DatagramSocket;
 import java.util.ArrayList;
@@ -25,6 +26,9 @@ import com.example.ladarmonitor.R;
 import com.example.orders.MainPeremeterOrders;
 import com.example.orders.NormalOrders;
 import com.example.thread.ReadThread;
+import com.example.thread.WriteBodyThread;
+import com.example.thread.WriteHeadThread;
+import com.example.thread.WriteRearThread;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -1547,10 +1551,17 @@ public class SettingActivity extends Activity {
                                 }
                             }
                         }).start();
-                        MainActivity.writeThread.setPath(path + "/" + tv_storeFile.getText().toString());
-                        MainActivity.writeThread.setPath_ano(path + "/" + tv_storeFile.getText().toString());
-                        MainActivity.writeThread.setSample_wnd(Integer.parseInt(et_timeWindow.getText().toString()));
-                        MainActivity.writeThread.setTimedelay(Short.parseShort(et_delay.getText().toString()));
+//                        MainActivity.writeThread.setPath(path + "/" + tv_storeFile.getText().toString());
+//                        MainActivity.writeThread.setPath_ano(path + "/" + tv_storeFile.getText().toString());
+//                        MainActivity.writeThread.setSample_wnd(Integer.parseInt(et_timeWindow.getText().toString()));
+//                        MainActivity.writeThread.setTimedelay(Short.parseShort(et_delay.getText().toString()));
+
+//
+
+                        MainActivity.writeHeadThread.setSample_wnd(Integer.parseInt(et_timeWindow.getText().toString()));
+                        MainActivity.writeHeadThread.setTimedelay(Short.parseShort(et_delay.getText().toString()));
+
+
 
                         finish();
 
@@ -1648,10 +1659,15 @@ public class SettingActivity extends Activity {
                         }
                     }
                 }).start();
-                MainActivity.writeThread.setPath(path + "/" + tv_storeFile.getText().toString());
-                MainActivity.writeThread.setSample_wnd(Integer.parseInt(et_timeWindow.getText().toString()));
-                MainActivity.writeThread.setTimedelay(Short.parseShort(et_delay.getText().toString()));
-                MainActivity.writeThread.setPath_ano(path + "/" + tv_storeFile.getText().toString());
+//                MainActivity.writeThread.setPath(path + "/" + tv_storeFile.getText().toString());
+//                MainActivity.writeThread.setSample_wnd(Integer.parseInt(et_timeWindow.getText().toString()));
+//                MainActivity.writeThread.setTimedelay(Short.parseShort(et_delay.getText().toString()));
+//                MainActivity.writeThread.setPath_ano(path + "/" + tv_storeFile.getText().toString());
+
+//                MainActivity.writeHeadThread.setSample_wnd(Integer.parseInt(et_timeWindow.getText().toString()));
+//                MainActivity.writeHeadThread.setTimedelay(Short.parseShort(et_delay.getText().toString()));
+
+
                 finish();
 
             }

@@ -3775,20 +3775,21 @@ public final class R {
     public static final int tv_markNumber=0x7f070107;
     public static final int tv_none=0x7f070108;
     public static final int tv_numberOfReceive=0x7f070109;
-    public static final int tv_path=0x7f07010a;
-    public static final int tv_pathoffile=0x7f07010b;
-    public static final int tv_pathoffile2=0x7f07010c;
-    public static final int tv_settingPath=0x7f07010d;
-    public static final int tv_storeFile=0x7f07010e;
-    public static final int tv_text=0x7f07010f;
-    public static final int tv_theWayOfTrigger=0x7f070110;
-    public static final int tv_timeWindow=0x7f070111;
-    public static final int uniform=0x7f070112;
-    public static final int up=0x7f070113;
-    public static final int useLogo=0x7f070114;
-    public static final int withText=0x7f070115;
-    public static final int wrap=0x7f070116;
-    public static final int wrap_content=0x7f070117;
+    public static final int tv_numofSave=0x7f07010a;
+    public static final int tv_path=0x7f07010b;
+    public static final int tv_pathoffile=0x7f07010c;
+    public static final int tv_pathoffile2=0x7f07010d;
+    public static final int tv_settingPath=0x7f07010e;
+    public static final int tv_storeFile=0x7f07010f;
+    public static final int tv_text=0x7f070110;
+    public static final int tv_theWayOfTrigger=0x7f070111;
+    public static final int tv_timeWindow=0x7f070112;
+    public static final int uniform=0x7f070113;
+    public static final int up=0x7f070114;
+    public static final int useLogo=0x7f070115;
+    public static final int withText=0x7f070116;
+    public static final int wrap=0x7f070117;
+    public static final int wrap_content=0x7f070118;
   }
   public static final class integer {
     public static final int abc_config_activityDefaultDur=0x7f080000;

@@ -987,6 +987,7 @@ id tv_mPath
 id tv_markNumber
 id tv_none
 id tv_numberOfReceive
+id tv_numofSave
 id tv_path
 id tv_pathoffile
 id tv_pathoffile2
