@@ -1103,6 +1103,8 @@ public class MainActivity extends Activity {
             readThread.setNumberOfReceive(0);
 
         }
+        poolRaw =null;
+        pool=null;
         try {
             mrafColor = new RandomAccessFile(tv_path.getText().toString(), "rw");
             pool = Executors.newFixedThreadPool(1);
