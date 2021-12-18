@@ -73,10 +73,12 @@
             </intent-filter>
         </activity>
         <activity
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:name="com.example.BackRadar.SettingActivity"
             android:label="@string/title_activity_setting"
             android:screenOrientation="landscape"
-            android:theme="@style/MySettingActivity" />
+
+            />
         <activity
             android:name="com.example.BackRadar.MyFileManager"
             android:label="@string/title_activity_my_file_manager"

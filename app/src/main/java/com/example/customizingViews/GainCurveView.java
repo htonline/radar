@@ -61,7 +61,6 @@ public class GainCurveView extends View {
     public void returnGainData(float[] xRaw, int[] gainData) {
         this.xRaw = xRaw;
         this.gainData = gainData;
-
         invalidate();
         mUp.onUp(gainData, xRaw);
     }
@@ -75,10 +74,10 @@ public class GainCurveView extends View {
         this.xRaw = mxRaw;
 //		Log.d("---------", "beforeInvalidate");
         invalidate();
-//		Log.d("------------", Arrays.toString(xRaw));
+
 //		Log.d("---------", "afterInvalidate");
         calculateGainData(xRaw);
-//		Log.d("------------", Arrays.toString(gainData));
+
         mUp.onUp(gainData, xRaw);
     }
 

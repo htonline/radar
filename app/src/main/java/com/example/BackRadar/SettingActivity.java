@@ -2,17 +2,14 @@ package com.example.BackRadar;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.lang.reflect.Array;
-import java.net.DatagramSocket;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
 
+import com.example.BackRadar.Entity.FileInfoInPath;
+import com.example.BackRadar.Entity.ParamsOfSetting;
 import com.example.fragments.LeftFragmentOfSettingActivity;
 import com.example.fragments.MiddleBackFragmentOfSettingActivity;
 import com.example.fragments.RightFragmentOfSettingActivity;
@@ -20,15 +17,10 @@ import com.example.helper.Dataprocess;
 import com.example.helper.SaveData;
 import com.example.interfaces.CallBackBackgrdData;
 import com.example.interfaces.CallBackGainData;
-import com.example.interfaces.OnUpActionBackgrdListener;
 import com.example.ladarmonitor.NoneActivity;
 import com.example.ladarmonitor.R;
 import com.example.orders.MainPeremeterOrders;
 import com.example.orders.NormalOrders;
-import com.example.thread.ReadThread;
-import com.example.thread.WriteBodyThread;
-import com.example.thread.WriteHeadThread;
-import com.example.thread.WriteRearThread;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -37,39 +29,26 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Message;
-import android.provider.ContactsContract.CommonDataKinds.Event;
-import android.R.integer;
-import android.R.string;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.graphics.Color;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
-import android.view.View.OnKeyListener;
-import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -77,11 +56,17 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
+import android.support.v4.app.*;
+
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
-public class SettingActivity extends Activity {
+public class SettingActivity extends AppCompatActivity implements ISettingActivity {
     private static final String TAG = "SettingActivityLog";
     public LeftFragmentOfSettingActivity leftFragmentOfSettingActivity;
     public RightFragmentOfSettingActivity rightFragmentOfSettingActivity;
@@ -100,13 +85,13 @@ public class SettingActivity extends Activity {
     private RadioGroup radioGroup;
 
     String surefilename = null;
-
+    private ISettingActivityPresenter msettingActivityPresenter;
 
     public static final int Const_NEW_NUMBEROFDATA = 513;
     private short reciveData[] = new short[Const_NEW_NUMBEROFDATA];
     private short battery;
 
-
+    private ParamsOfSetting paramsOfSettingMain;
     private static int countNumRadar = 0;
     //自动设置按钮暂停判断计数器
     boolean judge_automaticSetting = false;
@@ -121,7 +106,7 @@ public class SettingActivity extends Activity {
 
     private static int tempIfSaveTheRadar = 0;
 
-    private static float lowf ;
+    private static float lowf;
     private static float highf;
 
 
@@ -298,6 +283,8 @@ public class SettingActivity extends Activity {
             }
         }
     };
+    private Fragment fragment_showpath;
+    private FragmentTransaction fragmentTransaction;
 
 
     @Override
@@ -311,6 +298,9 @@ public class SettingActivity extends Activity {
             e1.printStackTrace();
         }
         checkPermission();
+
+
+        msettingActivityPresenter = new SettingActivityPresenter(this);
 
         rb_fillingfilter.setOnCheckedChangeListener(radiochecklistener);
         rb_lowpassfilter.setOnCheckedChangeListener(radiochecklistener);
@@ -1017,12 +1007,12 @@ public class SettingActivity extends Activity {
                 }
             }
         });
-        highf = sharemhighf.getFloat("mhighf",1500);
-        lowf = sharemlowf.getFloat("mlowf",100);
+        highf = sharemhighf.getFloat("mhighf", 1500);
+        lowf = sharemlowf.getFloat("mlowf", 100);
 
 
-        et_m_high_f.setText(highf+"");
-        et_m_low_f.setText(lowf+"");
+        et_m_high_f.setText(highf + "");
+        et_m_low_f.setText(lowf + "");
 
         new Thread(new Runnable() {
 
@@ -1170,9 +1160,8 @@ public class SettingActivity extends Activity {
         shareifbackremove = getSharedPreferences("ifbackremove", 0);
 
 
-
-        float gainCoe = shareCoeGain.getFloat("coeGain",0);
-        et_horiGain_coe.setText((String.valueOf((int)gainCoe)));
+        float gainCoe = shareCoeGain.getFloat("coeGain", 0);
+        et_horiGain_coe.setText((String.valueOf((int) gainCoe)));
         tempGain = shareifgain.getInt("ifgain", 0);
         tempIffliter = sharemfiltermode.getInt("mfiltermode", 4);
         tempBackgrd = shareifbackremove.getInt("ifbackremove", 0);
@@ -1436,10 +1425,12 @@ public class SettingActivity extends Activity {
         leftFragmentOfSettingActivity.setXRaw(xRaw);
         middleBackFragmentOfSettingActivity.setBRaw(bRaw);
         Arrays.fill(gainData, 1);
+        Arrays.fill(backgrdData,1);
         tempGain = 0;
         tempIffliter = 4;
         tempBackgrd = 0;
-
+        et_m_low_f.setText(""+100);
+        et_m_high_f.setText(""+1500);
 
     }
 
@@ -1560,7 +1551,6 @@ public class SettingActivity extends Activity {
 
                         MainActivity.writeHeadThread.setSample_wnd(Integer.parseInt(et_timeWindow.getText().toString()));
                         MainActivity.writeHeadThread.setTimedelay(Short.parseShort(et_delay.getText().toString()));
-
 
 
                         finish();
@@ -1767,7 +1757,8 @@ public class SettingActivity extends Activity {
                         radioGroup.clearCheck();
                     }
                     break;
-                    default:break;
+                default:
+                    break;
             }
 
         }
@@ -1930,5 +1921,133 @@ public class SettingActivity extends Activity {
         }
     }
 
+
+    @Override
+    public void btn_save_params(View view) {
+        ParamsOfSetting paramsOfSetting = new ParamsOfSetting();
+        paramsOfSetting.setParamsName(tv_storeFile.getText().toString());
+        paramsOfSetting.setFrequency(frequency);
+        paramsOfSetting.setTimeWindow(Integer.valueOf(et_timeWindow.getText().toString()));
+        paramsOfSetting.setDelay(Integer.valueOf(et_delay.getText().toString()));
+        paramsOfSetting.setSaveRaw(tempIfSaveTheRadar == 1);
+        paramsOfSetting.setGain(tempGain == 1);
+        paramsOfSetting.setGainCoe(Float.parseFloat(et_horiGain_coe.getText().toString()));
+        paramsOfSetting.setGainData(gainData);
+        paramsOfSetting.setDebackgrd(tempBackgrd == 1);
+        paramsOfSetting.setBackgrdData(backgrdData);
+        paramsOfSetting.setFilter(tempIffliter != 4);
+        paramsOfSetting.setFilterNum(tempIffliter);
+        paramsOfSetting.setxRaw(xRaw);
+        paramsOfSetting.setbRaw(bRaw);
+        paramsOfSetting.setFilterstart(Float.parseFloat(et_m_low_f.getText().toString()));
+        paramsOfSetting.setFilterstop(Float.parseFloat(et_m_high_f.getText().toString()));
+
+        msettingActivityPresenter.saveParamsOfSetting(paramsOfSetting, new ICallBackToDo() {
+            @Override
+            public void dosuccess() {
+                Toast.makeText(SettingActivity.this, "保存成功", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void dofailed() {
+                Toast.makeText(SettingActivity.this, "保存失败", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    @Override
+    public void btn_import_params(View view) {
+        msettingActivityPresenter.getParamsOfSetting();
+    }
+
+    @Override
+    public void showPathFiles(List<FileInfoInPath> lists_path) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("FILEPATH", (Serializable) lists_path);
+        fragment_showpath = new ShowPathFragment(msettingActivityPresenter, new ICallBackGetParams() {
+            @Override
+            public void getParams(ParamsOfSetting paramsOfSetting) {
+                paramsOfSettingMain = paramsOfSetting;
+                loadInTvAndFrag(paramsOfSettingMain);
+            }
+        });
+        fragment_showpath.setArguments(bundle);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.fl_contain_, fragment_showpath);
+        fragmentTransaction.commit();
+    }
+
+    public void loadInTvAndFrag(ParamsOfSetting paramsOfSetting) {
+        sp_frequency.setSelection((paramsOfSetting.getFrequency() / 10) - 1);
+        et_timeWindow.setText("" + paramsOfSetting.getTimeWindow());
+        et_delay.setText("" + paramsOfSetting.getDelay());
+        if (paramsOfSetting.isSaveRaw()) {
+            mcb_saveAno.setChecked(true);
+            tempIfSaveTheRadar = 1;
+        } else {
+            mcb_saveAno.setChecked(false);
+            tempIfSaveTheRadar = 0;
+        }
+        if (paramsOfSetting.isGain()){
+            cb_gain.setChecked(true);
+            tempGain = 1;
+            et_horiGain_coe.setText(""+paramsOfSetting.getGainCoe());
+            xRaw = paramsOfSetting.getxRaw();
+            leftFragmentOfSettingActivity.setXRaw(xRaw);
+            gainData = paramsOfSetting.getGainData();
+        }else {
+            cb_gain.setChecked(false);
+            tempGain = 0;
+            Arrays.fill(xRaw, 10);
+            leftFragmentOfSettingActivity.setXRaw(xRaw);
+            Arrays.fill(gainData, 1);
+        }
+        if (paramsOfSetting.isDebackgrd()){
+            cb_backremove.setChecked(true);
+            tempBackgrd = 1;
+            bRaw = paramsOfSetting.getbRaw();
+            middleBackFragmentOfSettingActivity.setBRaw(bRaw);
+            backgrdData = paramsOfSetting.getBackgrdData();
+        }else {
+            cb_backremove.setChecked(false);
+            tempBackgrd = 0;
+            Arrays.fill(backgrdData,1);
+            Arrays.fill(bRaw,10);
+            middleBackFragmentOfSettingActivity.setBRaw(bRaw);
+        }
+        if (paramsOfSetting.getFilterNum()!=4){
+            cb_filter.setChecked(true);
+            tempIffliter = paramsOfSetting.getFilterNum();
+            switch (tempIffliter) {
+                case 0:
+                    rb_lowpassfilter.setChecked(true);
+                    break;
+                case 1:
+                    rb_highpassfilter.setChecked(true);
+                    break;
+                case 2:
+                    rb_bandpassfilter.setChecked(true);
+                    break;
+                case 3:
+                    rb_fillingfilter.setChecked(true);
+                    break;
+                default:
+                    break;
+
+            }
+            et_m_low_f.setText(""+paramsOfSetting.getFilterstart());
+            et_m_high_f.setText(""+paramsOfSetting.getFilterstop());
+        }else {
+            cb_filter.setChecked(false);
+            rb_bandpassfilter.setChecked(false);
+            rb_highpassfilter.setChecked(false);
+            rb_lowpassfilter.setChecked(false);
+            rb_fillingfilter.setChecked(false);
+            et_m_low_f.setText(""+100);
+            et_m_high_f.setText(""+1500);
+        }
+
+    }
 
 }

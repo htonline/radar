@@ -77,7 +77,7 @@ import androidx.core.content.ContextCompat;
 
 
 public class MainActivity extends Activity {
-
+    private int tagForCloseSetting=0;
     private static RandomAccessFile mrafRaw;
     private static RandomAccessFile mrafColor;
     private WriteBodyThread writeBodyThread;
@@ -687,6 +687,7 @@ public class MainActivity extends Activity {
         ibtn_upload.setImageResource(R.drawable.upload);
         btn_mark.setEnabled(false);
         ibtn_setting.setEnabled(false);
+//        ibtn_setting.setEnabled(true);
         myBatterView = findViewById(R.id.MyBatterView);
 //        tv_numofSave = findViewById(R.id.tv_numofSave);
         met_radarName = findViewById(R.id.et_radarName);
@@ -1025,7 +1026,8 @@ public class MainActivity extends Activity {
     }
 
 
-    //当在settingActivity中退出来后，系统会自动调用这个函数，所以把需要改变能不能点击的事件放在这里
+    //当在settingActivity中退出来后，系统会自动调用这个函数，所以把需要改变能不能点击的事件放在这里.created by gaoweihang
+    //updated by wuxiaoxuan,只是activity的绘制流程罢了，不应该当成关闭后才调用的，会导致很多错误。
     @Override
     protected void onResume() {
 
@@ -1105,18 +1107,18 @@ public class MainActivity extends Activity {
         }
         poolRaw =null;
         pool=null;
-        try {
-            mrafColor = new RandomAccessFile(tv_path.getText().toString(), "rw");
-            pool = Executors.newFixedThreadPool(1);
-            if (IfSaveTheRadar==1){
-                mrafRaw = new RandomAccessFile(tv_path.getText().toString()+"-copy","rw");
-                poolRaw = Executors.newFixedThreadPool(1);
+        if (tv_path.getText().length()>5){
+            try {
+                mrafColor = new RandomAccessFile(tv_path.getText().toString(), "rw");
+                pool = Executors.newFixedThreadPool(1);
+                if (IfSaveTheRadar==1){
+                    mrafRaw = new RandomAccessFile(tv_path.getText().toString()+"-copy","rw");
+                    poolRaw = Executors.newFixedThreadPool(1);
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         }
-
-
         super.onResume();
     }
 
