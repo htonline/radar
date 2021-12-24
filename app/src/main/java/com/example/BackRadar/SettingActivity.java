@@ -36,6 +36,8 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -80,7 +82,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
     public int backgrdData[] = new int[Const_NumberOfVerticalDatas];
     public float xRaw[] = new float[17];
     public float bRaw[] = new float[17];
-    public float coeGain = 1;
+    public float  coeGain = 1;
 
     private RadioGroup radioGroup;
 
@@ -133,7 +135,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 
     private TextView tv_none = null;
     private Spinner sp_frequency = null;
-    private int frequency = 0;
+    private int frequency = 10;
 
     //	private Spinner sp_oneWay=null;
     private EditText et_timeWindow = null;
@@ -156,11 +158,11 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
     private CheckBox mcb_saveAno = null;
 
 
-    private EditText et_numberOfPulse = null;
+    private TextView et_numberOfPulse = null;
     private EditText et_singlePulse = null;
     private EditText et_singleDistance = null;
     private EditText et_samplingInterval = null;
-
+    private Button btn_sendTripNum = null;
 
     private EditText et_horiGain_coe = null;
 
@@ -355,13 +357,15 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
                 pOrders.setTriggerMode(1);
 ////				sp_oneWay.setSelection(0);
 //				//脉冲参数可以点击
-                et_numberOfPulse.setEnabled(true);
+//                et_numberOfPulse.setEnabled(true);
                 et_singleDistance.setEnabled(true);
                 et_singlePulse.setEnabled(true);
+                et_samplingInterval.setEnabled(true);
 
                 //默认选中单向触发
                 rd_oneWay.setChecked(true);
                 pOrders.setTriggerDirection(0);
+
                 new Thread(new Runnable() {
 
                     @Override
@@ -524,52 +528,52 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         });
 
 
-        //采样脉冲数改变监听
-        et_numberOfPulse.setOnEditorActionListener(new OnEditorActionListener() {
-
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                // TODO Auto-generated method stub
-
-                int numberOfPulse = Integer.parseInt(et_numberOfPulse.getText().toString());
-                int singlePulse = Integer.parseInt(et_singlePulse.getText().toString());
-                float singleDistance = Float.parseFloat(et_singleDistance.getText().toString());
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    if (et_numberOfPulse.getText().toString().equals("")) {
-                        Toast.makeText(SettingActivity.this, "采样脉冲数不能为空", Toast.LENGTH_SHORT).show();
-                        et_numberOfPulse.setText("1");
-                    } else if (Integer.parseInt(et_numberOfPulse.getText().toString()) <= 0) {
-                        Toast.makeText(SettingActivity.this, "采样脉冲数必须为不等于0的非负数", Toast.LENGTH_SHORT).show();
-                        et_numberOfPulse.setText("1");
-                    }
-
-                    tv_none.setFocusable(true);
-                    tv_none.setFocusableInTouchMode(true);
-                    tv_none.requestFocus();
-
-                    numberOfPulse = Integer.parseInt(et_numberOfPulse.getText().toString());
-                    et_samplingInterval.setText(String.valueOf(singleDistance * numberOfPulse / singlePulse));
-                    pOrders.setNumberOfPulse(Integer.parseInt(et_numberOfPulse.getText().toString()));
-                }
-                return false;
-            }
-        });
-
-        et_numberOfPulse.setOnFocusChangeListener(new OnFocusChangeListener() {
-
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                // TODO Auto-generated method stub
-                if (hasFocus) {
-
-                } else {
-                    InputMethodManager imm = (InputMethodManager) getSystemService(SettingActivity.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
-                    Intent intent = new Intent(SettingActivity.this, NoneActivity.class);
-                    startActivity(intent);
-                }
-            }
-        });
+//        //采样脉冲数改变监听
+//        et_numberOfPulse.setOnEditorActionListener(new OnEditorActionListener() {
+//
+//            @Override
+//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+//                // TODO Auto-generated method stub
+//
+//                int numberOfPulse = Integer.parseInt(et_numberOfPulse.getText().toString());
+//                int singlePulse = Integer.parseInt(et_singlePulse.getText().toString());
+//                float singleDistance = Float.parseFloat(et_singleDistance.getText().toString());
+//                if (actionId == EditorInfo.IME_ACTION_DONE) {
+//                    if (et_numberOfPulse.getText().toString().equals("")) {
+//                        Toast.makeText(SettingActivity.this, "采样脉冲数不能为空", Toast.LENGTH_SHORT).show();
+//                        et_numberOfPulse.setText("1");
+//                    } else if (Integer.parseInt(et_numberOfPulse.getText().toString()) <= 0) {
+//                        Toast.makeText(SettingActivity.this, "采样脉冲数必须为不等于0的非负数", Toast.LENGTH_SHORT).show();
+//                        et_numberOfPulse.setText("1");
+//                    }
+//
+//                    tv_none.setFocusable(true);
+//                    tv_none.setFocusableInTouchMode(true);
+//                    tv_none.requestFocus();
+//
+//                    numberOfPulse = Integer.parseInt(et_numberOfPulse.getText().toString());
+//                    et_samplingInterval.setText(String.valueOf(singleDistance * numberOfPulse / singlePulse));
+//                    pOrders.setNumberOfPulse(Integer.parseInt(et_numberOfPulse.getText().toString()));
+//                }
+//                return false;
+//            }
+//        });
+//
+//        et_numberOfPulse.setOnFocusChangeListener(new OnFocusChangeListener() {
+//
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                // TODO Auto-generated method stub
+//                if (hasFocus) {
+//
+//                } else {
+//                    InputMethodManager imm = (InputMethodManager) getSystemService(SettingActivity.INPUT_METHOD_SERVICE);
+//                    imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+//                    Intent intent = new Intent(SettingActivity.this, NoneActivity.class);
+//                    startActivity(intent);
+//                }
+//            }
+//        });
 
 //		et_numberOfPulse.setOnKeyListener(new OnKeyListener() {
 //
@@ -603,51 +607,51 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
                 else tempIfSaveTheRadar = 0;
             }
         });
-        et_singleDistance.setOnEditorActionListener(new OnEditorActionListener() {
+//        et_singleDistance.setOnEditorActionListener(new OnEditorActionListener() {
+//
+//            @Override
+//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+//                // TODO Auto-generated method stub
+//
+//                int numberOfPulse = Integer.parseInt(et_numberOfPulse.getText().toString());
+//                int singlePulse = Integer.parseInt(et_singlePulse.getText().toString());
+//                float singleDistance = Float.parseFloat(et_singleDistance.getText().toString());
+//                if (actionId == EditorInfo.IME_ACTION_DONE) {
+//                    if (Integer.parseInt(et_singleDistance.getText().toString()) <= 0) {
+//                        Toast.makeText(SettingActivity.this, "单圈距离必须为不等于0的非负数", Toast.LENGTH_SHORT).show();
+//                        et_singleDistance.setText("0.30");
+//                    } else if (et_singleDistance.getText().toString().equals("")) {
+//                        Toast.makeText(SettingActivity.this, "单圈距离不能为空", Toast.LENGTH_SHORT).show();
+//                        et_singleDistance.setText("0.30");
+//
+//                    }
+//
+//                    tv_none.setFocusable(true);
+//                    tv_none.setFocusableInTouchMode(true);
+//                    tv_none.requestFocus();
+//
+//                    singleDistance = Float.parseFloat(et_singleDistance.getText().toString());
+////                    et_samplingInterval.setText(String.valueOf(singleDistance * numberOfPulse / singlePulse));
+//                }
+//                return false;
+//            }
+//        });
 
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                // TODO Auto-generated method stub
-
-                int numberOfPulse = Integer.parseInt(et_numberOfPulse.getText().toString());
-                int singlePulse = Integer.parseInt(et_singlePulse.getText().toString());
-                float singleDistance = Float.parseFloat(et_singleDistance.getText().toString());
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    if (Integer.parseInt(et_singleDistance.getText().toString()) <= 0) {
-                        Toast.makeText(SettingActivity.this, "单圈距离必须为不等于0的非负数", Toast.LENGTH_SHORT).show();
-                        et_singleDistance.setText("0.30");
-                    } else if (et_singleDistance.getText().toString().equals("")) {
-                        Toast.makeText(SettingActivity.this, "单圈距离不能为空", Toast.LENGTH_SHORT).show();
-                        et_singleDistance.setText("0.30");
-
-                    }
-
-                    tv_none.setFocusable(true);
-                    tv_none.setFocusableInTouchMode(true);
-                    tv_none.requestFocus();
-
-                    singleDistance = Float.parseFloat(et_singleDistance.getText().toString());
-                    et_samplingInterval.setText(String.valueOf(singleDistance * numberOfPulse / singlePulse));
-                }
-                return false;
-            }
-        });
-
-        et_singleDistance.setOnFocusChangeListener(new OnFocusChangeListener() {
-
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                // TODO Auto-generated method stub
-                if (hasFocus) {
-
-                } else {
-                    InputMethodManager imm = (InputMethodManager) getSystemService(SettingActivity.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
-                    Intent intent = new Intent(SettingActivity.this, NoneActivity.class);
-                    startActivity(intent);
-                }
-            }
-        });
+//        et_singleDistance.setOnFocusChangeListener(new OnFocusChangeListener() {
+//
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                // TODO Auto-generated method stub
+//                if (hasFocus) {
+//
+//                } else {
+//                    InputMethodManager imm = (InputMethodManager) getSystemService(SettingActivity.INPUT_METHOD_SERVICE);
+//                    imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+//                    Intent intent = new Intent(SettingActivity.this, NoneActivity.class);
+//                    startActivity(intent);
+//                }
+//            }
+//        });
 
 //		et_singleDistance.setOnKeyListener(new OnKeyListener() {
 //
@@ -671,50 +675,50 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 //				return false;
 //			}
 //		});
-
-        et_singlePulse.setOnEditorActionListener(new OnEditorActionListener() {
-
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                // TODO Auto-generated method stub
-                int numberOfPulse = Integer.parseInt(et_numberOfPulse.getText().toString());
-                int singlePulse = Integer.parseInt(et_singlePulse.getText().toString());
-                float singleDistance = Float.parseFloat(et_singleDistance.getText().toString());
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    if (Integer.parseInt(et_singlePulse.getText().toString()) <= 0) {
-                        Toast.makeText(SettingActivity.this, "单圈脉冲必须为不等于0的非负数", Toast.LENGTH_SHORT).show();
-                        et_singlePulse.setText("100");
-                    } else if (et_singlePulse.getText().toString().equals("")) {
-                        Toast.makeText(SettingActivity.this, "单圈脉冲不能为空", Toast.LENGTH_SHORT).show();
-                        et_singlePulse.setText("100");
-                    }
-
-                    tv_none.setFocusable(true);
-                    tv_none.setFocusableInTouchMode(true);
-                    tv_none.requestFocus();
-
-                    singlePulse = Integer.parseInt(et_singlePulse.getText().toString());
-                    et_samplingInterval.setText(String.valueOf(singleDistance * numberOfPulse / singlePulse));
-                }
-                return false;
-            }
-        });
-
-        et_singlePulse.setOnFocusChangeListener(new OnFocusChangeListener() {
-
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                // TODO Auto-generated method stub
-                if (hasFocus) {
-
-                } else {
-                    InputMethodManager imm = (InputMethodManager) getSystemService(SettingActivity.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
-                    Intent intent = new Intent(SettingActivity.this, NoneActivity.class);
-                    startActivity(intent);
-                }
-            }
-        });
+//        et_samplingInterval.addTextChangedListener(new );
+//        et_singlePulse.setOnEditorActionListener(new OnEditorActionListener() {
+//
+//            @Override
+//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+//                // TODO Auto-generated method stub
+//                int numberOfPulse = Integer.parseInt(et_numberOfPulse.getText().toString());
+//                int singlePulse = Integer.parseInt(et_singlePulse.getText().toString());
+//                float singleDistance = Float.parseFloat(et_singleDistance.getText().toString());
+//                if (actionId == EditorInfo.IME_ACTION_DONE) {
+//                    if (Integer.parseInt(et_singlePulse.getText().toString()) <= 0) {
+//                        Toast.makeText(SettingActivity.this, "单圈脉冲必须为不等于0的非负数", Toast.LENGTH_SHORT).show();
+//                        et_singlePulse.setText("100");
+//                    } else if (et_singlePulse.getText().toString().equals("")) {
+//                        Toast.makeText(SettingActivity.this, "单圈脉冲不能为空", Toast.LENGTH_SHORT).show();
+//                        et_singlePulse.setText("100");
+//                    }
+//
+//                    tv_none.setFocusable(true);
+//                    tv_none.setFocusableInTouchMode(true);
+//                    tv_none.requestFocus();
+//
+//                    singlePulse = Integer.parseInt(et_singlePulse.getText().toString());
+//                    et_samplingInterval.setText(String.valueOf(singleDistance * numberOfPulse / singlePulse));
+//                }
+//                return false;
+//            }
+//        });
+//
+//        et_singlePulse.setOnFocusChangeListener(new OnFocusChangeListener() {
+//
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                // TODO Auto-generated method stub
+//                if (hasFocus) {
+//
+//                } else {
+//                    InputMethodManager imm = (InputMethodManager) getSystemService(SettingActivity.INPUT_METHOD_SERVICE);
+//                    imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+//                    Intent intent = new Intent(SettingActivity.this, NoneActivity.class);
+//                    startActivity(intent);
+//                }
+//            }
+//        });
 
 //		et_singlePulse.setOnKeyListener(new OnKeyListener() {
 //
@@ -772,6 +776,12 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 //
 //			}
 //		});
+
+
+
+
+
+
 
         //频率点击事件
         sp_frequency.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
@@ -955,6 +965,59 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 //				return false;
 //			}
 //		});
+
+        et_samplingInterval.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                et_numberOfPulse.setText(""+(int)((Double.valueOf(s.toString())*Integer.valueOf(et_singlePulse.getText().toString()))/
+                        Double.valueOf(et_singleDistance.getText().toString())));
+            }
+        });
+        et_singlePulse.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                et_numberOfPulse.setText(""+(int)((Double.valueOf(et_samplingInterval.getText().toString())*Integer.valueOf(s.toString()))/
+                        Double.valueOf(et_singleDistance.getText().toString())));
+            }
+        });
+        et_singleDistance.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                et_numberOfPulse.setText(""+(int)((Double.valueOf(et_samplingInterval.toString())*Integer.valueOf(et_singlePulse.getText().toString()))/
+                        Double.valueOf(s.toString())));
+
+            }
+        });
         et_delay.setOnEditorActionListener(new OnEditorActionListener() {
 
             @Override
@@ -1115,12 +1178,12 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         rd_wheel = (RadioButton) findViewById(R.id.rb_wheel);
         rd_oneWay = (RadioButton) findViewById(R.id.rb_oneWay);
         rd_twoWays = (RadioButton) findViewById(R.id.rb_twoWays);
-        et_numberOfPulse = (EditText) findViewById(R.id.et_numberOfPulse);
+        et_numberOfPulse = (TextView) findViewById(R.id.et_numberOfPulse);
         et_singlePulse = (EditText) findViewById(R.id.et_singlePulse);
         et_singleDistance = (EditText) findViewById(R.id.et_singleDistance);
         et_samplingInterval = (EditText) findViewById(R.id.et_samplingInterval);
         et_horiGain_coe = (EditText) findViewById(R.id.et_horGain_coe);
-
+        btn_sendTripNum = (Button) findViewById(R.id.btn_sendTripNum);
         rb_fillingfilter = findViewById(R.id.rb_fillingfilter);
         rb_lowpassfilter = findViewById(R.id.rb_lowpassfilter);
         rb_highpassfilter = findViewById(R.id.rb_highpassfilter);
@@ -1160,7 +1223,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         shareifbackremove = getSharedPreferences("ifbackremove", 0);
 
 
-        float gainCoe = shareCoeGain.getFloat("coeGain", 0);
+        float gainCoe = shareCoeGain.getFloat("coeGain", 1);
         et_horiGain_coe.setText((String.valueOf((int) gainCoe)));
         tempGain = shareifgain.getInt("ifgain", 0);
         tempIffliter = sharemfiltermode.getInt("mfiltermode", 4);
@@ -1227,7 +1290,12 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 //		Log.d(TAG, mainPeremeterOrders.getString("path", " ")+"----------------");
 //
         tempIfSaveTheRadar = mainPeremeterOrders.getInt("saveRadar", 1);
-
+        btn_sendTripNum.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendTripNum();
+            }
+        });
         if (tempIfSaveTheRadar == 1) {
             mcb_saveAno.setChecked(true);
         } else mcb_saveAno.setChecked(false);
@@ -1271,12 +1339,14 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
             pOrders.setFrequency((short) 0x6400);
         }
 
-        et_numberOfPulse.setText(String.valueOf(500));
+        et_numberOfPulse.setText(String.valueOf(20));
         et_singlePulse.setText(String.valueOf(500));
-        et_singleDistance.setText(String.valueOf(0.30));
-        et_samplingInterval.setText(String.valueOf(calculateSamplingInterval()));
+        et_singleDistance.setText(String.valueOf(0.3));
+        et_samplingInterval.setText(String.valueOf(0.003));
         et_timeWindow.setText(mainPeremeterOrders.getString("timeWindow", "70"));
         et_delay.setText(mainPeremeterOrders.getString("delay", "100"));
+
+
 
 //接口回调获得增益数组
         leftFragmentOfSettingActivity.setCallBackGainData(new CallBackGainData() {
@@ -1325,11 +1395,6 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.setting, menu);
         return true;
-    }
-
-
-    public double calculateSamplingInterval() {
-        return Double.parseDouble(et_singleDistance.getText().toString()) / (Integer.parseInt(et_singlePulse.getText().toString()) / Integer.parseInt(et_numberOfPulse.getText().toString()));
     }
 
     //水平增益按钮点击事件
@@ -1926,6 +1991,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
     public void btn_save_params(View view) {
         ParamsOfSetting paramsOfSetting = new ParamsOfSetting();
         paramsOfSetting.setParamsName(tv_storeFile.getText().toString());
+        if (frequency==10)
         paramsOfSetting.setFrequency(frequency);
         paramsOfSetting.setTimeWindow(Integer.valueOf(et_timeWindow.getText().toString()));
         paramsOfSetting.setDelay(Integer.valueOf(et_delay.getText().toString()));
@@ -2048,6 +2114,21 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
             et_m_high_f.setText(""+1500);
         }
 
+    }
+
+    public void sendTripNum(){
+        String num = et_numberOfPulse.getText().toString();
+        try{
+            pOrders.setTriggerpulsenum((byte)Integer.parseInt(num));
+        }catch (Exception e){
+            Toast.makeText(this,e.toString(),Toast.LENGTH_SHORT).show();
+        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                pOrders.send();
+            }
+        });
     }
 
 }

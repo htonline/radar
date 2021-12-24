@@ -20,7 +20,6 @@ public class WriteBodyThread extends Thread {
     public void run() {
         try {
             if (mraf!=null){
-                Log.d(TAG, "run: --> "+mraf.length());
                 mraf.write(mdata);
             }
         } catch (IOException e) {

@@ -643,7 +643,7 @@
                             android:text="采样脉冲数"
                             android:textSize="@dimen/textSize" />
 
-                        <EditText
+                        <TextView
                             android:id="@+id/et_numberOfPulse"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -715,6 +715,11 @@
                             android:inputType="number"
                             android:textSize="@dimen/textSize" />
                     </LinearLayout>
+                    <Button
+                        android:id="@+id/btn_sendTripNum"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="确定"/>
                 </LinearLayout>
             </LinearLayout>
 

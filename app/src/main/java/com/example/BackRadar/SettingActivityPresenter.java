@@ -28,7 +28,8 @@ public class SettingActivityPresenter implements ISettingActivityPresenter {
     public void saveParamsOfSetting(ParamsOfSetting paramsOfSetting, ICallBackToDo callBackToDo) {
         String filename = paramsOfSetting.getParamsName();
         filename = filename.split("\\.")[0]+"Params";
-        boolean modelWriteObj = mSettingActivityModel.WriteToFile(paramsOfSetting, android.os.Environment.getExternalStorageDirectory()+"/radar/params/"+filename);
+        String path = android.os.Environment.getExternalStorageDirectory()+"/radar/params";
+        boolean modelWriteObj = mSettingActivityModel.WriteToFile(paramsOfSetting, path,filename);
         if ((modelWriteObj)) {
             callBackToDo.dosuccess();
         } else {
@@ -48,7 +49,8 @@ public class SettingActivityPresenter implements ISettingActivityPresenter {
 
     @Override
     public ParamsOfSetting loadParamsFromFile(String url,ICallBackToDo backtoDo) {
-        ParamsOfSetting paramsOfSetting = mSettingActivityModel.readFromFile(android.os.Environment.getExternalStorageDirectory()+"/radar/params/"+url);
+        String path = android.os.Environment.getExternalStorageDirectory()+"/radar/params/";
+        ParamsOfSetting paramsOfSetting = mSettingActivityModel.readFromFile(path+url);
         if (paramsOfSetting==null){
             backtoDo.dofailed();
         }else {

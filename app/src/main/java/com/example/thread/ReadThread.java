@@ -22,7 +22,7 @@ import com.example.BackRadar.MainActivity;
 import com.example.customizingViews.ColoursView;
 
 public class ReadThread implements Runnable {
-    private static final String TAG = "ReadThread==============";
+    private static final String TAG = "ReadThread";
     public Thread t;
     boolean suspended = false;
     public Handler handler = null;
@@ -158,7 +158,7 @@ public class ReadThread implements Runnable {
                         numberOfReceive++;
                         message = Message.obtain();
                         message.what = 0;
-//                        Log.d(TAG, "run: --> numberOfLogo --> "+ numberOfLogo);
+                        Log.d(TAG, "run: --> numberOfLogo --> "+ numberOfLogo);
                         message.arg1 = tempJudge;
                         message.arg2 = numberOfReceive;
                         message.obj = arrayListOfNewColour;

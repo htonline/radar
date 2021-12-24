@@ -22,14 +22,18 @@ import java.util.List;
 public class SettingAcitivityModel {
     private static final String TAG = "SettingAcitivityModel";
 
-    public boolean WriteToFile(Object obj, String url) {
+    public boolean WriteToFile(Object obj, String path,String url) {
 //        String filesDir = getApplicationContext().getFilesDir().getPath();
         try {
-            File file = new File(url);
+            File filepath = new File(path);
+            if (!filepath.exists()){
+                filepath.mkdirs();
+            }
+            File file = new File(path,url);
             if (!file.exists()) {
                 file.createNewFile();
             }
-            OutputStream ot = new FileOutputStream(new File(url));
+            OutputStream ot = new FileOutputStream(file);
             ObjectOutputStream oos = new ObjectOutputStream(ot);
             oos.writeObject(obj);
             oos.close();
@@ -44,6 +48,9 @@ public class SettingAcitivityModel {
     public List<FileInfoInPath> getFilePaths() {
         List<FileInfoInPath> fileInfoInPaths = new ArrayList<>();
         File file = new File(android.os.Environment.getExternalStorageDirectory() + "/radar/params");
+        if (!file.exists()){
+            file.mkdirs();
+        }
         File[] files = file.listFiles();
         for (File file1 : files) {
             FileInfoInPath fileInfoInPath = new FileInfoInPath();

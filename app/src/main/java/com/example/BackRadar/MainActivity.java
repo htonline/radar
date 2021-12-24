@@ -234,97 +234,98 @@ public class MainActivity extends Activity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
-                    reciveData = (short[]) msg.obj;
-                    int tempJudge = msg.arg1;
-                    if (tempJudge==1){
-                        judge_MartOrNot=true;
-                        markNumber++;
-                        tv_markNumber.setText(markNumber + "");
-                    }
-                    for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
-                        colorGap[i] = reciveData[i];
-                        RawcolorGap[i] = reciveData[i];
-                        Rwcolorgap[2*i]=shortToByte(reciveData[i])[0];
-                        Rwcolorgap[2*i+1]=shortToByte(reciveData[i])[1];
-                    }
-                    if(judge_MartOrNot){
-                        Rwcolorgap[0]=(byte) 0xff;
-                        Rwcolorgap[1]= (byte) 0x00;
-                        Rwcolorgap[2]=(byte) 0xff;
-                        Rwcolorgap[3]=(byte) 0x00;
-                        Rwcolorgap[4]= (byte) 0xff;
-                        Rwcolorgap[5]=(byte) 0x00;
-                        Rwcolorgap[6]=(byte) 0xff;
-                        Rwcolorgap[7]=(byte) 0x00;
-                    }
+                    if (clickOrNot != 0){
+                        reciveData = (short[]) msg.obj;
+                        int tempJudge = msg.arg1;
+                        if (tempJudge==1){
+                            judge_MartOrNot=true;
+                            markNumber++;
+                            tv_markNumber.setText(markNumber + "");
+                        }
+                        for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
+                            colorGap[i] = reciveData[i];
+                            RawcolorGap[i] = reciveData[i];
+                            Rwcolorgap[2*i]=shortToByte(reciveData[i])[0];
+                            Rwcolorgap[2*i+1]=shortToByte(reciveData[i])[1];
+                        }
+                        if(judge_MartOrNot){
+                            Rwcolorgap[0]=(byte) 0xff;
+                            Rwcolorgap[1]= (byte) 0x00;
+                            Rwcolorgap[2]=(byte) 0xff;
+                            Rwcolorgap[3]=(byte) 0x00;
+                            Rwcolorgap[4]= (byte) 0xff;
+                            Rwcolorgap[5]=(byte) 0x00;
+                            Rwcolorgap[6]=(byte) 0xff;
+                            Rwcolorgap[7]=(byte) 0x00;
+                        }
 //                    if (mrafRaw == null) Log.d(TAG, "handleMessage: !!!!!!!!!!!");
-                    writeBodyThreadRaw = new WriteBodyThread(mrafRaw,Rwcolorgap);
-                    poolRaw.execute(writeBodyThreadRaw);
+                        writeBodyThreadRaw = new WriteBodyThread(mrafRaw,Rwcolorgap);
+                        poolRaw.execute(writeBodyThreadRaw);
 //                    writeThread.setRwcolorgap(Rwcolorgap);
-                    battery = reciveData[512];
+                        battery = reciveData[512];
 //                    Log.d(TAG, "handleMessage:  --> battery --> "+battery);
-                    int mbtr_num = (int)((float)(battery / 100)*1.1 - 20) * 10;
-                    myBatterView.setPro(mbtr_num);
+                        int mbtr_num = (int)((float)(battery / 100)*1.1 - 20) * 10;
+                        myBatterView.setPro(mbtr_num);
 //				judgeHaveThread.setColorGap(colorGap);
 //				judgeMetalThread.setColorGap(colorGap);
-                    if (tempifbackremove == 1) {
-                        short[] newnoise = new short[Const_NumberOfVerticalDatas];
-                        for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
-                            newnoise[i] = (short) backgrdData[i];
-                        }
+                        if (tempifbackremove == 1) {
+                            short[] newnoise = new short[Const_NumberOfVerticalDatas];
+                            for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
+                                newnoise[i] = (short) backgrdData[i];
+                            }
 //                        Log.d(TAG, "------tempifbackremove------------");
-                        float[] noise = dataprocessMain.calm_gainnoiseb(newnoise);
-                        colorGap = dataprocessMain.backgroundRemoveProcess(Const_NumberOfVerticalDatas, colorGap, noise, sumcolorData);
-                    }
+                            float[] noise = dataprocessMain.calm_gainnoiseb(newnoise);
+                            colorGap = dataprocessMain.backgroundRemoveProcess(Const_NumberOfVerticalDatas, colorGap, noise, sumcolorData);
+                        }
 
-                    if (tempShare != 4) {
+                        if (tempShare != 4) {
 //                        Log.d(TAG, "--------tempShare----------");
-                        dataprocessMain.m_filterP.setM_low_f(numlowf);
-                        dataprocessMain.m_filterP.setM_high_f(numhighf);
-                        dataprocessMain.setM_iffilter(true);
-                        dataprocessMain.m_filterP.setM_mode(tempShare);
-                        colorGap = dataprocessMain.dodataprocess(colorGap);
-                    }
-                    if (tempifgain == 1) {
+                            dataprocessMain.m_filterP.setM_low_f(numlowf);
+                            dataprocessMain.m_filterP.setM_high_f(numhighf);
+                            dataprocessMain.setM_iffilter(true);
+                            dataprocessMain.m_filterP.setM_mode(tempShare);
+                            colorGap = dataprocessMain.dodataprocess(colorGap);
+                        }
+                        if (tempifgain == 1) {
 //                        Log.d(TAG, "--------tempifgain----------");
-                        colorGap = dataprocessMain.gainProcess(colorGap, gainData, coeGain, Const_NumberOfVerticalDatas);
-                    }
+                            colorGap = dataprocessMain.gainProcess(colorGap, gainData, coeGain, Const_NumberOfVerticalDatas);
+                        }
 
-                    if (judge_MartOrNot) {
-                        for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
-                            colorList[i] = 0x0000ff;
-                            colorGap[i] = (short) (colorGap[i]);
-                        }
-                    } else {
-                        for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
-                            int color = ((colorGap[i]) / 256)+128;
-                            colorList[i] = Color.rgb(color, color, color);
+                        if (judge_MartOrNot) {
+                            for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
+                                colorList[i] = 0x0000ff;
+                                colorGap[i] = (short) (colorGap[i]);
+                            }
+                        } else {
+                            for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
+                                int color = ((colorGap[i]) / 256)+128;
+                                colorList[i] = Color.rgb(color, color, color);
 //                            TempColorList[i] = (short) (colorGap[i]);
-                            colorgap[2*i]=shortToByte(colorGap[i])[0];
-                            colorgap[2*i+1]=shortToByte(colorGap[i])[1];
+                                colorgap[2*i]=shortToByte(colorGap[i])[0];
+                                colorgap[2*i+1]=shortToByte(colorGap[i])[1];
+                            }
                         }
-                    }
-                    if(judge_MartOrNot){
-                        colorgap[0]=(byte) 0xff;
-                        colorgap[1]= (byte) 0x00;
-                        colorgap[2]=(byte) 0xff;
-                        colorgap[3]=(byte) 0x00;
-                        colorgap[4]= (byte) 0xff;
-                        colorgap[5]=(byte) 0x00;
-                        colorgap[6]=(byte) 0xff;
-                        colorgap[7]=(byte) 0x00;
-                    }
+                        if(judge_MartOrNot){
+                            colorgap[0]=(byte) 0xff;
+                            colorgap[1]= (byte) 0x00;
+                            colorgap[2]=(byte) 0xff;
+                            colorgap[3]=(byte) 0x00;
+                            colorgap[4]= (byte) 0xff;
+                            colorgap[5]=(byte) 0x00;
+                            colorgap[6]=(byte) 0xff;
+                            colorgap[7]=(byte) 0x00;
+                        }
 //                    writeThread.setColorgap(colorgap);
 //                    writeThread.setJudgeIfRepeat(false);
 //                    writeThread.setJudgeNumber(3);
 //                    writeThread.setJudgeIfRepeat(true);
-                    writeBodyThread = new WriteBodyThread(mrafColor,colorgap);
-                    pool.execute(writeBodyThread);
-
-                    tv_numberOfReceive.setText(msg.arg2 + "");
-                    lFragment.drawNewVertical(colorList);
-                    judge_MartOrNot = false;
-                    break;
+                        writeBodyThread = new WriteBodyThread(mrafColor,colorgap);
+                        pool.execute(writeBodyThread);
+                        tv_numberOfReceive.setText(msg.arg2 + "");
+                        lFragment.drawNewVertical(colorList);
+                        judge_MartOrNot = false;
+                        break;
+                    }
                 case 1:
                     ibtn_wifi.setImageResource(R.drawable.wifigreen2);
                     ibtn_wifi.setEnabled(false);
@@ -413,8 +414,11 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         fManager = getFragmentManager();
         checkPermission();
-        init();
         lFragment = new LeftFragmentOfMainActivity();
+        init();
+        poolRaw =null;
+        pool=null;
+
         ibtn_startAndSuspend.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -709,17 +713,17 @@ public class MainActivity extends Activity {
         });
 
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Looper.prepare();
-                if (!intIP2StringIP(wifiAdmin.getCurrentWifiInfo().getIpAddress()).equals(STATICIP))Toast.makeText(MainActivity.this,"请手动修改静态ip地址",Toast.LENGTH_SHORT).show();
-                while (!intIP2StringIP(wifiAdmin.getCurrentWifiInfo().getIpAddress()).equals(STATICIP)) ;
-                handlerOfColour.sendEmptyMessage(1);
-                Toast.makeText(MainActivity.this, "成功连接！", Toast.LENGTH_SHORT).show();
-                Looper.loop();
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Looper.prepare();
+//                if (!intIP2StringIP(wifiAdmin.getCurrentWifiInfo().getIpAddress()).equals(STATICIP))Toast.makeText(MainActivity.this,"请手动修改静态ip地址",Toast.LENGTH_SHORT).show();
+//                while (!intIP2StringIP(wifiAdmin.getCurrentWifiInfo().getIpAddress()).equals(STATICIP)) ;
+//                handlerOfColour.sendEmptyMessage(1);
+//                Toast.makeText(MainActivity.this, "成功连接！", Toast.LENGTH_SHORT).show();
+//                Looper.loop();
+//            }
+//        }).start();
 
         btn_wifi_connect.setOnClickListener((view) ->
                 new Thread(() -> {
@@ -1105,12 +1109,11 @@ public class MainActivity extends Activity {
             readThread.setNumberOfReceive(0);
 
         }
-        poolRaw =null;
-        pool=null;
+
         if (tv_path.getText().length()>5){
             try {
                 mrafColor = new RandomAccessFile(tv_path.getText().toString(), "rw");
-                pool = Executors.newFixedThreadPool(1);
+                pool = Executors.newFixedThreadPool(1);//建立一个无界队列的线程池
                 if (IfSaveTheRadar==1){
                     mrafRaw = new RandomAccessFile(tv_path.getText().toString()+"-copy","rw");
                     poolRaw = Executors.newFixedThreadPool(1);
