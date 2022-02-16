@@ -23,12 +23,12 @@ android {
         exclude 'META-INF/XXXX'
         exclude 'META-INF/XXXX'
 
-        exclude 'lib/x86/libZBarDecoder.so'
-        exclude 'lib/armeabi-v7a/libZBarDecoder.so'
-        exclude 'lib/mips/libZBarDecoder.so'
-        exclude 'lib/armeabi/libZBarDecoder.so'
-        exclude 'project.properties'
-        exclude 'com.dtr.zbar.build.ZBarDecoder'
+//        exclude 'lib/x86/libZBarDecoder.so'
+//        exclude 'lib/armeabi-v7a/libZBarDecoder.so'
+//        exclude 'lib/mips/libZBarDecoder.so'
+//        exclude 'lib/armeabi/libZBarDecoder.so'
+//        exclude 'project.properties'
+//        exclude 'com.dtr.zbar.build.ZBarDecoder'
     }
     defaultConfig {
         ndk {
