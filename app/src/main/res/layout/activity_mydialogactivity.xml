@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#fff"
+    android:id="@+id/activity_mydialog"
+    android:layout_width="@dimen/mydialogWidth"
+    android:layout_height="@dimen/mydialogHeight"
+    android:orientation="vertical"
+    >
+</LinearLayout>

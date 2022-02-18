@@ -1,5 +1,4 @@
-package com.example.UpLoad;
-
+package com.example.UpLoad.Fragment;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -7,28 +6,30 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-//import android.support.annotation.RequiresApi;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
-import com.example.BackRadar.MainActivity;
+import com.example.UpLoad.FileListMyDialogManager;
+import com.example.UpLoad.SelectPicActivity;
 import com.example.entity.Wall;
 import com.example.helper.OkHttpTools;
 import com.example.helper.UploadImage;
 import com.example.helper.WifiTool;
-import com.example.helper.zbar.CaptureActivity;
 import com.example.ladarmonitor.R;
-
-//import org.json.JSONException;
-//import org.json.JSONObject;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -36,11 +37,11 @@ import java.lang.reflect.Method;
 import static android.os.Build.VERSION.SDK_INT;
 import static com.example.BackRadar.SettingActivity.FILE_RESULT_CODE;
 
-public class MyDialogActivity2 extends Activity {
+public class UploadNoQrCodeFragment extends Fragment {
     public static final int TO_SELECT_PHOTO = 3;
     private static final String TAG = "MyDialogActivity2";
     SharedPreferences sharePath;
-
+    private Activity mActivity;
     private TextView textView;
     private String path = null;
     private String urlString = null;
@@ -112,36 +113,42 @@ public class MyDialogActivity2 extends Activity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_dialog2);
-        wifiAdmin = new WifiTool(MyDialogActivity2.this);
-        sharePath = getSharedPreferences("mainPeremeterOrders", 0);
+        mActivity = getActivity();
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_my_dialog2,null);
+        wifiAdmin = new WifiTool(mActivity);
+        sharePath = mActivity.getSharedPreferences("mainPeremeterOrders", 0);
         filepath = sharePath.getString("path", "/storage/emulated/0");
 
 //        Toast.makeText(MyDialogActivity2.this,filepath+"",Toast.LENGTH_SHORT).show();
-        textView = (TextView) findViewById(R.id.tv_pathoffile2);
-        btn_chosePath = findViewById(R.id.my_dialog_addFile2);
-        ib_upload_file = findViewById(R.id.ib_uploadFile2);
-        et_cxbh2 = findViewById(R.id.et_cxbh2);
-        et_cxorient2 = findViewById(R.id.et_cxorient2);
-        et_cxstart2 = findViewById(R.id.et_cxstart2);
-        et_cxstop2 = findViewById(R.id.et_cxstop2);
+        textView = (TextView) view.findViewById(R.id.tv_pathoffile2);
+        btn_chosePath = view.findViewById(R.id.my_dialog_addFile2);
+        ib_upload_file = view.findViewById(R.id.ib_uploadFile2);
+        et_cxbh2 = view.findViewById(R.id.et_cxbh2);
+        et_cxorient2 = view.findViewById(R.id.et_cxorient2);
+        et_cxstart2 = view.findViewById(R.id.et_cxstart2);
+        et_cxstop2 = view.findViewById(R.id.et_cxstop2);
 //        tv_dqid = findViewById(R.id.tv_dqid);
-        et_dqbh2 = findViewById(R.id.et_dqbh2);
-        et_dqheight2 = findViewById(R.id.et_dqheight2);
-        et_dqthk2 = findViewById(R.id.et_dqthk2);
-        et_dqtype2 = findViewById(R.id.et_dqtype2);
-        et_dqwidth2 = findViewById(R.id.et_dqwidth2);
-        et_dqloc2 = findViewById(R.id.et_dqloc2);
-        et_detect_username2 = findViewById(R.id.et_detect_username2);
-        et_mainServerNum2 = findViewById(R.id.et_mainServerNum2);
-        et_remark2 = findViewById(R.id.et_remark2);
-        ib_login = findViewById(R.id.ib_login);
+        et_dqbh2 = view.findViewById(R.id.et_dqbh2);
+        et_dqheight2 = view.findViewById(R.id.et_dqheight2);
+        et_dqthk2 = view.findViewById(R.id.et_dqthk2);
+        et_dqtype2 = view.findViewById(R.id.et_dqtype2);
+        et_dqwidth2 = view.findViewById(R.id.et_dqwidth2);
+        et_dqloc2 = view.findViewById(R.id.et_dqloc2);
+        et_detect_username2 = view.findViewById(R.id.et_detect_username2);
+        et_mainServerNum2 = view.findViewById(R.id.et_mainServerNum2);
+        et_remark2 = view.findViewById(R.id.et_remark2);
+        ib_login = view.findViewById(R.id.ib_login);
 
-        ib_upload_img_01 = findViewById(R.id.ib_upload_pic_012);
-        ib_upload_img_02 = findViewById(R.id.ib_upload_pic_022);
-        ib_upload_img_03 = findViewById(R.id.ib_upload_pic_032);
+        ib_upload_img_01 = view.findViewById(R.id.ib_upload_pic_012);
+        ib_upload_img_02 = view.findViewById(R.id.ib_upload_pic_022);
+        ib_upload_img_03 = view.findViewById(R.id.ib_upload_pic_032);
 
         ib_upload_img_01.setImageResource(R.drawable.uploadim16);
         ib_upload_img_02.setImageResource(R.drawable.uploadim16);
@@ -155,7 +162,7 @@ public class MyDialogActivity2 extends Activity {
 
 
 //                wifiAdmin.closeWifi();
-                Toast.makeText(MyDialogActivity2.this,"请确认连接正常功能的wifi",Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity,"请确认连接正常功能的wifi",Toast.LENGTH_SHORT).show();
 
 
                 runFirst();
@@ -166,12 +173,12 @@ public class MyDialogActivity2 extends Activity {
         ib_upload_img_01.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MyDialogActivity2.this, SelectPicActivity.class);
+                Intent intent = new Intent(mActivity, SelectPicActivity.class);
                 if (user_token != null) {
                     intent.putExtra("token", user_token);
                     startActivityForResult(intent, TO_SELECT_PHOTO);
                     choseImgUp = 1;
-                } else Toast.makeText(MyDialogActivity2.this, "请先登录", Toast.LENGTH_SHORT).show();
+                } else Toast.makeText(mActivity, "请先登录", Toast.LENGTH_SHORT).show();
 
 
             }
@@ -179,51 +186,51 @@ public class MyDialogActivity2 extends Activity {
         ib_upload_img_02.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MyDialogActivity2.this, SelectPicActivity.class);
+                Intent intent = new Intent(mActivity, SelectPicActivity.class);
                 if (user_token != null) {
                     intent.putExtra("token", user_token);
                     startActivityForResult(intent, TO_SELECT_PHOTO);
                     choseImgUp = 2;
-                } else Toast.makeText(MyDialogActivity2.this, "请先登录", Toast.LENGTH_SHORT).show();
+                } else Toast.makeText(mActivity, "请先登录", Toast.LENGTH_SHORT).show();
             }
         });
         ib_upload_img_03.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MyDialogActivity2.this, SelectPicActivity.class);
+                Intent intent = new Intent(mActivity, SelectPicActivity.class);
                 if (user_token != null) {
                     intent.putExtra("token", user_token);
                     startActivityForResult(intent, TO_SELECT_PHOTO);
                     choseImgUp = 3;
-                } else Toast.makeText(MyDialogActivity2.this, "请先登录", Toast.LENGTH_SHORT).show();
+                } else Toast.makeText(mActivity, "请先登录", Toast.LENGTH_SHORT).show();
             }
         });
         wall = new Wall();
         ib_upload_file.setImageResource(R.drawable.uploadfiled);
         uploadpath = "";
-        abtn_my_dialog_cancel = (Button) findViewById(R.id.btn_my_dialog_cancel);
+        abtn_my_dialog_cancel = (Button) view.findViewById(R.id.btn_my_dialog_cancel);
         abtn_my_dialog_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 //                wifiAdmin.openWifi();
 //                Toast.makeText(MyDialogActivity2.this,"wifi已打开",Toast.LENGTH_SHORT).show();
-                finish();
+                mActivity.finish();
             }
         });
 
-        abtn_my_dialog_upload = (Button) findViewById(R.id.btn_my_dialog_upload);
+        abtn_my_dialog_upload = (Button) view.findViewById(R.id.btn_my_dialog_upload);
         abtn_my_dialog_upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (user_token == null) {
-                    Toast.makeText(MyDialogActivity2.this, "请先点击左上角登录", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, "请先点击左上角登录", Toast.LENGTH_SHORT).show();
 
                 } else if (et_cxstart2.getText().toString() == "") {
-                    Toast.makeText(MyDialogActivity2.this, "请填写完整", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, "请填写完整", Toast.LENGTH_SHORT).show();
                 } else if (tag_is_uploadraw == 0) {
-                    Toast.makeText(MyDialogActivity2.this, "请上传雷达数据", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, "请上传雷达数据", Toast.LENGTH_SHORT).show();
                 } else if (tag_is_uploadimg01 == 0 || tag_is_uploadimg02 == 0 || tag_is_uploadimg03 == 0) {
-                    Toast.makeText(MyDialogActivity2.this, "请上传完整3张现场图片", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, "请上传完整3张现场图片", Toast.LENGTH_SHORT).show();
                 } else {
                     runFirst();
                     initHttpDQTask();
@@ -241,29 +248,28 @@ public class MyDialogActivity2 extends Activity {
 //                Log.d(TAG,textView.getText().toString().length()+"-----------");
                 if (user_token != null) {
                     if (textView.getText().toString().length() < 3) {
-                        Toast.makeText(MyDialogActivity2.this, "请选择雷达数据", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mActivity, "请选择雷达数据", Toast.LENGTH_SHORT).show();
                     } else {
                         initTask();
                         asyncTask.execute((Object) null);
                     }
-                } else Toast.makeText(MyDialogActivity2.this, "请先登录", Toast.LENGTH_SHORT).show();
+                } else Toast.makeText(mActivity, "请先登录", Toast.LENGTH_SHORT).show();
 
             }
         });
         btn_chosePath.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = FileListMyDialogManager.actionStart(MyDialogActivity2.this, filepath);
+                Intent intent = FileListMyDialogManager.actionStart(mActivity, filepath);
                 startActivityForResult(intent, FILE_RESULT_CODE);
             }
         });
         textView.setText(uploadpath);
-
-
+        return view;
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case FILE_RESULT_CODE:
@@ -279,7 +285,7 @@ public class MyDialogActivity2 extends Activity {
                 }
                 break;
             case TO_SELECT_PHOTO:
-                if (resultCode == RESULT_OK) {
+                if (resultCode == mActivity.RESULT_OK) {
                     int rescode = data.getIntExtra("UPLOADIMG_RES", 0);
                     String strpicpath = data.getStringExtra("UPPICRES");
                     String strpicpathd = null;
@@ -347,10 +353,10 @@ public class MyDialogActivity2 extends Activity {
                 super.onPostExecute(o);
                 user_token = o.toString();
                 if (o.toString().indexOf("Bearer") != -1) {
-                    Toast.makeText(MyDialogActivity2.this, "登录成功", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, "登录成功", Toast.LENGTH_SHORT).show();
                     ib_login.setImageResource(R.drawable.loginok16);
                 } else
-                    Toast.makeText(MyDialogActivity2.this, o.toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, o.toString(), Toast.LENGTH_SHORT).show();
             }
         };
     }
@@ -410,10 +416,10 @@ public class MyDialogActivity2 extends Activity {
             protected void onPostExecute(Object o) {
                 super.onPostExecute(o);
                 if (o.toString() == String.valueOf(1)) {
-                    Toast.makeText(MyDialogActivity2.this, "上传成功!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, "上传成功!", Toast.LENGTH_SHORT).show();
 
                 } else {
-                    Toast.makeText(MyDialogActivity2.this, o.toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, o.toString(), Toast.LENGTH_SHORT).show();
                 }
             }
         };
@@ -429,7 +435,7 @@ public class MyDialogActivity2 extends Activity {
                 urlString = urlString.replace("sdcard", "storage/emulated/0");
 //                Log.d(TAG, urlString);
                 if (user_token == "") {
-                    Toast.makeText(MyDialogActivity2.this, "请先登录", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, "请先登录", Toast.LENGTH_SHORT).show();
                 }
                 String response = UploadImage.uploadFile(new File(urlString), "http://39.105.125.51:8001/api/phoneOperate/updateWenjian", user_token);
                 return response;
@@ -440,20 +446,20 @@ public class MyDialogActivity2 extends Activity {
             protected void onPreExecute() {
                 super.onPreExecute();
                 urlString = uploadpath;
-                Toast.makeText(MyDialogActivity2.this, "开始上传", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity, "开始上传", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             protected void onPostExecute(Object o) {
                 super.onPostExecute(o);
                 if (o.toString().indexOf("avatar") != 0) {
-                    Toast.makeText(MyDialogActivity2.this, "上传成功！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, "上传成功！", Toast.LENGTH_SHORT).show();
                     JSONObject jsonObj = JSON.parseObject(o.toString());
                     urlrawpath2 = jsonObj.getString("avatar");
                     ib_upload_file.setImageResource(R.drawable.ok16);
                     tag_is_uploadraw = 1;
                 } else
-                    Toast.makeText(MyDialogActivity2.this, (o == null ? "" : o.toString()), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, (o == null ? "" : o.toString()), Toast.LENGTH_SHORT).show();
             }
         };
     }

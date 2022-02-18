@@ -15,7 +15,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.example.UpLoad.MyDialogActivity;
-import com.example.UpLoad.MyDialogActivity2;
 import com.example.customizingViews.ColoursView;
 import com.example.customizingViews.MyBatterView;
 import com.example.customizingViews.RadarView;
@@ -907,11 +906,13 @@ public class MainActivity extends Activity {
                     case 0:
 //                        Log.d(TAG, "onClick: 1111111111111111111111");
                         Intent intent = new Intent(MainActivity.this, MyDialogActivity.class);
+                        intent.putExtra("type",0);
                         startActivity(intent);
                         break;
                     case 1:
 //                        Log.d(TAG, "onClick: 22222222222222222222222222");
-                        Intent intent2 = new Intent(MainActivity.this, MyDialogActivity2.class);
+                        Intent intent2 = new Intent(MainActivity.this, MyDialogActivity.class);
+                        intent2.putExtra("type",1);
                         startActivity(intent2);
                         break;
                     default:
