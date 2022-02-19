@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.example.UpLoad.MyDialogActivity;
+import com.example.upload.MyDialogActivity;
 import com.example.customizingViews.ColoursView;
 import com.example.customizingViews.MyBatterView;
 import com.example.customizingViews.RadarView;

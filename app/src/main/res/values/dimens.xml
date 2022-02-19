@@ -6,6 +6,9 @@
     <dimen name="textSize">8sp</dimen>
     <dimen name="textNormSize">10sp</dimen>
     <dimen name="textLargeSize">10sp</dimen>
+
+    <dimen name="textDialogTitleSize">25sp</dimen>
+    <dimen name="textDialogLoginTitleSize">35sp</dimen>
     <dimen name="textTitleLargeSize">10sp</dimen>
     <dimen name="textTitleSize">14sp</dimen>
 

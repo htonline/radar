@@ -15,16 +15,32 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <ImageButton
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/ib_login"/>
+                android:layout_height="match_parent"
+                android:background="#ccf5d8"
+                android:gravity="center"
+                android:orientation="horizontal"
+                >
+                <ImageView
+                    android:layout_margin="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ib_login"/>
+                <TextView
+                    android:gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tv_dialog_username"
+                    android:textSize="@dimen/textNormSize"/>
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/my_dialog_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="25sp"
+                android:textSize="@dimen/textDialogTitleSize"
                 android:textColor="#000"
                 android:layout_gravity="center"
                 android:gravity="center"
@@ -493,6 +509,21 @@
                         android:textSize="@dimen/textNormSize"
                         android:textColor="#000"
                         />
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="#d5ffcc"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/upload_percent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0%"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            />
+                    </LinearLayout>
+
                     <ImageButton
                         android:id="@+id/ib_uploadFile"
                         android:layout_width="wrap_content"

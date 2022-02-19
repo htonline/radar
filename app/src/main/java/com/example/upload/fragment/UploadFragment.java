@@ -1,4 +1,4 @@
-package com.example.UpLoad.Fragment;
+package com.example.upload.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,17 +25,41 @@ import androidx.fragment.app.Fragment;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
-import com.example.UpLoad.FileListMyDialogManager;
-import com.example.UpLoad.SelectPicActivity;
+import com.example.upload.FileListMyDialogManager;
+import com.example.upload.GetRequestInterface;
+import com.example.upload.LoadOnSubscribe;
+import com.example.upload.SelectPicActivity;
 import com.example.entity.Wall;
 import com.example.helper.OkHttpTools;
-import com.example.helper.UploadImage;
 import com.example.helper.WifiTool;
 import com.example.helper.zbar.CaptureActivity;
 import com.example.ladarmonitor.R;
+import com.example.upload.convertor.FileConverterFactory;
+import com.example.upload.entity.UpFilePath;
+import com.example.upload.entity.UserInfoLogin;
+import com.example.upload.up.LoadCallBack;
+import com.google.gson.Gson;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.os.Build.VERSION.SDK_INT;
 import static com.example.BackRadar.SettingActivity.FILE_RESULT_CODE;
@@ -60,11 +86,9 @@ public class UploadFragment extends Fragment {
     private ImageButton ib_upload_img_01;
     private ImageButton ib_upload_img_02;
     private ImageButton ib_upload_img_03;
-    private ImageButton ib_login;
-
-    private AsyncTask asyncTask;
+    private ImageView ib_login;
+    private TextView mtv_up_percent;
     private AsyncTask asyncTask2;
-    private AsyncTask asyncTask3;
     private Wall wall;
     //    private TextView tv_dqid;
     private TextView tv_dqbh;
@@ -77,6 +101,7 @@ public class UploadFragment extends Fragment {
     private TextView tv_cxstart;
     private TextView tv_cxstop;
     private TextView tv_dqloc;
+    private TextView mtv_login_username;
     WifiTool wifiAdmin;
     private String urlrawpath;
     private String urlpicpath1;
@@ -89,6 +114,7 @@ public class UploadFragment extends Fragment {
     private int tag_is_uploadimg02 = 0;
     private int tag_is_uploadimg03 = 0;
 
+    private UserInfoLogin userInfoLogin;
 
     private EditText et_detect_username;//采集人员姓名
     private EditText et_mainServerNum;//主机序号
@@ -119,6 +145,8 @@ public class UploadFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActivity = getActivity();
+        Bundle bundle = getArguments();
+        userInfoLogin = (UserInfoLogin) bundle.getSerializable("userinfologin");
     }
 
     @Nullable
@@ -128,7 +156,7 @@ public class UploadFragment extends Fragment {
         wifiAdmin = new WifiTool(mActivity);
         sharePath = mActivity.getSharedPreferences("mainPeremeterOrders", 0);
         filepath = sharePath.getString("path", "/storage/emulated/0");
-
+        mtv_login_username = view.findViewById(R.id.tv_dialog_username);
 //        Toast.makeText(MyDialogActivity.this,filepath+"",Toast.LENGTH_SHORT).show();
         textView = (TextView) view.findViewById(R.id.tv_pathoffile);
         btn_chosePath = view.findViewById(R.id.my_dialog_addFile);
@@ -149,7 +177,7 @@ public class UploadFragment extends Fragment {
         et_mainServerNum = view.findViewById(R.id.et_mainServerNum);
         et_remark = view.findViewById(R.id.et_remark);
         ib_login = view.findViewById(R.id.ib_login);
-
+        mtv_up_percent = view.findViewById(R.id.upload_percent);
         ib_upload_img_01 = view.findViewById(R.id.ib_upload_pic_01);
         ib_upload_img_02 = view.findViewById(R.id.ib_upload_pic_02);
         ib_upload_img_03 = view.findViewById(R.id.ib_upload_pic_03);
@@ -158,23 +186,9 @@ public class UploadFragment extends Fragment {
         ib_upload_img_02.setImageResource(R.drawable.uploadim16);
         ib_upload_img_03.setImageResource(R.drawable.uploadim16);
 
-        ib_login.setImageResource(R.drawable.login_16);
-
-
-        ib_login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-
-//                wifiAdmin.closeWifi();
-                Toast.makeText(mActivity,"请确认连接正常功能的wifi",Toast.LENGTH_SHORT).show();
-
-
-                runFirst();
-                initHttpDQTaskLogin();
-                asyncTask3.execute((Object) null);
-            }
-        });
+        ib_login.setImageResource(R.drawable.loginok16);
+        mtv_login_username.setText(userInfoLogin.getUser().getUserIn().getNickName());
+        user_token = userInfoLogin.getToken();
         ib_upload_img_01.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -183,9 +197,9 @@ public class UploadFragment extends Fragment {
                     intent.putExtra("token", user_token);
                     startActivityForResult(intent, TO_SELECT_PHOTO);
                     choseImgUp = 1;
-                } else Toast.makeText(mActivity, "请先登录", Toast.LENGTH_SHORT).show();
-
-
+                } else {
+                    Toast.makeText(mActivity, "请先登录", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         ib_upload_img_02.setOnClickListener(new View.OnClickListener() {
@@ -255,8 +269,13 @@ public class UploadFragment extends Fragment {
                     if (textView.getText().toString().length() < 3) {
                         Toast.makeText(mActivity, "请选择雷达数据", Toast.LENGTH_SHORT).show();
                     } else {
-                        initTask();
-                        asyncTask.execute((Object) null);
+                        urlString = uploadpath;
+                        urlString = urlString.replace("sdcard", "storage/emulated/0");
+                        if (user_token == "") {
+                            Toast.makeText(getActivity(), "请先登录", Toast.LENGTH_SHORT).show();
+                        }else {
+                            uploadOneFile(new File(urlString), user_token);
+                        }
                     }
                 } else Toast.makeText(mActivity, "请先登录", Toast.LENGTH_SHORT).show();
 
@@ -279,6 +298,92 @@ public class UploadFragment extends Fragment {
         });
 
         return view;
+    }
+
+    public void uploadOneFile(File file, String user_token) {
+        LoadOnSubscribe loadOnSubscribe = new LoadOnSubscribe();
+        ArrayMap<String, Object> params = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            params = new ArrayMap<>();
+        }
+        List<String> files1 = new ArrayList<>();
+        files1.add(file.getAbsolutePath());
+        params.put("files", files1);
+        params.put("LoadOnSubscribe", loadOnSubscribe);
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(60000, TimeUnit.MILLISECONDS)
+                .readTimeout(60000, TimeUnit.MILLISECONDS)
+                .writeTimeout(60000, TimeUnit.MILLISECONDS)
+//                .addInterceptor(getHeader())
+                .addNetworkInterceptor(getResponseIntercept()).build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(new FileConverterFactory())
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .baseUrl("http://39.105.125.51:8001/")
+                .build();
+        GetRequestInterface loadService = retrofit.create(GetRequestInterface.class);
+        Observable.merge(Observable.create(loadOnSubscribe), loadService.upLoadOneFile(params,user_token))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new LoadCallBack<Object>() {
+                    @Override
+                    protected void onProgress(String percent) {
+                        mtv_up_percent.setText(percent + "%");
+                    }
+
+                    @Override
+                    protected void onSuccess(Object t) {
+                        Toast.makeText(mActivity,"上传成功",Toast.LENGTH_LONG).show();
+                        Gson gson = new Gson();
+                        String str = gson.toJson(t);
+                        UpFilePath path = gson.fromJson(str,UpFilePath.class);
+                        urlrawpath = path.getAvatar();
+                        ib_upload_file.setImageResource(R.drawable.upload_file_03);
+                    }
+                });
+
+//        Log.d(TAG, "uploadOneFile:  --> path :"+file.getAbsolutePath());
+//        RequestBody body = RequestBody
+//                .create(MediaType.parse("application/octet-stream"),file);
+//        MultipartBody.Part part = MultipartBody.Part.createFormData("file",file.getName(),body);
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl("http://39.105.125.51:8001/")
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//        GetRequestInterface getRequestInterface = retrofit.create(GetRequestInterface.class);
+//        Call<UpFilePath> upFilePathCall = getRequestInterface.upLoadOneFile(part,user_token);
+//        upFilePathCall.enqueue(new Callback<UpFilePath>() {
+//            @Override
+//            public void onResponse(Call<UpFilePath> call, Response<UpFilePath> response) {
+//                if (response.body() == null){
+//                    try {
+//                        Toast.makeText(mActivity,""+response.errorBody().string(),Toast.LENGTH_LONG).show();
+//                    }catch (Exception e){
+//                        Log.e(TAG, "Exception "+e);
+//                    }
+//                }else {
+//                    Toast.makeText(mActivity,"上传雷达数据成功",Toast.LENGTH_LONG).show();
+//                    urlrawpath = response.body().getAvatar();
+//                    ib_upload_file.setImageResource(R.drawable.upload_file_03);
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<UpFilePath> call, Throwable t) {
+//                Toast.makeText(mActivity,"上传失败",Toast.LENGTH_LONG).show();
+//                Log.d(TAG, "onResponse: "+t);
+//            }
+//        });
+    }
+    private HttpLoggingInterceptor getResponseIntercept() {
+        return new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+            @Override
+            public void log(String message) {
+
+            }
+        }).setLevel(HttpLoggingInterceptor.Level.BODY);
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -374,45 +479,6 @@ public class UploadFragment extends Fragment {
 
     }
 
-
-    private void initHttpDQTaskLogin() {
-        asyncTask3 = new AsyncTask() {
-            @Override
-            protected Object doInBackground(Object[] objects) {
-                OkHttpTools tools = new OkHttpTools();
-                String result = null;
-                try {
-                    result = tools.Login();
-                } catch (JSONException | org.json.JSONException e) {
-                    e.printStackTrace();
-                }
-//                        handler.sendEmptyMessage(1);
-//                        Log.d(TAG, "============="+result);
-//                OkHttpTools tools =  new OkHttpTools();
-//                String result = null;
-//                try {
-//                    result = tools.Login();
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-
-                return result;
-            }
-
-            @Override
-            protected void onPostExecute(Object o) {
-                super.onPostExecute(o);
-                user_token = o.toString();
-                if (o.toString().indexOf("Bearer") != -1) {
-                    Toast.makeText(mActivity, "登录成功", Toast.LENGTH_SHORT).show();
-                    ib_login.setImageResource(R.drawable.loginok16);
-                } else
-                    Toast.makeText(mActivity, o.toString(), Toast.LENGTH_SHORT).show();
-            }
-        };
-    }
-
-
     private void initHttpDQTask() {
         asyncTask2 = new AsyncTask() {
             @Override
@@ -461,42 +527,5 @@ public class UploadFragment extends Fragment {
         };
     }
 
-    private void initTask() {
-        asyncTask = new AsyncTask() {
-            @Override
-            protected Object doInBackground(Object[] params) {
-                //                    UploadImage.uploadFile();
-//                Log.d(TAG, urlString);
 
-                urlString = urlString.replace("sdcard", "storage/emulated/0");
-//                Log.d(TAG, urlString);
-                if (user_token == "") {
-                    Toast.makeText(getActivity(), "请先登录", Toast.LENGTH_SHORT).show();
-                }
-                String response = UploadImage.uploadFile(new File(urlString), "http://39.105.125.51:8001/api/phoneOperate/updateWenjian", user_token);
-                return response;
-
-            }
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                urlString = uploadpath;
-                Toast.makeText(getActivity(), "开始上传", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            protected void onPostExecute(Object o) {
-                super.onPostExecute(o);
-                if (o.toString().indexOf("avatar") != 0) {
-                    Toast.makeText(getActivity(), "上传成功！", Toast.LENGTH_SHORT).show();
-                    JSONObject jsonObj = JSON.parseObject(o.toString());
-                    urlrawpath = jsonObj.getString("avatar");
-                    ib_upload_file.setImageResource(R.drawable.ok16);
-                    tag_is_uploadraw = 1;
-                } else
-                    Toast.makeText(getActivity(), (o == null ? "" : o.toString()), Toast.LENGTH_SHORT).show();
-            }
-        };
-    }
 }
