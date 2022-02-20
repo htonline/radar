@@ -7,10 +7,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 
-/**
- * 文件上传，下载 进度观察者 发射器（计算上传百分比）
- * Created by fangs on 2018/5/21.
- */
 public class LoadOnSubscribe implements ObservableOnSubscribe<Object> {
     private static final String TAG = "LoadOnSubscribe";
     private ObservableEmitter<Object> mObservableEmitter;//进度观察者 发射器

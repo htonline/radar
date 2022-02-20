@@ -12,10 +12,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
 
-/**
- * 上传文件 转换器工厂
- * Created by fangs on 2018/11/12.
- */
+
 public class FileConverterFactory extends Converter.Factory {
 
     @Nullable

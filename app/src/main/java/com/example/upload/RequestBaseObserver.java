@@ -8,10 +8,6 @@ import io.reactivex.Observer;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 
-/**
- * 自定义 基础功能 Observer
- * Created by fangs on 2017/8/28.
- */
 public abstract class RequestBaseObserver<V> implements Observer<V> {
 
     private Disposable disposed;

@@ -2,10 +2,7 @@ package com.example.upload.utils;
 
 import android.util.Log;
 
-/**
- * Log统一管理类
- * Created by fangs on 2017/3/1.
- */
+
 public class L {
 
     private L() {

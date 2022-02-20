@@ -34,7 +34,6 @@
                     android:id="@+id/tv_dialog_username"
                     android:textSize="@dimen/textNormSize"/>
             </LinearLayout>
-
             <TextView
                 android:id="@+id/my_dialog_title"
                 android:layout_width="0dp"
@@ -46,6 +45,39 @@
                 android:gravity="center"
                 android:text="扫描二维码上传" >
             </TextView>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+                <TextView
+                    android:text="项目名称"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_margin="5dp"
+                    android:gravity="center"
+                    android:textSize="@dimen/textNormSize"
+                    android:textColor="#000"
+                    />
+                <TextView
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#000"
+                    />
+                <TextView
+                    android:id="@+id/tv_dqbh"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_margin="5dp"
+                    android:gravity="center"
+                    android:textSize="@dimen/textNormSize"
+                    android:textColor="#000"
+                    />
+            </LinearLayout>
+
 
 
 
@@ -72,38 +104,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-                <TextView
-                    android:text="线路名"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_margin="5dp"
-                    android:gravity="center"
-                    android:textSize="@dimen/textNormSize"
-                    android:textColor="#000"
-                    />
+
+
                 <TextView
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:background="#000"
                     />
                 <TextView
-                    android:id="@+id/tv_dqbh"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_margin="5dp"
-                    android:gravity="center"
-                    android:textSize="@dimen/textNormSize"
-                    android:textColor="#000"
-                    />
-                <TextView
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="#000"
-                    />
-                <TextView
-                    android:text="挡墙类型"
+                    android:text="检测内容"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -127,18 +136,13 @@
                     android:textSize="@dimen/textNormSize"
                     android:textColor="#000"
                     />
-            </LinearLayout>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#000"
-                />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
                 <TextView
-                    android:text="挡墙高度"
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#000"
+                    />
+                <TextView
+                    android:text="项目编号"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -147,6 +151,7 @@
                     android:textSize="@dimen/textNormSize"
                     android:textColor="#000"
                     />
+
                 <TextView
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
@@ -162,13 +167,18 @@
                     android:textSize="@dimen/textNormSize"
                     android:textColor="#000"
                     />
+            </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#000"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
                 <TextView
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="#000"
-                    />
-                <TextView
-                    android:text="天气"
+                    android:text="检测位置"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -198,7 +208,7 @@
                     android:background="#000"
                     />
                 <TextView
-                    android:text="片石尺寸"
+                    android:text="测线编号"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -222,36 +232,7 @@
                     android:textSize="@dimen/textNormSize"
                     android:textColor="#000"
                     />
-                <TextView
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="#000"
-                    />
-                <TextView
-                    android:text="行别"
-                    android:layout_width="80dp"
-                    android:layout_margin="5dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:textSize="@dimen/textNormSize"
-                    android:textColor="#000"
-                    />
-                <TextView
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="#000"
-                    />
-                <TextView
-                    android:id="@+id/tv_cxbh"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_margin="5dp"
-                    android:gravity="center"
-                    android:textSize="@dimen/textNormSize"
-                    android:textColor="#000"
-                    />
+
             </LinearLayout>
             <TextView
                 android:layout_width="match_parent"
@@ -268,8 +249,40 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
                 <TextView
-                    android:text="挡墙倾斜度"
+                    android:text="起始里程"
+                    android:layout_width="80dp"
+                    android:layout_margin="5dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="@dimen/textNormSize"
+                    android:textColor="#000"
+                    />
+                <TextView
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#000"
+                    />
+
+                <TextView
+                    android:id="@+id/tv_cxbh"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_margin="5dp"
+                    android:gravity="center"
+                    android:textSize="@dimen/textNormSize"
+                    android:textColor="#000"
+                    />
+                <TextView
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#000"
+                    />
+                <TextView
+                    android:text="终止里程"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -299,6 +312,7 @@
                     android:background="#000"
                     />
                 <TextView
+                    android:visibility="gone"
                     android:text="挡墙起止里程"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
@@ -309,11 +323,13 @@
                     android:textColor="#000"
                     />
                 <TextView
+                    android:visibility="gone"
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:background="#000"
                     />
                 <TextView
+                    android:visibility="gone"
                     android:id="@+id/tv_cxstart"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
@@ -324,11 +340,13 @@
                     android:textColor="#000"
                     />
                 <TextView
+                    android:visibility="gone"
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:background="#000"
                     />
                 <TextView
+                    android:visibility="gone"
                     android:text="表面破损情况"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
@@ -339,11 +357,13 @@
                     android:textColor="#000"
                     />
                 <TextView
+                    android:visibility="gone"
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:background="#000"
                     />
                 <TextView
+                    android:visibility="gone"
                     android:id="@+id/tv_cxstop"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
@@ -354,11 +374,13 @@
                     android:textColor="#000"
                     />
                 <TextView
+                    android:visibility="gone"
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:background="#000"
                     />
                 <TextView
+                    android:visibility="gone"
                     android:text="表面植被情况"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
@@ -369,11 +391,13 @@
                     android:textColor="#000"
                     />
                 <TextView
+                    android:visibility="gone"
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:background="#000"
                     />
                 <TextView
+                    android:visibility="gone"
                     android:id="@+id/tv_dqloc"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
@@ -395,7 +419,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <TextView
-                    android:text="采集人员"
+                    android:text="施工单位负责人及其联系电话"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -417,7 +441,7 @@
                     android:layout_margin="5dp"
                     android:gravity="center"
                     android:imeOptions="actionDone"
-                    android:hint="请输入姓名"
+                    android:hint="请输入姓名联系方式"
                     android:textSize="@dimen/textNormSize"
                     android:textColor="#000"
                     />
@@ -427,7 +451,7 @@
                     android:background="#000"
                     />
                 <TextView
-                    android:text="主机序号"
+                    android:text="检测单位负责人及其联系电话"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -452,7 +476,7 @@
                     android:imeOptions="actionDone"
                     android:textSize="@dimen/textNormSize"
                     android:textColor="#000"
-                    android:hint="请输入主机序号"
+                    android:hint="请输入姓名联系方式"
                     />
             </LinearLayout>
             <TextView

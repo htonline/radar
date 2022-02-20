@@ -5,10 +5,6 @@ import android.os.Environment;
 import java.io.File;
 import java.text.DecimalFormat;
 
-/**
- * 工具类
- * Created by fangs on 2018/11/12.
- */
 public class TransfmtUtils {
 
     private TransfmtUtils() {

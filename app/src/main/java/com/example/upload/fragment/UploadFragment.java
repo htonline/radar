@@ -336,6 +336,7 @@ public class UploadFragment extends Fragment {
                     @Override
                     protected void onSuccess(Object t) {
                         Toast.makeText(mActivity,"上传成功",Toast.LENGTH_LONG).show();
+                        tag_is_uploadraw = 1;
                         Gson gson = new Gson();
                         String str = gson.toJson(t);
                         UpFilePath path = gson.fromJson(str,UpFilePath.class);
