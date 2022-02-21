@@ -13,4 +13,19 @@
         \n请点击”设置”->在应用程序中找到”popon”->权限管理->%2$s->”允许”即可 </string>
     <string name="camera">摄像头(相机)</string>
 
+
+    <string name = "cxname">H0</string>
+    <string name = "cxname2">H1</string>
+    <string name = "cxname3">H-1</string>
+    <string name = "cxname4">H2</string>
+    <string name = "cxname5">H-2</string>
+    <string name = "cxname6">H3</string>
+    <string name = "cxname7">H-3</string>
+    <string name = "cxname8">H4</string>
+    <string name = "cxname9">H-4</string>
+    <string name = "cxname10">JD1</string>
+    <string name = "cxname11">JD-1</string>
+    <string name = "cxname12">JD2</string>
+    <string name = "cxname13">JD-2</string>
+
 </resources>

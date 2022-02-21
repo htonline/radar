@@ -1,671 +1,479 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="#fff"
-    android:layout_width="@dimen/mydialogWidth"
-    android:layout_height="@dimen/mydialogHeight"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        android:layout_weight="1">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="#ccf5d8"
+                android:background="@drawable/tv_bg"
                 android:gravity="center"
-                android:orientation="horizontal"
-                >
+                android:orientation="horizontal">
+
                 <ImageView
-                    android:layout_margin="5dp"
+                    android:id="@+id/ib_login"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/ib_login"/>
+                    android:src="@drawable/loginok16" />
+
                 <TextView
-                    android:gravity="center"
+                    android:id="@+id/tv_dialog_username"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tv_dialog_username"
-                    android:textSize="@dimen/textNormSize"/>
+                    android:gravity="center"
+                    android:textSize="@dimen/textmydialogssmallSize" />
             </LinearLayout>
+
+
             <TextView
                 android:id="@+id/my_dialog_title"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="@dimen/textDialogTitleSize"
-                android:textColor="#000"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@drawable/tv_bg"
                 android:gravity="center"
-                android:text="扫描二维码上传" >
-            </TextView>
+                android:text="扫描二维码上传"
+                android:textColor="#000"
+                android:textSize="@dimen/textSmallSize"
+                android:textStyle="bold"></TextView>
+
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
+                android:layout_weight="1"
                 android:orientation="horizontal">
+
                 <TextView
-                    android:text="项目名称"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_margin="5dp"
-                    android:gravity="center"
-                    android:textSize="@dimen/textNormSize"
-                    android:textColor="#000"
-                    />
-                <TextView
-                    android:layout_width="1dp"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:background="#000"
-                    />
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="@drawable/tv_bg"
+                    android:gravity="center"
+                    android:text="项目名称"
+                    android:textColor="#000"
+                    android:textSize="@dimen/textmydialogssmallSize" />
+
                 <TextView
                     android:id="@+id/tv_dqbh"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:layout_margin="5dp"
+                    android:background="@drawable/tv_bg"
                     android:gravity="center"
-                    android:textSize="@dimen/textNormSize"
                     android:textColor="#000"
-                    />
+                    android:textSize="@dimen/textmydialogssmallSize" />
             </LinearLayout>
-
-
-
-
 
 
             <ImageButton
-                android:src="@drawable/scan_icon16"
+                android:id="@+id/iv_scanicon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/iv_scanicon"
-                />
+                android:src="@drawable/scan_icon16" />
 
         </LinearLayout>
-        <TextView
+
+        <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#000"
-            />
+            android:background="#000" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-
                 <TextView
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="#000"
-                    />
-                <TextView
-                    android:text="检测内容"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_height="10dp"
                     android:layout_weight="1"
+                    android:background="@drawable/tv_bg"
                     android:gravity="center"
-                    android:layout_margin="5dp"
-                    android:textSize="@dimen/textNormSize"
+                    android:text="检测内容"
                     android:textColor="#000"
-                    />
-                <TextView
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="#000"
-                    />
+                    android:textSize="@dimen/textmydialogssmallSize" />
+
                 <TextView
                     android:id="@+id/tv_dqtype"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_margin="5dp"
-                    android:gravity="center"
-                    android:textSize="@dimen/textNormSize"
-                    android:textColor="#000"
-                    />
-                <TextView
-                    android:layout_width="1dp"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:background="#000"
-                    />
-                <TextView
-                    android:text="项目编号"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:background="@drawable/tv_bg"
                     android:gravity="center"
-                    android:layout_margin="5dp"
-                    android:textSize="@dimen/textNormSize"
                     android:textColor="#000"
-                    />
+                    android:textSize="@dimen/textmydialogssmallSize" />
 
                 <TextView
-                    android:layout_width="1dp"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:background="#000"
-                    />
+                    android:layout_weight="1"
+                    android:background="@drawable/tv_bg"
+                    android:gravity="center"
+                    android:text="项目编号"
+                    android:textColor="#000"
+                    android:textSize="@dimen/textmydialogssmallSize" />
+
                 <TextView
                     android:id="@+id/tv_dqheight"
-                    android:layout_width="80dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:background="@drawable/tv_bg"
                     android:gravity="center"
-                    android:layout_margin="5dp"
-                    android:textSize="@dimen/textNormSize"
                     android:textColor="#000"
-                    />
+                    android:textSize="@dimen/textmydialogssmallSize" />
             </LinearLayout>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#000"
-                />
+                android:background="#000" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
                 <TextView
-                    android:text="检测位置"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_margin="5dp"
-                    android:gravity="center"
-                    android:textSize="@dimen/textNormSize"
-                    android:textColor="#000"
-                    />
-                <TextView
-                    android:layout_width="1dp"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:background="#000"
-                    />
+                    android:layout_weight="1"
+                    android:background="@drawable/tv_bg"
+                    android:gravity="center"
+                    android:text="检测日期"
+                    android:textColor="#000"
+                    android:textSize="@dimen/textmydialogssmallSize" />
+
                 <TextView
                     android:id="@+id/tv_dqwidth"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_margin="5dp"
-                    android:gravity="center"
-                    android:textSize="@dimen/textNormSize"
-                    android:textColor="#000"
-                    />
-                <TextView
-                    android:layout_width="1dp"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:background="#000"
-                    />
-                <TextView
-                    android:text="测线编号"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_margin="5dp"
+                    android:background="@drawable/tv_bg"
                     android:gravity="center"
-                    android:textSize="@dimen/textNormSize"
                     android:textColor="#000"
-                    />
+                    android:textSize="@dimen/textmydialogssmallSize" />
+
                 <TextView
-                    android:layout_width="1dp"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:background="#000"
-                    />
+                    android:layout_weight="1"
+                    android:background="@drawable/tv_bg"
+                    android:gravity="center"
+                    android:text="检测标准"
+                    android:textColor="#000"
+                    android:textSize="@dimen/textmydialogssmallSize" />
+
                 <TextView
                     android:id="@+id/tv_dqthk"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:layout_margin="5dp"
+                    android:background="@drawable/tv_bg"
                     android:gravity="center"
-                    android:textSize="@dimen/textNormSize"
                     android:textColor="#000"
-                    />
+                    android:textSize="@dimen/textmydialogssmallSize" />
 
             </LinearLayout>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#000"
-                />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#000"
-                />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <!--                <TextView-->
+                <!--                    android:text="起始里程"-->
+                <!--                    android:layout_width="80dp"-->
+                <!--                    android:layout_margin="5dp"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_weight="1"-->
+                <!--                    android:gravity="center"-->
+                <!--                    android:textSize="@dimen/textNormSize"-->
+                <!--                    android:textColor="#000"-->
+                <!--                    />-->
+                <!--                <TextView-->
+                <!--                    android:layout_width="1dp"-->
+                <!--                    android:layout_height="match_parent"-->
+                <!--                    android:background="#000"-->
+                <!--                    />-->
+
+                <!--                <TextView-->
+                <!--                    android:id="@+id/tv_cxbh"-->
+                <!--                    android:layout_width="80dp"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_weight="1"-->
+                <!--                    android:layout_margin="5dp"-->
+                <!--                    android:gravity="center"-->
+                <!--                    android:textSize="@dimen/textNormSize"-->
+                <!--                    android:textColor="#000"-->
+                <!--                    />-->
+                <!--                <TextView-->
+                <!--                    android:layout_width="1dp"-->
+                <!--                    android:layout_height="match_parent"-->
+                <!--                    android:background="#000"-->
+                <!--                    />-->
+                <!--                <TextView-->
+                <!--                    android:text="终止里程"-->
+                <!--                    android:layout_width="80dp"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_weight="1"-->
+                <!--                    android:layout_margin="5dp"-->
+                <!--                    android:gravity="center"-->
+                <!--                    android:textSize="@dimen/textNormSize"-->
+                <!--                    android:textColor="#000"-->
+                <!--                    />-->
+                <!--                <TextView-->
+                <!--                    android:layout_width="1dp"-->
+                <!--                    android:layout_height="match_parent"-->
+                <!--                    android:background="#000"-->
+                <!--                    />-->
+                <!--                <TextView-->
+                <!--                    android:id="@+id/tv_cxorient"-->
+                <!--                    android:layout_width="80dp"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_weight="1"-->
+                <!--                    android:layout_margin="5dp"-->
+                <!--                    android:gravity="center"-->
+                <!--                    android:textSize="@dimen/textNormSize"-->
+                <!--                    android:textColor="#000"-->
+                <!--                    />-->
+                <TextView
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#000" />
+
+
 
                 <TextView
-                    android:text="起始里程"
-                    android:layout_width="80dp"
-                    android:layout_margin="5dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:textSize="@dimen/textNormSize"
-                    android:textColor="#000"
-                    />
-                <TextView
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:background="#000"
-                    />
+                    android:visibility="gone" />
 
                 <TextView
-                    android:id="@+id/tv_cxbh"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_margin="5dp"
-                    android:gravity="center"
-                    android:textSize="@dimen/textNormSize"
-                    android:textColor="#000"
-                    />
-                <TextView
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="#000"
-                    />
-                <TextView
-                    android:text="终止里程"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_margin="5dp"
                     android:gravity="center"
-                    android:textSize="@dimen/textNormSize"
-                    android:textColor="#000"
-                    />
-                <TextView
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="#000"
-                    />
-                <TextView
-                    android:id="@+id/tv_cxorient"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_margin="5dp"
-                    android:gravity="center"
-                    android:textSize="@dimen/textNormSize"
-                    android:textColor="#000"
-                    />
-                <TextView
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="#000"
-                    />
-                <TextView
-                    android:visibility="gone"
-                    android:text="挡墙起止里程"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_margin="5dp"
-                    android:gravity="center"
-                    android:textSize="@dimen/textNormSize"
-                    android:textColor="#000"
-                    />
-                <TextView
-                    android:visibility="gone"
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="#000"
-                    />
-                <TextView
-                    android:visibility="gone"
-                    android:id="@+id/tv_cxstart"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_margin="5dp"
-                    android:gravity="center"
-                    android:textSize="@dimen/textNormSize"
-                    android:textColor="#000"
-                    />
-                <TextView
-                    android:visibility="gone"
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="#000"
-                    />
-                <TextView
-                    android:visibility="gone"
                     android:text="表面破损情况"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_margin="5dp"
-                    android:gravity="center"
-                    android:textSize="@dimen/textNormSize"
                     android:textColor="#000"
-                    />
+                    android:textSize="@dimen/textNormSize"
+                    android:visibility="gone" />
+
                 <TextView
-                    android:visibility="gone"
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:background="#000"
-                    />
+                    android:visibility="gone" />
+
                 <TextView
-                    android:visibility="gone"
                     android:id="@+id/tv_cxstop"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:layout_margin="5dp"
-                    android:textSize="@dimen/textNormSize"
                     android:textColor="#000"
-                    />
+                    android:textSize="@dimen/textNormSize"
+                    android:visibility="gone" />
+
                 <TextView
-                    android:visibility="gone"
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:background="#000"
-                    />
+                    android:visibility="gone" />
+
                 <TextView
-                    android:visibility="gone"
-                    android:text="表面植被情况"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:layout_margin="5dp"
-                    android:textSize="@dimen/textNormSize"
+                    android:text="表面植被情况"
                     android:textColor="#000"
-                    />
+                    android:textSize="@dimen/textNormSize"
+                    android:visibility="gone" />
+
                 <TextView
-                    android:visibility="gone"
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:background="#000"
-                    />
+                    android:visibility="gone" />
+
                 <TextView
-                    android:visibility="gone"
                     android:id="@+id/tv_dqloc"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_margin="5dp"
+                    android:layout_weight="1"
                     android:gravity="center"
-                    android:textSize="@dimen/textNormSize"
                     android:textColor="#000"
-                    />
+                    android:textSize="@dimen/textNormSize"
+                    android:visibility="gone" />
             </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="3dp"
-                android:background="#000"
-                />
+                android:layout_height="1dp"
+                android:background="#000" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
                 <TextView
-                    android:text="施工单位负责人及其联系电话"
-                    android:layout_width="80dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_margin="5dp"
                     android:gravity="center"
-                    android:textSize="@dimen/textNormSize"
+                    android:text="施工单位负责人及其联系电话"
                     android:textColor="#000"
-                    />
+                    android:textSize="@dimen/textmydialogssmallSize" />
+
                 <TextView
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
-                    android:background="#000"
-                    />
+                    android:background="#000" />
+
                 <EditText
                     android:id="@+id/et_detect_username"
-                    android:layout_width="80dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_margin="5dp"
                     android:gravity="center"
-                    android:imeOptions="actionDone"
                     android:hint="请输入姓名联系方式"
-                    android:textSize="@dimen/textNormSize"
+                    android:imeOptions="actionDone"
                     android:textColor="#000"
-                    />
+                    android:textSize="@dimen/textmydialogssmallSize" />
+
                 <TextView
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
-                    android:background="#000"
-                    />
+                    android:background="#000" />
+
                 <TextView
-                    android:text="检测单位负责人及其联系电话"
-                    android:layout_width="80dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_margin="5dp"
                     android:gravity="center"
-                    android:textSize="@dimen/textNormSize"
+                    android:text="检测单位负责人及其联系电话"
                     android:textColor="#000"
+                    android:textSize="@dimen/textmydialogssmallSize"
 
                     />
+
                 <TextView
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
-                    android:background="#000"
-                    />
+                    android:background="#000" />
+
                 <EditText
                     android:id="@+id/et_mainServerNum"
-                    android:layout_width="80dp"
-                    android:layout_margin="5dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:imeOptions="actionDone"
-                    android:textSize="@dimen/textNormSize"
-                    android:textColor="#000"
                     android:hint="请输入姓名联系方式"
-                    />
-            </LinearLayout>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#000"
-                />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <LinearLayout
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-                    <TextView
-                        android:text="雷达数据"
-                        android:layout_width="80dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_margin="5dp"
-                        android:gravity="center"
-                        android:layout_gravity="center"
-                        android:textSize="@dimen/textNormSize"
-                        android:textColor="#000"
-                        />
-                    <ImageButton
-                        android:src="@drawable/serchfile16"
-                        android:id="@+id/my_dialog_addFile"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="#000"
-                        android:baselineAligned="false"
-                        android:layout_gravity="center" />
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="#000"
-                    />
-                <LinearLayout
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-                    <TextView
-                        android:id="@+id/tv_pathoffile"
-                        android:layout_width="80dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:layout_margin="5dp"
-                        android:layout_gravity="center"
-                        android:textSize="@dimen/textNormSize"
-                        android:textColor="#000"
-                        />
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:background="#d5ffcc"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:id="@+id/upload_percent"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0%"
-                            android:gravity="center"
-                            android:layout_gravity="center"
-                            />
-                    </LinearLayout>
-
-                    <ImageButton
-                        android:id="@+id/ib_uploadFile"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="#000"
-                        android:baselineAligned="false"
-                        android:layout_gravity="center" />
-                </LinearLayout>
-                <TextView
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="#000"
-                    />
-                <LinearLayout
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-                <TextView
-                    android:text="上传现场图片"
-                    android:layout_gravity="center"
-                    android:layout_width="80dp"
-                    android:layout_margin="5dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:textSize="@dimen/textNormSize"
+                    android:imeOptions="actionDone"
                     android:textColor="#000"
-                    /></LinearLayout>
-                <TextView
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="#000"
-                    />
-                <LinearLayout
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_weight="1"
-                    >
-                    <ImageButton
-                        android:id="@+id/ib_upload_pic_01"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1">
-
-                    </ImageButton>
-                    <ImageButton
-                        android:id="@+id/ib_upload_pic_02"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1">
-
-                    </ImageButton>
-                    <ImageButton
-                        android:id="@+id/ib_upload_pic_03"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1">
-
-                    </ImageButton>
-                </LinearLayout>
+                    android:textSize="@dimen/textmydialogssmallSize" />
             </LinearLayout>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#000"
-                />
+                android:background="#000" />
+
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <ListView
+            android:descendantFocusability="afterDescendants"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/lv_uploadCX"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <EditText
                     android:id="@+id/et_remark"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:layout_margin="5dp"
+                    android:hint="请输入备注"
                     android:imeOptions="actionDone"
-                    android:textSize="@dimen/textNormSize"
-                    android:hint="请输入备注" />
+                    android:textSize="@dimen/textmydialogssmallSize" />
             </LinearLayout>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#000"
-                />
-
         </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <Button
-            android:id="@+id/btn_my_dialog_cancel"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#000"
-            android:baselineAligned="false"
-            android:layout_weight="1"
-            android:layout_marginLeft="5dp"
-            android:text="返回" />
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/btn_my_dialog_cancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="1"
+                android:baselineAligned="false"
+                android:text="返回"
+                android:textColor="#000" />
 
-        <Button
-            android:id="@+id/btn_my_dialog_upload"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textColor="#000"
-            android:baselineAligned="false"
-            android:layout_weight="1"
-            android:layout_marginRight="5dp"
-            android:text="确定上传" />
+            <Button
+                android:id="@+id/btn_my_dialog_upload"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:baselineAligned="false"
+                android:text="确定上传"
+                android:textColor="#000" />
+        </LinearLayout>
 
     </LinearLayout>
-
-
-
 
 
 </LinearLayout>

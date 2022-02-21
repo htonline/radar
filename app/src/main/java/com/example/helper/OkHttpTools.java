@@ -98,8 +98,8 @@ public class OkHttpTools {
         json.put("jiancerenyuanName",wall.getJiancerenyuanName());
         json.put("shujuwenjianName",wall.getShujuwenjianName());
         json.put("zhaopianOne",wall.getZhaopianOne());
-        json.put("zhaopianTwo",wall.getZhaopianTwo());
-        json.put("zhaopianThree",wall.getZhaopianThree());
+        json.put("zhaopianTwo",wall.getZhaopianOne());
+        json.put("zhaopianThree",wall.getZhaopianOne());
         json.put("beizhu",wall.getBeizhu());
         RequestBody formBody = RequestBody.create(JSON, String.valueOf(json));
         Request request = new Request.Builder()
