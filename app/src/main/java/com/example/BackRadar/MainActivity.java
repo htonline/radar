@@ -911,9 +911,10 @@ public class MainActivity extends Activity {
                         break;
                     case 1:
 //                        Log.d(TAG, "onClick: 22222222222222222222222222");
-                        Intent intent2 = new Intent(MainActivity.this, MyDialogActivity.class);
-                        intent2.putExtra("type",1);
-                        startActivity(intent2);
+//                        Intent intent2 = new Intent(MainActivity.this, MyDialogActivity.class);
+//                        intent2.putExtra("type",1);
+//                        startActivity(intent2);
+                        Toast.makeText(MainActivity.this,"该模式暂未开放！",Toast.LENGTH_SHORT).show();
                         break;
                     default:
                         break;
