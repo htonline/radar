@@ -70,11 +70,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import static android.os.Build.VERSION.SDK_INT;
 import static com.example.BackRadar.SettingActivity.FILE_RESULT_CODE;
 
-public class UploadFragment extends Fragment  {
+public class UploadFragment extends Fragment {
     public static final int TO_SELECT_PHOTO = 3;
     private static final String TAG = "MyDialogActivity";
     SharedPreferences sharePath;
     private Activity mActivity;
+    private OkHttpTools tools;
     //    private TextView textView;
     private String path = null;
     private String urlString = null;
@@ -173,6 +174,7 @@ public class UploadFragment extends Fragment  {
         Bundle bundle = getArguments();
         userInfoLogin = (UserInfoLogin) bundle.getSerializable("userinfologin");
         initFileInfosData();
+        tools = new OkHttpTools();
     }
 
     private void initFileInfosData() {
@@ -312,17 +314,6 @@ public class UploadFragment extends Fragment  {
         abtn_my_dialog_upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (user_token == null) {
-                    Toast.makeText(mActivity, "请先点击左上角登录", Toast.LENGTH_SHORT).show();
-
-                }
-                for (UpLoadFileInfo info : mfileInfos) {
-                    if (info.getIsphotoup() == false || info.getIsfileup() == false) {
-                        Toast.makeText(mActivity, "请上传所需文件或图片", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                }
-
                 runFirst();
                 initHttpDQTask();
                 asyncTask2.execute((Object) null);
@@ -565,9 +556,24 @@ public class UploadFragment extends Fragment  {
             protected Object doInBackground(Object[] objects) {
                 int i = 0;
                 List<String> results = new ArrayList<>();
-                for (UpLoadFileInfo info : mfileInfos){
+                for (UpLoadFileInfo info : mfileInfos) {
                     EditText et_start = lv_uploadfile.getChildAt(i).findViewById(R.id.tv_cxbh);
                     EditText et_stop = lv_uploadfile.getChildAt(i).findViewById(R.id.tv_cxorient);
+                    i++;
+                    if (TextUtils.isEmpty(et_start.getText())
+                            && TextUtils.isEmpty(et_stop.getText())
+                            && TextUtils.isEmpty(info.getFilePath())
+                            && TextUtils.isEmpty(info.getPhotoPath())) {
+                        continue;
+                    }
+                    if ((TextUtils.isEmpty(et_start.getText())
+                            || TextUtils.isEmpty(et_stop.getText())
+                            || TextUtils.isEmpty(info.getFileRemotePath())
+                            || TextUtils.isEmpty(info.getPhotoRemotePath()))) {
+                        Log.d(TAG, "doInBackground:  --> -1");
+                        results.add("-1");
+                        return results;
+                    }
                     info.setStartKM(et_start.getText().toString());
                     info.setStopKM(et_stop.getText().toString());
                     Wall wall = new Wall();
@@ -590,7 +596,6 @@ public class UploadFragment extends Fragment  {
                     wall.setZhujiXuhao(et_mainServerNum.getText().toString());
                     wall.setBeizhu(et_remark.getText().toString() + "备注");
                     wall.setToken(user_token);
-                    OkHttpTools tools = new OkHttpTools();
 //                Log.d(TAG, wall+"");
                     String result = null;
                     try {
@@ -599,7 +604,7 @@ public class UploadFragment extends Fragment  {
                     } catch (JSONException | org.json.JSONException e) {
                         e.printStackTrace();
                     }
-                    Log.d(TAG, "doInBackground:  --> "+result);
+                    Log.d(TAG, "doInBackground:  --> " + result);
                 }
 
 //                wall.setBeizhu(et_remark.getText().toString() + "备注");
@@ -643,13 +648,20 @@ public class UploadFragment extends Fragment  {
 //                    Toast.makeText(mActivity, o.toString(), Toast.LENGTH_SHORT).show();
 //                }
                 List<String> stringList = (List<String>) o;
-                for (String s :stringList){
-                    if (!s.equals("1")){
-                        Toast.makeText(mActivity,"上传失败",Toast.LENGTH_SHORT).show();
+                for (String s : stringList) {
+                    if (s.equals("-1")) {
+                        Toast.makeText(mActivity, "请将单道信息填写完整！", Toast.LENGTH_SHORT).show();
+                        return;
+                    } else if (!s.equals("1")) {
+                        Toast.makeText(mActivity, "上传失败", Toast.LENGTH_SHORT).show();
                         return;
                     }
                 }
-                Toast.makeText(mActivity,"上传成功",Toast.LENGTH_SHORT).show();
+                if (stringList.isEmpty()) {
+                    Toast.makeText(mActivity, "无信息", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(mActivity, "上传成功", Toast.LENGTH_SHORT).show();
+                }
             }
         };
     }
