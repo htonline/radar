@@ -15,8 +15,12 @@
     <dimen name="textsSmallSize">6sp</dimen>
     <dimen name="textSmallSize">8sp</dimen>
     <dimen name="textmydialogssmallSize">6sp</dimen>
+
     <dimen name="mydialogWidth">1200dp</dimen>
     <dimen name="mydialogHeight">400dp</dimen>
+
+    <dimen name="mydialogScanWidth">700dp</dimen>
+    <dimen name="mydialogScanHeight">300dp</dimen>
 
 
 

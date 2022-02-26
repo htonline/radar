@@ -33,7 +33,7 @@ public class MyDialogActivity extends FragmentActivity {
         Intent intent = getIntent();
         type = intent.getIntExtra("type",0);
         fragmentManager = getSupportFragmentManager();
-        if (staticuserInfoLogin == null){
+//        if (staticuserInfoLogin == null){
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             LoginFragment mFragment = new LoginFragment(this);
             mFragment.setGetCallBack(new GetCallBack<UserInfoLogin>() {
@@ -50,9 +50,9 @@ public class MyDialogActivity extends FragmentActivity {
             });
             transaction.add(R.id.activity_mydialog,mFragment);
             transaction.commit();
-        }else {
-            upToFragment();
-        }
+//        }else {
+//            upToFragment();
+//        }
     }
     public void upToFragment(){
         FragmentTransaction transaction = fragmentManager.beginTransaction();

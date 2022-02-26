@@ -1,6 +1,8 @@
 package com.example.upload.fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -14,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -148,7 +151,9 @@ public class UploadFragment extends Fragment {
     private String cexianZhongdian;
     private String cexianQidian;
     private String dangqiangWeizhi;
-
+    private FrameLayout scaninfo;
+    private SharedPreferences mainPreferences;
+    private SharedPreferences.Editor mainPreferenceEditor;
 
     public void runFirst() {
         if (SDK_INT < Build.VERSION_CODES.P) {
@@ -175,6 +180,8 @@ public class UploadFragment extends Fragment {
         userInfoLogin = (UserInfoLogin) bundle.getSerializable("userinfologin");
         initFileInfosData();
         tools = new OkHttpTools();
+        mainPreferences = mActivity.getSharedPreferences("uploadfrgInfo",0);
+        mainPreferenceEditor = mainPreferences.edit();
     }
 
     private void initFileInfosData() {
@@ -248,6 +255,14 @@ public class UploadFragment extends Fragment {
         et_remark = view.findViewById(R.id.et_remark);
         ib_login = view.findViewById(R.id.ib_login);
         lv_uploadfile = view.findViewById(R.id.lv_uploadCX);
+        scaninfo = view.findViewById(R.id.scannerInfo);
+        scaninfo.setVisibility(View.GONE);
+        ((Button)scaninfo.findViewById(R.id.scan_btn_cancel)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scaninfo.setVisibility(View.GONE);
+            }
+        });
 //        mtv_up_percent = view.findViewById(R.id.upload_percent);
 //        ib_upload_img_01 = view.findViewById(R.id.ib_upload_pic_01);
 //        ib_upload_img_02 = view.findViewById(R.id.ib_upload_pic_02);
@@ -355,8 +370,24 @@ public class UploadFragment extends Fragment {
                 startActivityForResult(intent, TO_SCAN_RESULT);
             }
         });
-
+        initText();
         return view;
+    }
+
+    private void initText() {
+        dangqiangBianhao = mainPreferences.getString("dqbh",null);
+        dangqiangLeixing = mainPreferences.getString("dqtype",null);
+        dangqiangGao = mainPreferences.getString("dqheight",null);
+        dangqiangKuan = mainPreferences.getString("dqwidth",null);
+        dangqiangHoudu = mainPreferences.getString("dqthk",null);
+        dangqiangWeizhi = mainPreferences.getString("dqloc",null);
+
+        tv_dqbh.setText(dangqiangBianhao);
+        tv_dqtype.setText(dangqiangLeixing);
+        tv_dqheight.setText(dangqiangGao);
+        tv_dqwidth.setText(dangqiangKuan);
+        tv_dqthk.setText(dangqiangHoudu);
+        tv_dqloc.setText(dangqiangWeizhi);
     }
 
     public void uploadOneFile(File file, String user_token) {
@@ -503,7 +534,7 @@ public class UploadFragment extends Fragment {
                     }
                 }
                 break;
-            case 2:
+            case TO_SCAN_RESULT:
                 if (resultCode == mActivity.RESULT_OK) {
                     String result = data.getStringExtra(CaptureActivity.EXTRA_STRING);
                     JSONObject jsonObj = JSON.parseObject(result);
@@ -540,6 +571,21 @@ public class UploadFragment extends Fragment {
 //                    tv_cxstart.setText(cexianQidian);
 //                    tv_cxstop.setText(cexianZhongdian);
                     tv_dqloc.setText(dangqiangWeizhi);
+
+                    mainPreferenceEditor.putString("dqbh",dangqiangBianhao);
+                    mainPreferenceEditor.putString("dqtype",dangqiangLeixing);
+                    mainPreferenceEditor.putString("dqheight",dangqiangGao);
+                    mainPreferenceEditor.putString("dqwidth",dangqiangKuan);
+                    mainPreferenceEditor.putString("dqthk",dangqiangHoudu);
+                    mainPreferenceEditor.putString("dqloc",dangqiangWeizhi);
+                    mainPreferenceEditor.apply();
+                    scaninfo.setVisibility(View.VISIBLE);
+                    ((TextView)scaninfo.findViewById(R.id.scan_tv_dqbh)).setText(dangqiangBianhao);
+                    ((TextView)scaninfo.findViewById(R.id.scan_tv_dqtype)).setText(dangqiangLeixing);
+                    ((TextView)scaninfo.findViewById(R.id.scan_tv_dqheight)).setText(dangqiangGao);
+                    ((TextView)scaninfo.findViewById(R.id.scan_tv_dqwidth)).setText(dangqiangKuan);
+                    ((TextView)scaninfo.findViewById(R.id.scan_tv_dqthk)).setText(dangqiangHoudu);
+
                 }
                 break;
             default:
