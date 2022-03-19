@@ -41,7 +41,7 @@
         android:theme="@android:style/Theme.Light.NoTitleBar"
         android:usesCleartextTraffic="true">
         <activity
-            android:name="com.example.BackRadar.SettingActivityForNormal"
+            android:name="com.example.backRadar.SettingActivityForNormal"
             android:screenOrientation="landscape"
             android:theme="@style/MySettingActivity"></activity>
         <activity
@@ -62,7 +62,7 @@
             android:name="com.example.upload.MyDialogActivity"
             android:theme="@style/share_activity_styles" />
         <activity
-            android:name="com.example.BackRadar.MainActivity"
+            android:name="com.example.backRadar.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="landscape">
             <intent-filter>
@@ -73,13 +73,13 @@
         </activity>
         <activity
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:name="com.example.BackRadar.SettingActivity"
+            android:name="com.example.backRadar.SettingActivity"
             android:label="@string/title_activity_setting"
             android:screenOrientation="landscape"
 
             />
         <activity
-            android:name="com.example.BackRadar.MyFileManager"
+            android:name="com.example.backRadar.MyFileManager"
             android:label="@string/title_activity_my_file_manager"
             android:theme="@android:style/Theme.Dialog" />
         <activity

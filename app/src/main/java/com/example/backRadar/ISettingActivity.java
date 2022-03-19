@@ -1,8 +1,8 @@
-package com.example.BackRadar;
+package com.example.backRadar;
 
 import android.view.View;
 
-import com.example.BackRadar.Entity.FileInfoInPath;
+import com.example.backRadar.Entity.FileInfoInPath;
 
 import java.util.List;
 

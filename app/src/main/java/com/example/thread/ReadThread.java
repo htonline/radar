@@ -3,23 +3,13 @@ package com.example.thread;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
-import android.R.integer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.example.BackRadar.MainActivity;
-import com.example.customizingViews.ColoursView;
 
 public class ReadThread implements Runnable {
     private static final String TAG = "ReadThread";

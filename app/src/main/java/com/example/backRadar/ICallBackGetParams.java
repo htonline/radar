@@ -1,6 +1,6 @@
-package com.example.BackRadar;
+package com.example.backRadar;
 
-import com.example.BackRadar.Entity.ParamsOfSetting;
+import com.example.backRadar.Entity.ParamsOfSetting;
 
 public interface ICallBackGetParams {
     void getParams(ParamsOfSetting paramsOfSetting);

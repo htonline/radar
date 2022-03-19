@@ -1,18 +1,15 @@
-package com.example.BackRadar;
+package com.example.backRadar;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -20,13 +17,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.BackRadar.Entity.FileInfoInPath;
-import com.example.BackRadar.Entity.ParamsOfSetting;
+import com.example.backRadar.Entity.FileInfoInPath;
+import com.example.backRadar.Entity.ParamsOfSetting;
 import com.example.ladarmonitor.R;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.util.List;
 
 public class ShowPathFragment extends Fragment {

@@ -1,4 +1,4 @@
-package com.example.BackRadar.Entity;
+package com.example.backRadar.Entity;
 
 import java.io.Serializable;
 import java.util.Arrays;

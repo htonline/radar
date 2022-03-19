@@ -1,4 +1,4 @@
-package com.example.BackRadar;
+package com.example.backRadar;
 
 import java.io.File;
 import java.io.FileNotFoundException;

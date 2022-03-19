@@ -1,4 +1,4 @@
-package com.example.BackRadar;
+package com.example.backRadar;
 
 import android.content.Context;
 import android.view.View;
@@ -6,10 +6,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.example.BackRadar.Entity.FileInfoInPath;
+import com.example.backRadar.Entity.FileInfoInPath;
 import com.example.ladarmonitor.R;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 

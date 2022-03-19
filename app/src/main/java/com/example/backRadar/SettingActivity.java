@@ -1,4 +1,4 @@
-package com.example.BackRadar;
+package com.example.backRadar;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,8 +8,8 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
-import com.example.BackRadar.Entity.FileInfoInPath;
-import com.example.BackRadar.Entity.ParamsOfSetting;
+import com.example.backRadar.Entity.FileInfoInPath;
+import com.example.backRadar.Entity.ParamsOfSetting;
 import com.example.fragments.LeftFragmentOfSettingActivity;
 import com.example.fragments.MiddleBackFragmentOfSettingActivity;
 import com.example.fragments.RightFragmentOfSettingActivity;
@@ -30,7 +30,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -57,8 +56,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
-
-import android.support.v4.app.*;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;

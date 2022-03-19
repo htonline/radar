@@ -1,41 +1,22 @@
 package com.example.upload;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.media.Image;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Choreographer;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.fragment.app.Fragment;
-
-import com.example.BackRadar.MainActivity;
-import com.example.BackRadar.SettingActivity;
 import com.example.interfaces.CallBackToDo;
 import com.example.ladarmonitor.R;
 import com.example.upload.entity.UpLoadFileInfo;
-import com.example.upload.fragment.UploadFragment;
 
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-
-import static com.example.BackRadar.SettingActivity.FILE_RESULT_CODE;
 
 public class UpLoadFileListAdapter extends BaseAdapter {
     List<UpLoadFileInfo> mfileInfos;

@@ -1,9 +1,7 @@
-package com.example.BackRadar;
+package com.example.backRadar;
 
-import android.util.Log;
-
-import com.example.BackRadar.Entity.FileInfoInPath;
-import com.example.BackRadar.Entity.ParamsOfSetting;
+import com.example.backRadar.Entity.FileInfoInPath;
+import com.example.backRadar.Entity.ParamsOfSetting;
 
 import java.util.List;
 

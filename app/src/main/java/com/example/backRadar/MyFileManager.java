@@ -1,4 +1,4 @@
-package com.example.BackRadar;
+package com.example.backRadar;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.app.ListActivity;
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;

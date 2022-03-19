@@ -1,4 +1,4 @@
-package com.example.BackRadar.Entity;
+package com.example.backRadar.Entity;
 
 public class FileInfoInPath {
     String Filename;

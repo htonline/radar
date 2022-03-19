@@ -48,20 +48,14 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
-import okhttp3.RequestBody;
 import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.os.Build.VERSION.SDK_INT;
-import static com.example.BackRadar.SettingActivity.FILE_RESULT_CODE;
+import static com.example.backRadar.SettingActivity.FILE_RESULT_CODE;
 
 public class UploadNoQrCodeFragment extends Fragment {
     public static final int TO_SELECT_PHOTO = 3;

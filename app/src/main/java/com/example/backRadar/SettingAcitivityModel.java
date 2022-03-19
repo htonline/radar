@@ -1,19 +1,17 @@
-package com.example.BackRadar;
+package com.example.backRadar;
 
 import android.icu.text.SimpleDateFormat;
 import android.util.Log;
 
-import com.example.BackRadar.Entity.FileInfoInPath;
-import com.example.BackRadar.Entity.ParamsOfSetting;
+import com.example.backRadar.Entity.FileInfoInPath;
+import com.example.backRadar.Entity.ParamsOfSetting;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
