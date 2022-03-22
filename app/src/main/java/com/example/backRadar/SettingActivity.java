@@ -65,6 +65,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import org.w3c.dom.Text;
+
 public class SettingActivity extends AppCompatActivity implements ISettingActivity {
     private static final String TAG = "SettingActivityLog";
     public LeftFragmentOfSettingActivity leftFragmentOfSettingActivity;
@@ -155,10 +157,10 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
     private CheckBox mcb_saveAno = null;
 
 
-    private TextView et_numberOfPulse = null;
+    private EditText et_numberOfPulse = null;
     private EditText et_singlePulse = null;
     private EditText et_singleDistance = null;
-    private EditText et_samplingInterval = null;
+    private TextView et_samplingInterval = null;
     private Button btn_sendTripNum = null;
 
     private EditText et_horiGain_coe = null;
@@ -321,6 +323,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
                 rd_oneWay.setChecked(false);
                 rd_twoWays.setChecked(false);
                 //脉冲参数不能点击
+
                 et_numberOfPulse.setEnabled(false);
                 et_singleDistance.setEnabled(false);
                 et_singlePulse.setEnabled(false);
@@ -354,10 +357,10 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
                 pOrders.setTriggerMode(1);
 ////				sp_oneWay.setSelection(0);
 //				//脉冲参数可以点击
-//                et_numberOfPulse.setEnabled(true);
+                et_numberOfPulse.setEnabled(true);
                 et_singleDistance.setEnabled(true);
                 et_singlePulse.setEnabled(true);
-                et_samplingInterval.setEnabled(true);
+//                et_samplingInterval.setEnabled(true);
 
                 //默认选中单向触发
                 rd_oneWay.setChecked(true);
@@ -963,23 +966,25 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 //			}
 //		});
 
-        et_samplingInterval.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//        et_samplingInterval.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                et_samplingInterval.setText(""+(int)((Double.valueOf(s.toString())*Integer.valueOf(et_singlePulse.getText().toString()))/
+//                        Double.valueOf(et_singleDistance.getText().toString())));
+//            }
+//        });
+        et_singlePulse.setLayerType(View.LAYER_TYPE_HARDWARE,null);
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                et_numberOfPulse.setText(""+(int)((Double.valueOf(s.toString())*Integer.valueOf(et_singlePulse.getText().toString()))/
-                        Double.valueOf(et_singleDistance.getText().toString())));
-            }
-        });
         et_singlePulse.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -988,13 +993,13 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                et_samplingInterval.setText(""+(Double.valueOf(et_singleDistance.getText().toString())*Double.valueOf(et_numberOfPulse.getText().toString())
+                        /(Double.valueOf(s.toString()))));
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                et_numberOfPulse.setText(""+(int)((Double.valueOf(et_samplingInterval.getText().toString())*Integer.valueOf(s.toString()))/
-                        Double.valueOf(et_singleDistance.getText().toString())));
+
             }
         });
         et_singleDistance.addTextChangedListener(new TextWatcher() {
@@ -1005,16 +1010,33 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                et_samplingInterval.setText(""+(Double.valueOf(s.toString())*Double.valueOf(et_numberOfPulse.getText().toString())
+                        /(Double.valueOf(et_singlePulse.getText().toString()))));
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                et_numberOfPulse.setText(""+(int)((Double.valueOf(et_samplingInterval.toString())*Integer.valueOf(et_singlePulse.getText().toString()))/
-                        Double.valueOf(s.toString())));
+
 
             }
         });
+        et_numberOfPulse.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                et_samplingInterval.setText(""+(Double.valueOf(et_singleDistance.getText().toString())*Double.valueOf(s.toString())
+                        /(Double.valueOf(et_singlePulse.getText().toString()))));
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
         et_delay.setOnEditorActionListener(new OnEditorActionListener() {
 
             @Override
@@ -1175,10 +1197,10 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         rd_wheel = (RadioButton) findViewById(R.id.rb_wheel);
         rd_oneWay = (RadioButton) findViewById(R.id.rb_oneWay);
         rd_twoWays = (RadioButton) findViewById(R.id.rb_twoWays);
-        et_numberOfPulse = (TextView) findViewById(R.id.et_numberOfPulse);
+        et_numberOfPulse = (EditText) findViewById(R.id.et_numberOfPulse);
         et_singlePulse = (EditText) findViewById(R.id.et_singlePulse);
         et_singleDistance = (EditText) findViewById(R.id.et_singleDistance);
-        et_samplingInterval = (EditText) findViewById(R.id.et_samplingInterval);
+        et_samplingInterval = (TextView) findViewById(R.id.et_samplingInterval);
         et_horiGain_coe = (EditText) findViewById(R.id.et_horGain_coe);
         btn_sendTripNum = (Button) findViewById(R.id.btn_sendTripNum);
         rb_fillingfilter = findViewById(R.id.rb_fillingfilter);
@@ -1290,7 +1312,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         btn_sendTripNum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendTripNum();
+                sendTripNum(et_numberOfPulse.getText().toString());
             }
         });
         if (tempIfSaveTheRadar == 1) {
@@ -2113,8 +2135,8 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 
     }
 
-    public void sendTripNum(){
-        String num = et_numberOfPulse.getText().toString();
+    public void sendTripNum(String s){
+        String num = s;
         try{
             pOrders.setTriggerpulsenum((byte)Integer.parseInt(num));
         }catch (Exception e){

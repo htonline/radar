@@ -1,4 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
-  
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <RadioGroup
+                android:id="@+id/rg_trigger"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/rb_timing"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="定时器触发"
+                    android:textSize="@dimen/textSize" />
+
+                <RadioButton
+                    android:id="@+id/rb_wheel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="测距轮触发"
+                    android:textSize="@dimen/textSize" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="30dp"
+                        android:layout_height="match_parent" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <RadioGroup
+                            android:id="@+id/rg_direction"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <RadioButton
+                                android:id="@+id/rb_oneWay"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="单向触发"
+                                android:textSize="@dimen/textSize" />
+
+
+                            <RadioButton
+                                android:id="@+id/rb_twoWays"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="双向触发"
+                                android:textSize="@dimen/textSize" />
+                        </RadioGroup>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </RadioGroup>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="采样脉冲数"
+                        android:textSize="@dimen/textSize" />
+
+                    <EditText
+                        android:id="@+id/et_numberOfPulse"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:imeOptions="flagNoExtractUi|flagNoFullscreen|actionDone"
+                        android:inputType="number"
+                        android:textSize="@dimen/textSize" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="采样间隔"
+                        android:textSize="@dimen/textSize" />
+
+                    <TextView
+                        android:id="@+id/et_samplingInterval"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:imeOptions="flagNoExtractUi|flagNoFullscreen|actionDone"
+                        android:inputType="number"
+                        android:textSize="@dimen/textSize" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="单圈脉冲"
+                        android:textSize="@dimen/textSize" />
+
+                    <EditText
+                        android:id="@+id/et_singlePulse"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="@dimen/textSize" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="单圈距离"
+                        android:textSize="@dimen/textSize" />
+
+                    <EditText
+                        android:id="@+id/et_singleDistance"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:imeOptions="flagNoExtractUi|flagNoFullscreen|actionDone"
+                        android:inputType="number"
+                        android:textSize="@dimen/textSize" />
+                </LinearLayout>
+                <Button
+                    android:id="@+id/btn_sendTripNum"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="确定"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+
 </merge>

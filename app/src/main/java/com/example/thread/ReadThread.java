@@ -148,7 +148,7 @@ public class ReadThread implements Runnable {
                         numberOfReceive++;
                         message = Message.obtain();
                         message.what = 0;
-                        Log.d(TAG, "run: --> numberOfLogo --> "+ numberOfLogo);
+//                        Log.d(TAG, "run: --> numberOfLogo --> "+ numberOfLogo);
                         message.arg1 = tempJudge;
                         message.arg2 = numberOfReceive;
                         message.obj = arrayListOfNewColour;
