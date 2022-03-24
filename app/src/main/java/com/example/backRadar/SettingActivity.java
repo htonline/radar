@@ -1049,6 +1049,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
                         public void run() {
                             // TODO Auto-generated method stub
                             try {
+                                Log.d(TAG, "run:  -- TriggerMode:"+pOrders.getTriggerMode()+"  Direction:"+pOrders.getTriggerDirection());
                                 pOrders.send();
                             } catch (Exception e) {
                                 // TODO Auto-generated catch block
@@ -1114,6 +1115,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
                     pOrders.setTriggerdistance(2);
                     pOrders.setM_time_wnd(Short.parseShort(et_timeWindow.getText().toString()));
                     pOrders.setDelay_time_DELAY(Short.parseShort(et_delay.getText().toString()));
+                    Log.d(TAG, "run:  -- TriggerMode:"+pOrders.getTriggerMode()+"  Direction:"+pOrders.getTriggerDirection());
                     pOrders.send();
                 } catch (Exception e1) {
                     // TODO Auto-generated catch block
@@ -1561,6 +1563,14 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         if (tv_settingPath.getText().toString().length() < 3) {
             Toast.makeText(this, "路径不能为空", Toast.LENGTH_SHORT).show();
         } else {
+            if (!rd_timing.isChecked()){
+                if (rd_oneWay.isChecked()){
+                    openTheWheel(0);
+                }else if (rd_twoWays.isChecked()){
+                    openTheWheel(1);
+                }
+                sendTripNum(et_numberOfPulse.getText().toString());
+            }
             path = tv_settingPath.getText().toString();
             file = new File(path + "/" + tv_storeFile.getText().toString());
 //			if (pOrders.getTriggerMode()==(byte)1&&pOrders.getTriggerDirection()==(byte)-1){
@@ -2192,7 +2202,6 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         mainPeremeterOrdersEditor.putString("singlePulse", et_singlePulse.getText().toString());
         mainPeremeterOrdersEditor.putString("singleDistance", et_singleDistance.getText().toString());
         mainPeremeterOrdersEditor.putString("samplingInterval", et_samplingInterval.getText().toString());
-        Log.d(TAG, "sendTripNum:  ---- "+et_numberOfPulse.getText().toString());
         mainPeremeterOrdersEditor.commit();
         String num = s;
         try {
@@ -2203,6 +2212,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         new Thread(new Runnable() {
             @Override
             public void run() {
+                Log.d(TAG, "run:  -- TriggerMode:"+pOrders.getTriggerMode()+"  Direction:"+pOrders.getTriggerDirection());
                 pOrders.send();
             }
         }).start();
@@ -2233,6 +2243,15 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 
         pOrders.setTriggerDirection(num);
         mainPeremeterOrdersEditor.putInt("isWheel", num+1);//0-定时器，1-单向，2-双向
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                Log.d(TAG, "run:  -- TriggerMode:"+pOrders.getTriggerMode()+"  Direction:"+pOrders.getTriggerDirection());
+                // TODO Auto-generated method stub
+                pOrders.send();
+            }
+        }).start();
     }
 
     private void closeTheWheel() {
