@@ -35,6 +35,7 @@ public class WriteHeadThread extends Thread{
     public void run() {
         try {
             if (mraf!=null){
+                Log.d(TAG, "run:  writeHeadTHread");
                 Arrays.fill(line_position,(byte)0xCC);
                 Arrays.fill(nouse, (byte) 0xCC);
                 mraf.write("yf  ".getBytes(StandardCharsets.UTF_8));

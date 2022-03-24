@@ -1570,6 +1570,9 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
                     openTheWheel(1);
                 }
                 sendTripNum(et_numberOfPulse.getText().toString());
+                mainPeremeterOrdersEditor.putInt("triggerMode",1);
+            }else{
+                mainPeremeterOrdersEditor.putInt("triggerMode",0);
             }
             path = tv_settingPath.getText().toString();
             file = new File(path + "/" + tv_storeFile.getText().toString());

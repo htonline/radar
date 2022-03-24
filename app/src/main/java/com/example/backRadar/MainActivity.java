@@ -74,6 +74,8 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import org.w3c.dom.Text;
+
 
 public class MainActivity extends Activity {
     private int tagForCloseSetting=0;
@@ -110,6 +112,8 @@ public class MainActivity extends Activity {
     private TextView tv_frequency = null;
     private TextView tv_delay = null;
     private TextView tv_markNumber = null;
+    private TextView tv_triigerMode = null;
+
     private static Dataprocess dataprocessMain = null;
     //	private TextView tv_numberOfLose=null;
 //    private TextView tv_logo = null;
@@ -406,6 +410,8 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mainPeremeterOrders = getSharedPreferences("mainPeremeterOrders", 0);
+        mainPeremeterOrdersEditor = mainPeremeterOrders.edit();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
@@ -677,6 +683,7 @@ public class MainActivity extends Activity {
         tv_frequency = (TextView) findViewById(R.id.tv_frequency);
         tv_delay = (TextView) findViewById(R.id.tv_delay);
         tv_markNumber = (TextView) findViewById(R.id.tv_markNumber);
+        tv_triigerMode = (TextView) findViewById(R.id.tv_theWayOfTrigger);
 //        tv_logo = (TextView) findViewById(R.id.tv_logo);
         Typeface typeface = Typeface.createFromAsset(getAssets(), "PlayfairDisplay-Bold.ttf");
 //        tv_logo.setTypeface(typeface);
@@ -695,7 +702,11 @@ public class MainActivity extends Activity {
 //        tv_numofSave = findViewById(R.id.tv_numofSave);
         met_radarName = findViewById(R.id.et_radarName);
 
-
+        if (mainPeremeterOrders.getInt("triggerMode",0) == 0){
+            tv_triigerMode.setText("时间");
+        }else{
+            tv_triigerMode.setText("测距轮");
+        }
         tempifbackremove = 0;
         tempifgain = 0;
         tempShare = 4;
@@ -1094,8 +1105,7 @@ public class MainActivity extends Activity {
             //再次设置后重置判断参数
             judge_clickStopIbtn = false;
 
-            mainPeremeterOrders = getSharedPreferences("mainPeremeterOrders", 0);
-            mainPeremeterOrdersEditor = mainPeremeterOrders.edit();
+
 //			Toast.makeText(this, "path:"+mainPeremeterOrders.getString("path", "gwh/11")
 //					+"\n timeWindow:"+mainPeremeterOrders.getString("timeWindow", "1")
 //					+"\n frequncy:"+mainPeremeterOrders.getString("frequency", "1")
@@ -1107,6 +1117,11 @@ public class MainActivity extends Activity {
             tv_delay.setText(mainPeremeterOrders.getString("delay", "100"));
             IfSaveTheRadar = mainPeremeterOrders.getInt("saveRadar",1);
 //            writeThread.setAnoStart(IfSaveTheRadar);
+            if (mainPeremeterOrders.getInt("triggerMode",0) == 0){
+                tv_triigerMode.setText("时间");
+            }else{
+                tv_triigerMode.setText("测距轮");
+            }
             ibtn_startAndSuspend.setImageResource(R.drawable.startgreen2);
             readThread.setNumberOfReceive(0);
 
