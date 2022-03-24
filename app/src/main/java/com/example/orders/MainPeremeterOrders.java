@@ -171,6 +171,7 @@ public class MainPeremeterOrders {
 				buf[11]=0x21;
 		}
 		buf[10]=(byte) triggerpulsenum;
+
 	}
 
 	public void send() {

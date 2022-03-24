@@ -857,7 +857,7 @@ public class MainActivity extends Activity {
         //打标数归零
         markNumber = 0;
         tv_markNumber.setText(markNumber + "");
-
+        tv_numberOfReceive.setText(""+0);//收包数量置空
         //判断是否点击开始暂停按钮置0
         clickOrNot = 0;
 //        writeThread.setTrace_num(Integer.parseInt(tv_numberOfReceive.getText().toString()));

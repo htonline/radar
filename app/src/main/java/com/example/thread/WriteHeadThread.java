@@ -12,18 +12,18 @@ import java.util.Arrays;
 public class WriteHeadThread extends Thread{
     private static final String TAG="WriteHeadThread";
     RandomAccessFile mraf=null;
-    private  int sample_wnd;
-    private  short timedelay;
+    private static int sample_wnd;
+    private static short timedelay;
     private int trace_num = 100;
     byte[] line_position = new byte[36];
     byte[] nouse = new byte[158];
 
-    public void setSample_wnd(int sample_wnd) {
-        this.sample_wnd = sample_wnd;
+    public static void setSample_wnd(int msample_wnd) {
+        sample_wnd = msample_wnd;
     }
 
-    public void setTimedelay(short timedelay) {
-        this.timedelay = timedelay;
+    public static void setTimedelay(short mtimedelay) {
+        timedelay = mtimedelay;
     }
 
 

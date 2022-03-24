@@ -36,6 +36,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -81,7 +82,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
     public int backgrdData[] = new int[Const_NumberOfVerticalDatas];
     public float xRaw[] = new float[17];
     public float bRaw[] = new float[17];
-    public float  coeGain = 1;
+    public float coeGain = 1;
 
     private RadioGroup radioGroup;
 
@@ -316,27 +317,28 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                rd_oneWay.setEnabled(false);
-                rd_twoWays.setEnabled(false);
-//				sp_oneWay.setSelection(0);
-//				sp_oneWay.setEnabled(false);
-                rd_oneWay.setChecked(false);
-                rd_twoWays.setChecked(false);
-                //脉冲参数不能点击
-
-                et_numberOfPulse.setEnabled(false);
-                et_singleDistance.setEnabled(false);
-                et_singlePulse.setEnabled(false);
-                pOrders.setTriggerMode(0);
-
-                new Thread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        // TODO Auto-generated method stub
-                        pOrders.send();
-                    }
-                }).start();
+                closeTheWheel();
+//                rd_oneWay.setEnabled(false);
+//                rd_twoWays.setEnabled(false);
+////				sp_oneWay.setSelection(0);
+////				sp_oneWay.setEnabled(false);
+//                rd_oneWay.setChecked(false);
+//                rd_twoWays.setChecked(false);
+//                //脉冲参数不能点击
+//
+//                et_numberOfPulse.setEnabled(false);
+//                et_singleDistance.setEnabled(false);
+//                et_singlePulse.setEnabled(false);
+//                pOrders.setTriggerMode(0);
+//
+//                new Thread(new Runnable() {
+//
+//                    @Override
+//                    public void run() {
+//                        // TODO Auto-generated method stub
+//                        pOrders.send();
+//                    }
+//                }).start();
             }
         });
         tv_storeFile.setText(et_nameOfMainFile.getText().toString() + et_serialNumberOfFile.getText().toString() + type);
@@ -352,28 +354,29 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                rd_oneWay.setEnabled(true);
-                rd_twoWays.setEnabled(true);
-                pOrders.setTriggerMode(1);
-////				sp_oneWay.setSelection(0);
-//				//脉冲参数可以点击
-                et_numberOfPulse.setEnabled(true);
-                et_singleDistance.setEnabled(true);
-                et_singlePulse.setEnabled(true);
-//                et_samplingInterval.setEnabled(true);
-
-                //默认选中单向触发
-                rd_oneWay.setChecked(true);
-                pOrders.setTriggerDirection(0);
-
-                new Thread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        // TODO Auto-generated method stub
-                        pOrders.send();
-                    }
-                }).start();
+                openTheWheel();
+//                rd_oneWay.setEnabled(true);
+//                rd_twoWays.setEnabled(true);
+//                pOrders.setTriggerMode(1);
+//////				sp_oneWay.setSelection(0);
+////				//脉冲参数可以点击
+//                et_numberOfPulse.setEnabled(true);
+//                et_singleDistance.setEnabled(true);
+//                et_singlePulse.setEnabled(true);
+////                et_samplingInterval.setEnabled(true);
+//
+//                //默认选中单向触发
+//                rd_oneWay.setChecked(true);
+//                pOrders.setTriggerDirection(0);
+//
+//                new Thread(new Runnable() {
+//
+//                    @Override
+//                    public void run() {
+//                        // TODO Auto-generated method stub
+//                        pOrders.send();
+//                    }
+//                }).start();
             }
         });
 
@@ -383,15 +386,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
             public void onClick(View v) {
                 // TODO Auto-generated method stub
 //				sp_oneWay.setEnabled(true);
-                pOrders.setTriggerDirection(0);
-                new Thread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        // TODO Auto-generated method stub
-                        pOrders.send();
-                    }
-                }).start();
+                openTheWheel(0);
             }
         });
 
@@ -401,16 +396,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
             public void onClick(View v) {
                 // TODO Auto-generated method stub
 //				sp_oneWay.setEnabled(false);
-                pOrders.setTriggerDirection(1);
-//				sp_oneWay.setSelection(0);
-                new Thread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        // TODO Auto-generated method stub
-                        pOrders.send();
-                    }
-                }).start();
+                openTheWheel(1);
             }
         });
 
@@ -778,11 +764,6 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 //		});
 
 
-
-
-
-
-
         //频率点击事件
         sp_frequency.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
             @Override
@@ -983,7 +964,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 //                        Double.valueOf(et_singleDistance.getText().toString())));
 //            }
 //        });
-        et_singlePulse.setLayerType(View.LAYER_TYPE_HARDWARE,null);
+        et_singlePulse.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
         et_singlePulse.addTextChangedListener(new TextWatcher() {
             @Override
@@ -993,8 +974,10 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                et_samplingInterval.setText(""+(Double.valueOf(et_singleDistance.getText().toString())*Double.valueOf(et_numberOfPulse.getText().toString())
-                        /(Double.valueOf(s.toString()))));
+                if (!TextUtils.isEmpty(s) && !TextUtils.isEmpty(et_singleDistance.getText()) && !TextUtils.isEmpty(et_numberOfPulse.getText())) {
+                    et_samplingInterval.setText("" + (Double.valueOf(et_singleDistance.getText().toString()) * Double.valueOf(et_numberOfPulse.getText().toString())
+                            / (Double.valueOf(s.toString()))));
+                }
             }
 
             @Override
@@ -1010,8 +993,10 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                et_samplingInterval.setText(""+(Double.valueOf(s.toString())*Double.valueOf(et_numberOfPulse.getText().toString())
-                        /(Double.valueOf(et_singlePulse.getText().toString()))));
+                if (!TextUtils.isEmpty(s) && !TextUtils.isEmpty(et_numberOfPulse.getText()) && !TextUtils.isEmpty(et_singlePulse.getText())) {
+                    et_samplingInterval.setText("" + (Double.valueOf(s.toString()) * Double.valueOf(et_numberOfPulse.getText().toString())
+                            / (Double.valueOf(et_singlePulse.getText().toString()))));
+                }
             }
 
             @Override
@@ -1028,8 +1013,10 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                et_samplingInterval.setText(""+(Double.valueOf(et_singleDistance.getText().toString())*Double.valueOf(s.toString())
-                        /(Double.valueOf(et_singlePulse.getText().toString()))));
+                if (!TextUtils.isEmpty(s) && !TextUtils.isEmpty(et_singleDistance.getText()) && !TextUtils.isEmpty(et_singlePulse.getText())) {
+                    et_samplingInterval.setText("" + (Double.valueOf(et_singleDistance.getText().toString()) * Double.valueOf(s.toString())
+                            / (Double.valueOf(et_singlePulse.getText().toString()))));
+                }
             }
 
             @Override
@@ -1220,12 +1207,13 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         radioGroup = findViewById(R.id.radioGroup1);
 
 //		sp_oneWay.setEnabled(false);
-        rd_oneWay.setEnabled(false);
-        rd_twoWays.setEnabled(false);
-        et_numberOfPulse.setEnabled(false);
-        et_singleDistance.setEnabled(false);
-        et_singlePulse.setEnabled(false);
-        et_samplingInterval.setEnabled(false);
+
+//        rd_oneWay.setEnabled(false);
+//        rd_twoWays.setEnabled(false);
+//        et_numberOfPulse.setEnabled(false);
+//        et_singleDistance.setEnabled(false);
+//        et_singlePulse.setEnabled(false);
+//        et_samplingInterval.setEnabled(false);
         surefilename = et_nameOfMainFile.getText().toString() + et_serialNumberOfFile.getText().toString();
 
         SharedPreferences shareXRaw = getSharedPreferences("xRaw", 0);
@@ -1289,7 +1277,45 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 
         mainPeremeterOrders = getSharedPreferences("mainPeremeterOrders", 0);
         mainPeremeterOrdersEditor = mainPeremeterOrders.edit();
+        switch (mainPeremeterOrders.getInt("isWheel", 0)) {
+            case 0: {
+                rd_timing.setChecked(true);
+                rd_oneWay.setEnabled(false);
+                rd_twoWays.setEnabled(false);
+                et_numberOfPulse.setEnabled(false);
+                et_singleDistance.setEnabled(false);
+                et_singlePulse.setEnabled(false);
+                et_samplingInterval.setEnabled(false);
+                break;
+            }
+            case 1: {
+                rd_timing.setChecked(false);
+                rd_wheel.setChecked(true);
+                rd_oneWay.setEnabled(true);
+                rd_oneWay.setChecked(true);
+                rd_twoWays.setChecked(false);
+                et_numberOfPulse.setEnabled(true);
+                et_singleDistance.setEnabled(true);
+                et_singlePulse.setEnabled(true);
+                et_samplingInterval.setEnabled(true);
+                openTheWheel(0);
+                break;
+            }
+            case 2: {
+                rd_timing.setChecked(false);
+                rd_wheel.setChecked(true);
+                rd_oneWay.setChecked(false);
+                rd_twoWays.setEnabled(true);
+                rd_twoWays.setChecked(true);
+                et_numberOfPulse.setEnabled(true);
+                et_singleDistance.setEnabled(true);
+                et_singlePulse.setEnabled(true);
+                et_samplingInterval.setEnabled(true);
+                openTheWheel(1);
+                break;
+            }
 
+        }
         //初始化触发方式spinner数据
 //		listOfTheWayOfPulse=new ArrayList<String>();
 //		listOfTheWayOfPulse.add(" ");
@@ -1358,13 +1384,25 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
             pOrders.setFrequency((short) 0x6400);
         }
 
-        et_numberOfPulse.setText(String.valueOf(20));
-        et_singlePulse.setText(String.valueOf(500));
-        et_singleDistance.setText(String.valueOf(0.3));
-        et_samplingInterval.setText(String.valueOf(0.003));
+
+                /*
+        *
+        * mainPeremeterOrdersEditor.putString("numberOfPulse",et_numberOfPulse.getText().toString());
+          mainPeremeterOrdersEditor.putString("singlePulse",et_singlePulse.getText().toString());
+          mainPeremeterOrdersEditor.putString("singleDistance",et_singleDistance.getText().toString());
+          mainPeremeterOrdersEditor.putString("samplingInterval",et_samplingInterval.getText().toString());
+        * */
+        Log.d(TAG, "init: ----- "+mainPeremeterOrders.getString("numberOfPulse", "20"));
+        et_numberOfPulse.setText(mainPeremeterOrders.getString("numberOfPulse", "20"));
+        et_singlePulse.setText(mainPeremeterOrders.getString("singlePulse", "500"));
+        et_singleDistance.setText(mainPeremeterOrders.getString("singleDistance", "0.3"));
+        et_samplingInterval.setText(mainPeremeterOrders.getString("samplingInterval", "0.003"));
+//        et_numberOfPulse.setText(String.valueOf(20));
+//        et_singlePulse.setText(String.valueOf(500));
+//        et_singleDistance.setText(String.valueOf(0.3));
+//        et_samplingInterval.setText(String.valueOf(0.003));
         et_timeWindow.setText(mainPeremeterOrders.getString("timeWindow", "70"));
         et_delay.setText(mainPeremeterOrders.getString("delay", "100"));
-
 
 
 //接口回调获得增益数组
@@ -1509,12 +1547,12 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         leftFragmentOfSettingActivity.setXRaw(xRaw);
         middleBackFragmentOfSettingActivity.setBRaw(bRaw);
         Arrays.fill(gainData, 1);
-        Arrays.fill(backgrdData,1);
+        Arrays.fill(backgrdData, 1);
         tempGain = 0;
         tempIffliter = 4;
         tempBackgrd = 0;
-        et_m_low_f.setText(""+100);
-        et_m_high_f.setText(""+1500);
+        et_m_low_f.setText("" + 100);
+        et_m_high_f.setText("" + 1500);
 
     }
 
@@ -1633,8 +1671,12 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 
 //
 
-                        MainActivity.writeHeadThread.setSample_wnd(Integer.parseInt(et_timeWindow.getText().toString()));
-                        MainActivity.writeHeadThread.setTimedelay(Short.parseShort(et_delay.getText().toString()));
+                        try{
+                            MainActivity.writeHeadThread.setSample_wnd(Integer.parseInt(et_timeWindow.getText().toString()));
+                            MainActivity.writeHeadThread.setTimedelay(Short.parseShort(et_delay.getText().toString()));
+                        }catch (Exception e){
+                            Toast.makeText(SettingActivity.this,"写入模块未正确初始化！",Toast.LENGTH_SHORT).show();
+                        }
 
 
                         finish();
@@ -2010,8 +2052,8 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
     public void btn_save_params(View view) {
         ParamsOfSetting paramsOfSetting = new ParamsOfSetting();
         paramsOfSetting.setParamsName(tv_storeFile.getText().toString());
-        if (frequency==10)
-        paramsOfSetting.setFrequency(frequency);
+        if (frequency == 10)
+            paramsOfSetting.setFrequency(frequency);
         paramsOfSetting.setTimeWindow(Integer.valueOf(et_timeWindow.getText().toString()));
         paramsOfSetting.setDelay(Integer.valueOf(et_delay.getText().toString()));
         paramsOfSetting.setSaveRaw(tempIfSaveTheRadar == 1);
@@ -2074,34 +2116,34 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
             mcb_saveAno.setChecked(false);
             tempIfSaveTheRadar = 0;
         }
-        if (paramsOfSetting.isGain()){
+        if (paramsOfSetting.isGain()) {
             cb_gain.setChecked(true);
             tempGain = 1;
-            et_horiGain_coe.setText(""+paramsOfSetting.getGainCoe());
+            et_horiGain_coe.setText("" + paramsOfSetting.getGainCoe());
             xRaw = paramsOfSetting.getxRaw();
             leftFragmentOfSettingActivity.setXRaw(xRaw);
             gainData = paramsOfSetting.getGainData();
-        }else {
+        } else {
             cb_gain.setChecked(false);
             tempGain = 0;
             Arrays.fill(xRaw, 10);
             leftFragmentOfSettingActivity.setXRaw(xRaw);
             Arrays.fill(gainData, 1);
         }
-        if (paramsOfSetting.isDebackgrd()){
+        if (paramsOfSetting.isDebackgrd()) {
             cb_backremove.setChecked(true);
             tempBackgrd = 1;
             bRaw = paramsOfSetting.getbRaw();
             middleBackFragmentOfSettingActivity.setBRaw(bRaw);
             backgrdData = paramsOfSetting.getBackgrdData();
-        }else {
+        } else {
             cb_backremove.setChecked(false);
             tempBackgrd = 0;
-            Arrays.fill(backgrdData,1);
-            Arrays.fill(bRaw,10);
+            Arrays.fill(backgrdData, 1);
+            Arrays.fill(bRaw, 10);
             middleBackFragmentOfSettingActivity.setBRaw(bRaw);
         }
-        if (paramsOfSetting.getFilterNum()!=4){
+        if (paramsOfSetting.getFilterNum() != 4) {
             cb_filter.setChecked(true);
             tempIffliter = paramsOfSetting.getFilterNum();
             switch (tempIffliter) {
@@ -2121,33 +2163,101 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
                     break;
 
             }
-            et_m_low_f.setText(""+paramsOfSetting.getFilterstart());
-            et_m_high_f.setText(""+paramsOfSetting.getFilterstop());
-        }else {
+            et_m_low_f.setText("" + paramsOfSetting.getFilterstart());
+            et_m_high_f.setText("" + paramsOfSetting.getFilterstop());
+        } else {
             cb_filter.setChecked(false);
             rb_bandpassfilter.setChecked(false);
             rb_highpassfilter.setChecked(false);
             rb_lowpassfilter.setChecked(false);
             rb_fillingfilter.setChecked(false);
-            et_m_low_f.setText(""+100);
-            et_m_high_f.setText(""+1500);
+            et_m_low_f.setText("" + 100);
+            et_m_high_f.setText("" + 1500);
         }
 
     }
 
-    public void sendTripNum(String s){
+    private void sendTripNum() {
+        sendTripNum(et_numberOfPulse.getText().toString());
+    }
+
+    private void sendTripNum(String s) {
+        /*
+            private EditText et_numberOfPulse = null;
+            private EditText et_singlePulse = null;
+            private EditText et_singleDistance = null;
+            private TextView et_samplingInterval = null;
+        * */
+        mainPeremeterOrdersEditor.putString("numberOfPulse", et_numberOfPulse.getText().toString());
+        mainPeremeterOrdersEditor.putString("singlePulse", et_singlePulse.getText().toString());
+        mainPeremeterOrdersEditor.putString("singleDistance", et_singleDistance.getText().toString());
+        mainPeremeterOrdersEditor.putString("samplingInterval", et_samplingInterval.getText().toString());
+        Log.d(TAG, "sendTripNum:  ---- "+et_numberOfPulse.getText().toString());
+        mainPeremeterOrdersEditor.commit();
         String num = s;
-        try{
-            pOrders.setTriggerpulsenum((byte)Integer.parseInt(num));
-        }catch (Exception e){
-            Toast.makeText(this,e.toString(),Toast.LENGTH_SHORT).show();
+        try {
+            pOrders.setTriggerpulsenum((byte) Integer.parseInt(num));
+        } catch (Exception e) {
+            Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
         }
         new Thread(new Runnable() {
             @Override
             public void run() {
                 pOrders.send();
             }
-        });
+        }).start();
+    }
+
+    private void openTheWheel(){
+        openTheWheel(0);
+    }
+    private void openTheWheel(int num) {
+        rd_oneWay.setEnabled(true);
+        rd_twoWays.setEnabled(true);
+        pOrders.setTriggerMode(1);
+////				sp_oneWay.setSelection(0);
+//				//脉冲参数可以点击
+        et_numberOfPulse.setEnabled(true);
+        et_singleDistance.setEnabled(true);
+        et_singlePulse.setEnabled(true);
+//                et_samplingInterval.setEnabled(true);
+
+        //默认选中单向触发
+        if (num == 0){
+            rd_oneWay.setChecked(true);
+            rd_twoWays.setChecked(false);
+        }else{
+            rd_oneWay.setChecked(false);
+            rd_twoWays.setChecked(true);
+        }
+
+        pOrders.setTriggerDirection(num);
+        mainPeremeterOrdersEditor.putInt("isWheel", num+1);//0-定时器，1-单向，2-双向
+    }
+
+    private void closeTheWheel() {
+        mainPeremeterOrdersEditor.putInt("isWheel", 0);
+        rd_oneWay.setEnabled(false);
+        rd_twoWays.setEnabled(false);
+//				sp_oneWay.setSelection(0);
+//				sp_oneWay.setEnabled(false);
+        rd_oneWay.setChecked(false);
+        rd_twoWays.setChecked(false);
+        //脉冲参数不能点击
+
+        et_numberOfPulse.setEnabled(false);
+        et_singleDistance.setEnabled(false);
+        et_singlePulse.setEnabled(false);
+        pOrders.setTriggerMode(0);
+
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                pOrders.send();
+            }
+        }).start();
     }
 
 }
