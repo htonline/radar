@@ -3,9 +3,11 @@ package com.example.upload.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.IpSecManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.TokenWatcher;
 import android.text.TextUtils;
 import android.util.ArrayMap;
 import android.util.Log;
@@ -29,6 +31,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.example.interfaces.CallBackToDo;
+import com.example.interfaces.GetCallBack;
 import com.example.upload.FileListMyDialogManager;
 import com.example.upload.GetRequestInterface;
 import com.example.upload.LoadOnSubscribe;
@@ -40,23 +43,36 @@ import com.example.helper.zbar.CaptureActivity;
 import com.example.ladarmonitor.R;
 import com.example.upload.UpLoadFileListAdapter;
 import com.example.upload.convertor.FileConverterFactory;
+import com.example.upload.entity.FileExists;
+import com.example.upload.entity.FileInfo;
 import com.example.upload.entity.UpFilePath;
 import com.example.upload.entity.UpLoadFileInfo;
 import com.example.upload.entity.UserInfoLogin;
+import com.example.upload.entity.Userinfo;
 import com.example.upload.up.LoadCallBack;
+import com.example.upload.utils.FileUtils;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -79,6 +95,8 @@ public class UploadFragment extends Fragment {
     private Button abtn_my_dialog_upload;
 
     private String user_token = null;
+
+    private ThreadPoolExecutor threadPool;
 
     private String temptoken = null;
     //    private ImageButton btn_chosePath;
@@ -108,7 +126,8 @@ public class UploadFragment extends Fragment {
     private String urlpicpath1;
     private String urlpicpath2;
     private String urlpicpath3;
-
+    private Retrofit mretrofit;
+    private GetRequestInterface mgetRequestInterface;
     private int choseImgUp = 0;
     private int tag_is_uploadraw = 0;
     private int tag_is_uploadimg01 = 0;
@@ -171,8 +190,13 @@ public class UploadFragment extends Fragment {
         userInfoLogin = (UserInfoLogin) bundle.getSerializable("userinfologin");
         initFileInfosData();
         tools = new OkHttpTools();
-        mainPreferences = mActivity.getSharedPreferences("uploadfrgInfo",0);
+        mainPreferences = mActivity.getSharedPreferences("uploadfrgInfo", 0);
         mainPreferenceEditor = mainPreferences.edit();
+        mretrofit = new Retrofit.Builder()
+                .baseUrl("http://39.105.125.51:8001/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        mgetRequestInterface = mretrofit.create(GetRequestInterface.class);
     }
 
     private void initFileInfosData() {
@@ -201,7 +225,23 @@ public class UploadFragment extends Fragment {
                     if (user_token == "") {
                         Toast.makeText(getActivity(), "请先登录", Toast.LENGTH_SHORT).show();
                     } else {
-                        uploadOneFile(new File(urlString), user_token);
+                        File file = new File(urlString);
+                        if (file.length() > 70 * 1024 * 1024) {
+                            FileUtils utils = new FileUtils();
+                            try {
+                                List<String> files = utils.splitBySize(file, 60 * 1024 * 1024);
+                                searchToUpFile(0, files.size() - 1, files);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            searchFile(mgetRequestInterface, file.getName(), user_token, new GetCallBack() {
+                                @Override
+                                public void doThing() {
+                                    uploadOneFile(file, user_token);
+                                }
+                            });
+                        }
                     }
                 }
             }
@@ -215,6 +255,23 @@ public class UploadFragment extends Fragment {
                 choseImgUp = 1;
             }
         };
+    }
+
+    private void searchToUpFile(int start, int stop, List<String> files) {
+        if (start > stop) {
+            return;
+        }
+        searchFile(mgetRequestInterface, files.get(start), user_token, new GetCallBack() {
+            @Override
+            public void doThing() {
+                uploadFileBySplit(mgetRequestInterface, new File(files.get(start)), user_token, new GetCallBack() {
+                    @Override
+                    public void doThing() {
+                        searchToUpFile(start + 1, stop, files);
+                    }
+                });
+            }
+        });
     }
 
     @Nullable
@@ -248,7 +305,7 @@ public class UploadFragment extends Fragment {
         lv_uploadfile = view.findViewById(R.id.lv_uploadCX);
         scaninfo = view.findViewById(R.id.scannerInfo);
         scaninfo.setVisibility(View.GONE);
-        ((Button)scaninfo.findViewById(R.id.scan_btn_cancel)).setOnClickListener(new View.OnClickListener() {
+        ((Button) scaninfo.findViewById(R.id.scan_btn_cancel)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 scaninfo.setVisibility(View.GONE);
@@ -366,12 +423,12 @@ public class UploadFragment extends Fragment {
     }
 
     private void initText() {
-        dangqiangBianhao = mainPreferences.getString("dqbh",null);
-        dangqiangLeixing = mainPreferences.getString("dqtype",null);
-        dangqiangGao = mainPreferences.getString("dqheight",null);
-        dangqiangKuan = mainPreferences.getString("dqwidth",null);
-        dangqiangHoudu = mainPreferences.getString("dqthk",null);
-        dangqiangWeizhi = mainPreferences.getString("dqloc",null);
+        dangqiangBianhao = mainPreferences.getString("dqbh", null);
+        dangqiangLeixing = mainPreferences.getString("dqtype", null);
+        dangqiangGao = mainPreferences.getString("dqheight", null);
+        dangqiangKuan = mainPreferences.getString("dqwidth", null);
+        dangqiangHoudu = mainPreferences.getString("dqthk", null);
+        dangqiangWeizhi = mainPreferences.getString("dqloc", null);
 
         tv_dqbh.setText(dangqiangBianhao);
         tv_dqtype.setText(dangqiangLeixing);
@@ -379,6 +436,89 @@ public class UploadFragment extends Fragment {
         tv_dqwidth.setText(dangqiangKuan);
         tv_dqthk.setText(dangqiangHoudu);
         tv_dqloc.setText(dangqiangWeizhi);
+    }
+
+    private void searchFile(GetRequestInterface getRequestInterface, String filename, String user_token, GetCallBack<String> back) {
+        FileInfo info = new FileInfo();
+        info.setFilename(tv_dqbh.getText().toString() + "-" + filename);
+        Gson gson = new Gson();
+        RequestBody body = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), gson.toJson(info));
+        Call<FileExists> call = getRequestInterface.getFileExists(body, user_token);
+        call.enqueue(new Callback<FileExists>() {
+            @Override
+            public void onResponse(Call<FileExists> call, Response<FileExists> response) {
+                if (response.body() != null) {
+                    if (response.body().getFileExist().equals("true")) {
+                        Toast.makeText(mActivity, "服务器已有该文件", Toast.LENGTH_SHORT).show();
+                    } else {
+                        back.doThing();
+//                        if (file.length() > 70 * 1024 * 1024){
+//                            uploadFileBySplit(getRequestInterface,file,user_token);
+//                        }else {
+//                            uploadOneFile(file,user_token);
+//                        }
+
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FileExists> call, Throwable t) {
+                Toast.makeText(mActivity, "校验文件错误！:" + t.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    private void uploadFileBySplit(GetRequestInterface getRequestInterface, File file, String user_token, GetCallBack callBack) {
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(60000, TimeUnit.SECONDS)
+                .readTimeout(60000, TimeUnit.SECONDS)
+                .writeTimeout(60000, TimeUnit.SECONDS)
+//                .addInterceptor(getHeader())
+                .addNetworkInterceptor(getResponseIntercept()).build();
+        mretrofit = new Retrofit.Builder()
+                .baseUrl("http://39.105.125.51:8001/")
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        getRequestInterface = mretrofit.create(GetRequestInterface.class);
+        RequestBody body = RequestBody.create(MediaType.parse("application/octet-stream"), file);
+        MultipartBody.Part part = MultipartBody.Part.createFormData("file", tv_dqbh.getText().toString() + "-" + file.getName(), body);
+        Call<UpFilePath> upFilePathCall = getRequestInterface.uploadOneFileBySplit(part, user_token);
+        upFilePathCall.enqueue(new Callback<UpFilePath>() {
+            @Override
+            public void onResponse(Call<UpFilePath> call, Response<UpFilePath> response) {
+                if (response.body() == null) {
+                    try {
+                        Toast.makeText(mActivity, "" + response.errorBody().string(), Toast.LENGTH_LONG).show();
+                    } catch (Exception e) {
+                        Log.e(TAG, "Exception " + e);
+                    }
+                } else {
+                    callBack.doThing();
+                    String[] sts = file.getName().split("\\.");
+                    if (response.body().getAvatar().equals(tv_dqbh.getText().toString() + "-" + sts[0] + "." + sts[1])) {
+                        ArrayList<File> files = FileUtils.getDirFilesForPrefix(file.getParent(), sts[0] + "." + sts[1] + ".");
+                        for (File f : files) {
+                            try {
+                                f.delete();
+                            } catch (Exception e) {
+                                Log.e(TAG, "onResponse: " + e.toString());
+                            }
+                        }
+                        Toast.makeText(mActivity, "上传雷达数据成功" + response.body().getAvatar(), Toast.LENGTH_LONG).show();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UpFilePath> call, Throwable t) {
+                Toast.makeText(mActivity, "上传失败", Toast.LENGTH_LONG).show();
+                Log.d(TAG, "onResponse: " + t);
+            }
+        });
     }
 
     public void uploadOneFile(File file, String user_token) {
@@ -563,19 +703,19 @@ public class UploadFragment extends Fragment {
 //                    tv_cxstop.setText(cexianZhongdian);
                     tv_dqloc.setText(dangqiangWeizhi);
 
-                    mainPreferenceEditor.putString("dqbh",dangqiangBianhao);
-                    mainPreferenceEditor.putString("dqtype",dangqiangLeixing);
-                    mainPreferenceEditor.putString("dqheight",dangqiangGao);
-                    mainPreferenceEditor.putString("dqwidth",dangqiangKuan);
-                    mainPreferenceEditor.putString("dqthk",dangqiangHoudu);
-                    mainPreferenceEditor.putString("dqloc",dangqiangWeizhi);
+                    mainPreferenceEditor.putString("dqbh", dangqiangBianhao);
+                    mainPreferenceEditor.putString("dqtype", dangqiangLeixing);
+                    mainPreferenceEditor.putString("dqheight", dangqiangGao);
+                    mainPreferenceEditor.putString("dqwidth", dangqiangKuan);
+                    mainPreferenceEditor.putString("dqthk", dangqiangHoudu);
+                    mainPreferenceEditor.putString("dqloc", dangqiangWeizhi);
                     mainPreferenceEditor.apply();
                     scaninfo.setVisibility(View.VISIBLE);
-                    ((TextView)scaninfo.findViewById(R.id.scan_tv_dqbh)).setText(dangqiangBianhao);
-                    ((TextView)scaninfo.findViewById(R.id.scan_tv_dqtype)).setText(dangqiangLeixing);
-                    ((TextView)scaninfo.findViewById(R.id.scan_tv_dqheight)).setText(dangqiangGao);
-                    ((TextView)scaninfo.findViewById(R.id.scan_tv_dqwidth)).setText(dangqiangKuan);
-                    ((TextView)scaninfo.findViewById(R.id.scan_tv_dqthk)).setText(dangqiangHoudu);
+                    ((TextView) scaninfo.findViewById(R.id.scan_tv_dqbh)).setText(dangqiangBianhao);
+                    ((TextView) scaninfo.findViewById(R.id.scan_tv_dqtype)).setText(dangqiangLeixing);
+                    ((TextView) scaninfo.findViewById(R.id.scan_tv_dqheight)).setText(dangqiangGao);
+                    ((TextView) scaninfo.findViewById(R.id.scan_tv_dqwidth)).setText(dangqiangKuan);
+                    ((TextView) scaninfo.findViewById(R.id.scan_tv_dqthk)).setText(dangqiangHoudu);
 
                 }
                 break;
