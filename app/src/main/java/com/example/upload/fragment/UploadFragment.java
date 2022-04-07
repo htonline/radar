@@ -7,6 +7,8 @@ import android.net.IpSecManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.TokenWatcher;
 import android.text.TextUtils;
 import android.util.ArrayMap;
@@ -32,6 +34,7 @@ import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.example.interfaces.CallBackToDo;
 import com.example.interfaces.GetCallBack;
+import com.example.thread.ShowProgressThread;
 import com.example.upload.FileListMyDialogManager;
 import com.example.upload.GetRequestInterface;
 import com.example.upload.LoadOnSubscribe;
@@ -164,6 +167,31 @@ public class UploadFragment extends Fragment {
     private FrameLayout scaninfo;
     private SharedPreferences mainPreferences;
     private SharedPreferences.Editor mainPreferenceEditor;
+    private ShowProgressThread t;
+    private Message msg;
+
+    class UiHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 1:
+                    mfileInfos.get(msg.arg2).setUploadpercent(msg.arg1 + "%");
+                    adapter.notifyDataSetChanged();
+                    break;
+                case 2:
+                    int listposition = msg.arg2;
+                    String url = (String) msg.obj;
+                    mfileInfos.get(listposition).setUploadpercent("100.0%");
+                    mfileInfos.get(listposition).setFileRemotePath(url);
+                    mfileInfos.get(listposition).setIsfileup(true);
+                    adapter.notifyDataSetChanged();
+                    Toast.makeText(mActivity, "上传雷达数据成功", Toast.LENGTH_LONG).show();
+                    break;
+            }
+        }
+    }
+
+    private Handler uiHandler = new UiHandler();
 
     public void runFirst() {
         if (SDK_INT < Build.VERSION_CODES.P) {
@@ -264,6 +292,9 @@ public class UploadFragment extends Fragment {
         searchFile(mgetRequestInterface, files.get(start), user_token, new GetCallBack() {
             @Override
             public void doThing() {
+                t = new ShowProgressThread(listPosition, start, stop,
+                        false, 100, adapter, mfileInfos, uiHandler);
+                t.start();
                 uploadFileBySplit(mgetRequestInterface, new File(files.get(start)), user_token, new GetCallBack() {
                     @Override
                     public void doThing() {
@@ -440,7 +471,8 @@ public class UploadFragment extends Fragment {
 
     private void searchFile(GetRequestInterface getRequestInterface, String filename, String user_token, GetCallBack<String> back) {
         FileInfo info = new FileInfo();
-        info.setFilename(tv_dqbh.getText().toString() + "-" + filename);
+        File file = new File(filename);
+        info.setFilename(tv_dqbh.getText().toString() + "-" + file.getName());
         Gson gson = new Gson();
         RequestBody body = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), gson.toJson(info));
         Call<FileExists> call = getRequestInterface.getFileExists(body, user_token);
@@ -449,7 +481,13 @@ public class UploadFragment extends Fragment {
             public void onResponse(Call<FileExists> call, Response<FileExists> response) {
                 if (response.body() != null) {
                     if (response.body().getFileExist().equals("true")) {
+                        String[] str = file.getName().split("\\.");
                         Toast.makeText(mActivity, "服务器已有该文件", Toast.LENGTH_SHORT).show();
+                        msg = Message.obtain();
+                        msg.what = 2;
+                        msg.obj = urlrawpath = tv_dqbh.getText().toString() + "-" + str[0]+"."+str[1];
+                        msg.arg2 = listPosition;
+                        uiHandler.sendMessage(msg);
                     } else {
                         back.doThing();
 //                        if (file.length() > 70 * 1024 * 1024){
@@ -499,6 +537,7 @@ public class UploadFragment extends Fragment {
                     callBack.doThing();
                     String[] sts = file.getName().split("\\.");
                     if (response.body().getAvatar().equals(tv_dqbh.getText().toString() + "-" + sts[0] + "." + sts[1])) {
+                        t.setIsfinished(true);
                         ArrayList<File> files = FileUtils.getDirFilesForPrefix(file.getParent(), sts[0] + "." + sts[1] + ".");
                         for (File f : files) {
                             try {
@@ -507,7 +546,11 @@ public class UploadFragment extends Fragment {
                                 Log.e(TAG, "onResponse: " + e.toString());
                             }
                         }
-                        Toast.makeText(mActivity, "上传雷达数据成功" + response.body().getAvatar(), Toast.LENGTH_LONG).show();
+                        msg = Message.obtain();
+                        msg.what = 2;
+                        msg.obj = urlrawpath = response.body().getAvatar();
+                        msg.arg2 = listPosition;
+                        uiHandler.sendMessage(msg);
                     }
 
                 }
