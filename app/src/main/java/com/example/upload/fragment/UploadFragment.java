@@ -96,7 +96,7 @@ public class UploadFragment extends Fragment {
     private String uploadpath;
     private Button abtn_my_dialog_cancel;
     private Button abtn_my_dialog_upload;
-
+    private ImageButton ib_touch_show;
     private String user_token = null;
 
     private ThreadPoolExecutor threadPool;
@@ -335,6 +335,17 @@ public class UploadFragment extends Fragment {
         ib_login = view.findViewById(R.id.ib_login);
         lv_uploadfile = view.findViewById(R.id.lv_uploadCX);
         scaninfo = view.findViewById(R.id.scannerInfo);
+        ib_touch_show = view.findViewById(R.id.ib_touchShow);
+        ib_touch_show.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (scaninfo.getVisibility() == View.VISIBLE){
+                    scaninfo.setVisibility(View.GONE);
+                }else{
+                    scaninfo.setVisibility(View.VISIBLE);
+                }
+            }
+        });
         scaninfo.setVisibility(View.GONE);
         ((Button) scaninfo.findViewById(R.id.scan_btn_cancel)).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -467,6 +478,12 @@ public class UploadFragment extends Fragment {
         tv_dqwidth.setText(dangqiangKuan);
         tv_dqthk.setText(dangqiangHoudu);
         tv_dqloc.setText(dangqiangWeizhi);
+
+        ((TextView) scaninfo.findViewById(R.id.scan_tv_dqbh)).setText(dangqiangBianhao);
+        ((TextView) scaninfo.findViewById(R.id.scan_tv_dqtype)).setText(dangqiangLeixing);
+        ((TextView) scaninfo.findViewById(R.id.scan_tv_dqheight)).setText(dangqiangGao);
+        ((TextView) scaninfo.findViewById(R.id.scan_tv_dqwidth)).setText(dangqiangKuan);
+        ((TextView) scaninfo.findViewById(R.id.scan_tv_dqthk)).setText(dangqiangHoudu);
     }
 
     private void searchFile(GetRequestInterface getRequestInterface, String filename, String user_token, GetCallBack<String> back) {
