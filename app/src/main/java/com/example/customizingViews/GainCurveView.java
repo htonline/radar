@@ -72,10 +72,7 @@ public class GainCurveView extends View {
 
     public void setxRaw(float[] mxRaw) {
         this.xRaw = mxRaw;
-//		Log.d("---------", "beforeInvalidate");
         invalidate();
-
-//		Log.d("---------", "afterInvalidate");
         calculateGainData(xRaw);
 
         mUp.onUp(gainData, xRaw);

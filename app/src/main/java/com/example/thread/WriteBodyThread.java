@@ -1,6 +1,9 @@
 package com.example.thread;
 
 import android.util.Log;
+import android.widget.TextView;
+
+import com.example.interfaces.GetCallBack;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -13,7 +16,12 @@ public class WriteBodyThread extends Thread {
     public WriteBodyThread(RandomAccessFile raf, byte[] data){
         mraf = raf;
         mdata = data;
+    }
 
+    private GetCallBack getCallBack;
+
+    public void setGetCallBack(GetCallBack getCallBack) {
+        this.getCallBack = getCallBack;
     }
 
     @Override
@@ -21,6 +29,7 @@ public class WriteBodyThread extends Thread {
         try {
             if (mraf!=null){
                 mraf.write(mdata);
+                getCallBack.doThing();
             }
         } catch (IOException e) {
             e.printStackTrace();

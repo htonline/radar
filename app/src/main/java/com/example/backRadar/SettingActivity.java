@@ -19,6 +19,7 @@ import com.example.interfaces.CallBackBackgrdData;
 import com.example.interfaces.CallBackGainData;
 import com.example.ladarmonitor.NoneActivity;
 import com.example.ladarmonitor.R;
+import com.example.orders.HardwaregainOrders;
 import com.example.orders.MainPeremeterOrders;
 import com.example.orders.NormalOrders;
 
@@ -172,6 +173,10 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
     private CheckBox cb_gain = null;
     private CheckBox cb_backremove = null;
     private CheckBox cb_filter = null;
+
+
+    private Button btn_hardwaregain = null;
+
     //startActivityForResult
     public static final int FILE_RESULT_CODE = 1;
 
@@ -196,6 +201,8 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
     private int mHour;
     private int mMinute;
     private Calendar calendar = null;
+
+    private HardwaregainOrders hardwaregainorders = null;
 
     //判断文件是否存在
     File file = null;
@@ -253,6 +260,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 
                     if (tempGain == 1) {
                         colorGap = dataprocess.gainProcess(colorGap, gainData, coeGain, Const_NumberOfVerticalDatas);
+                        hardwaregainorders.send(gainData);
                     }
 
                     for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
@@ -457,7 +465,12 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
             }
         });
 
+        btn_hardwaregain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+            }
+        });
 //		et_serialNumberOfFile.setOnKeyListener(new OnKeyListener() {
 //
 //			@Override
@@ -1165,6 +1178,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         // TODO Auto-generated method stub
         MainActivity.readThread.setHandler(handlerOfColour);
         pOrders = new MainPeremeterOrders(MainActivity.ds);
+        hardwaregainorders = new HardwaregainOrders(MainActivity.ds);
         dataprocess = new Dataprocess();
         dataprocess.init();
         //刚进入SettingActivity发送开始参数设置命令的进程
@@ -1207,6 +1221,8 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 
         mcb_saveAno = findViewById(R.id.mcheckbox_saveRadarAnot);
         radioGroup = findViewById(R.id.radioGroup1);
+
+        btn_hardwaregain = findViewById(R.id.btn_hardwaregain);
 
 //		sp_oneWay.setEnabled(false);
 

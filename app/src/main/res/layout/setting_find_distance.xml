@@ -149,7 +149,6 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:imeOptions="flagNoExtractUi|flagNoFullscreen|actionDone"
-                        android:inputType="number"
                         android:textSize="@dimen/textSize" />
                 </LinearLayout>
                 <Button

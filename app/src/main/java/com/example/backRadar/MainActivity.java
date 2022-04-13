@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.example.interfaces.GetCallBack;
 import com.example.upload.MyDialogActivity;
 import com.example.customizingViews.ColoursView;
 import com.example.customizingViews.MyBatterView;
@@ -113,6 +114,8 @@ public class MainActivity extends Activity {
     private TextView tv_delay = null;
     private TextView tv_markNumber = null;
     private TextView tv_triigerMode = null;
+
+    private TextView tv_numSave = null;
 
     private static Dataprocess dataprocessMain = null;
     //	private TextView tv_numberOfLose=null;
@@ -224,7 +227,7 @@ public class MainActivity extends Activity {
     //记录当前数据是第几道
     private int numberOfLogo;
     //记录实际收到多少道数据
-    private int counterOfReal;
+    private volatile int counterOfReal=1;
 
     //点击两次退出程序，判断间隔时间
     private long firstTime = 0;
@@ -263,7 +266,15 @@ public class MainActivity extends Activity {
                         }
 //                    if (mrafRaw == null) Log.d(TAG, "handleMessage: !!!!!!!!!!!");
                         writeBodyThreadRaw = new WriteBodyThread(mrafRaw,Rwcolorgap);
-                        poolRaw.execute(writeBodyThreadRaw);
+                        writeBodyThreadRaw.setGetCallBack(new GetCallBack() {
+                            @Override
+                            public void doThing() {
+                                GetCallBack.super.doThing();
+                            }
+                        });
+                        if (IfSaveTheRadar==1){
+                            poolRaw.execute(writeBodyThreadRaw);
+                        }
 //                    writeThread.setRwcolorgap(Rwcolorgap);
                         battery = reciveData[512];
 //                    Log.d(TAG, "handleMessage:  --> battery --> "+battery);
@@ -323,6 +334,19 @@ public class MainActivity extends Activity {
 //                    writeThread.setJudgeNumber(3);
 //                    writeThread.setJudgeIfRepeat(true);
                         writeBodyThread = new WriteBodyThread(mrafColor,colorgap);
+                        writeBodyThread.setGetCallBack(new GetCallBack() {
+                            @Override
+                            public void doThing() {
+//                                Log.d(TAG, "doThing:  -------");
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        counterOfReal+=1;
+                                        tv_numSave.setText(""+counterOfReal);
+                                    }
+                                });
+                            }
+                        });
                         pool.execute(writeBodyThread);
                         tv_numberOfReceive.setText(msg.arg2 + "");
                         lFragment.drawNewVertical(colorList);
@@ -451,8 +475,8 @@ public class MainActivity extends Activity {
                                     } catch (IOException e) {
                                         // TODO Auto-generated catch block
                                         e.printStackTrace();
+                                        Toast.makeText(MainActivity.this, "覆盖失败", Toast.LENGTH_LONG).show();
                                     }
-                                    Toast.makeText(MainActivity.this, "覆盖成功，开始采集！", Toast.LENGTH_LONG).show();
                                 }
                             }
                             if (IfSaveTheRadar==1&&file_copy.exists() && file_copy.isFile()) {
@@ -462,8 +486,8 @@ public class MainActivity extends Activity {
                                     } catch (IOException e) {
                                         // TODO Auto-generated catch block
                                         e.printStackTrace();
+                                        Toast.makeText(MainActivity.this, "覆盖失败", Toast.LENGTH_LONG).show();
                                     }
-                                    Toast.makeText(MainActivity.this, "覆盖成功，开始采集！", Toast.LENGTH_LONG).show();
                                 }
                             }
 
@@ -481,7 +505,16 @@ public class MainActivity extends Activity {
                                 fTransaction.commit();
                                 lFragment.drawLines(Integer.parseInt(mainPeremeterOrders.getString("timeWindow", "1")));
                             }
-
+                            try {
+                                mrafColor = new RandomAccessFile(tv_path.getText().toString(), "rw");
+                                pool = Executors.newFixedThreadPool(1);//建立一个无界队列的线程池
+                                if (IfSaveTheRadar==1){
+                                    mrafRaw = new RandomAccessFile(tv_path.getText().toString()+"-copy","rw");
+                                    poolRaw = Executors.newFixedThreadPool(1);
+                                }
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                            }
                             //偶数发送基数暂停
                             //第一次点击读取数据线程启动，同时发送命令给下位机开始采集数据
                             if (counter == 0) {
@@ -499,6 +532,8 @@ public class MainActivity extends Activity {
                                 readThread.setNumberOfReceive(0);
                                 //可以打标
                                 btn_mark.setEnabled(true);
+                                counterOfReal = 0;
+                                tv_numberOfReceive.setText(""+0);//收包数量置空
                                 new Thread(new Runnable() {
 
                                     @Override
@@ -590,6 +625,8 @@ public class MainActivity extends Activity {
                         readThread.setNumberOfReceive(0);
                         //可以打标
                         btn_mark.setEnabled(true);
+                        counterOfReal = 0;
+                        tv_numberOfReceive.setText(""+0);//收包数量置空
                         new Thread(new Runnable() {
 
                             @Override
@@ -701,7 +738,8 @@ public class MainActivity extends Activity {
         myBatterView = findViewById(R.id.MyBatterView);
 //        tv_numofSave = findViewById(R.id.tv_numofSave);
         met_radarName = findViewById(R.id.et_radarName);
-
+        tv_numSave = findViewById(R.id.tv_numOfSave);
+        tv_numSave.setText(""+0);
         if (mainPeremeterOrders.getInt("triggerMode",0) == 0){
             tv_triigerMode.setText("时间");
         }else{
@@ -867,8 +905,9 @@ public class MainActivity extends Activity {
         counter = 0;
         //打标数归零
         markNumber = 0;
+
         tv_markNumber.setText(markNumber + "");
-        tv_numberOfReceive.setText(""+0);//收包数量置空
+
         //判断是否点击开始暂停按钮置0
         clickOrNot = 0;
 //        writeThread.setTrace_num(Integer.parseInt(tv_numberOfReceive.getText().toString()));
