@@ -1,6 +1,8 @@
 package com.example.backRadar;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.app.AlertDialog;
@@ -204,6 +207,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 
     private HardwaregainOrders hardwaregainorders = null;
 
+//    private FileOutputStream outputStream;
     //判断文件是否存在
     File file = null;
     File file_copy = null;
@@ -309,7 +313,19 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         }
         checkPermission();
 
-
+//        try {
+//            File file = new File(Environment.getExternalStorageDirectory(),"apack/filetest");
+//            if (!file.exists()){
+//                try {
+//                    file.createNewFile();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            outputStream = new FileOutputStream(file);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
         msettingActivityPresenter = new SettingActivityPresenter(this);
 
         rb_fillingfilter.setOnCheckedChangeListener(radiochecklistener);
@@ -1097,45 +1113,45 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         et_m_high_f.setText(highf + "");
         et_m_low_f.setText(lowf + "");
 
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                // TODO Auto-generated method stub
-                nOrders = new NormalOrders();
-                //发送开始设置命令
-                while (true) {
-                    if (MainActivity.readThread.getJudge_startSetting() != 0) {
-                        MainActivity.readThread.setJudge_startSetting(0);
-                        break;
-                    } else {
-                        try {
-                            nOrders.send(startSetting, MainActivity.ds);
-                            Thread.sleep(100);
-                        } catch (Exception e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                    }
-                }
-
-                //发送设置参数
-                try {
-                    pOrders.setTriggerMode(0);
-                    pOrders.setTriggerDirection(-1);
-                    pOrders.setTriggerpulsenum((byte) 20);
-//						pOrders.setFilename("file1.raw".getBytes());
-                    pOrders.setTriggerdistance(2);
-                    pOrders.setM_time_wnd(Short.parseShort(et_timeWindow.getText().toString()));
-                    pOrders.setDelay_time_DELAY(Short.parseShort(et_delay.getText().toString()));
-                    Log.d(TAG, "run:  -- TriggerMode:"+pOrders.getTriggerMode()+"  Direction:"+pOrders.getTriggerDirection());
-                    pOrders.send();
-                } catch (Exception e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                // TODO Auto-generated method stub
+//                nOrders = new NormalOrders();
+//                //发送开始设置命令
+//                while (true) {
+//                    if (MainActivity.readThread.getJudge_startSetting() != 0) {
+//                        MainActivity.readThread.setJudge_startSetting(0);
+//                        break;
+//                    } else {
+//                        try {
+//                            nOrders.send(startSetting, MainActivity.ds);
+//                            Thread.sleep(100);
+//                        } catch (Exception e) {
+//                            // TODO Auto-generated catch block
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
+//
+//                //发送设置参数
+//                try {
+//                    pOrders.setTriggerMode(0);
+//                    pOrders.setTriggerDirection(-1);
+//                    pOrders.setTriggerpulsenum((byte) 20);
+////						pOrders.setFilename("file1.raw".getBytes());
+//                    pOrders.setTriggerdistance(2);
+//                    pOrders.setM_time_wnd(Short.parseShort(et_timeWindow.getText().toString()));
+//                    pOrders.setDelay_time_DELAY(Short.parseShort(et_delay.getText().toString()));
+//                    Log.d(TAG, "run:  -- TriggerMode:"+pOrders.getTriggerMode()+"  Direction:"+pOrders.getTriggerDirection());
+//                    pOrders.send();
+//                } catch (Exception e1) {
+//                    // TODO Auto-generated catch block
+//                    e1.printStackTrace();
+//                }
+//            }
+//        }).start();
 
 
     }
@@ -2232,6 +2248,11 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
             @Override
             public void run() {
                 Log.d(TAG, "run:  -- TriggerMode:"+pOrders.getTriggerMode()+"  Direction:"+pOrders.getTriggerDirection());
+//                try {
+//                    outputStream.write(pOrders.getBuf());
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
                 pOrders.send();
             }
         }).start();
@@ -2266,7 +2287,6 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 
             @Override
             public void run() {
-                Log.d(TAG, "run:  -- TriggerMode:"+pOrders.getTriggerMode()+"  Direction:"+pOrders.getTriggerDirection());
                 // TODO Auto-generated method stub
                 pOrders.send();
             }
