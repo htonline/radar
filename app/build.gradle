@@ -56,7 +56,11 @@ android {
                 outputFileName = "无线地质雷达采集系统_${variant.name}_v${variant.versionName}.apk"
             }
     }
-
+    signingConfigs{
+        debug{
+            v2SigningEnabled false;
+        }
+    }
 
 }
 

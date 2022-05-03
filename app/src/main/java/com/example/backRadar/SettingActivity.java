@@ -207,7 +207,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 
     private HardwaregainOrders hardwaregainorders = null;
 
-//    private FileOutputStream outputStream;
+    //    private FileOutputStream outputStream;
     //判断文件是否存在
     File file = null;
     File file_copy = null;
@@ -1078,7 +1078,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
                         public void run() {
                             // TODO Auto-generated method stub
                             try {
-                                Log.d(TAG, "run:  -- TriggerMode:"+pOrders.getTriggerMode()+"  Direction:"+pOrders.getTriggerDirection());
+                                Log.d(TAG, "run:  -- TriggerMode:" + pOrders.getTriggerMode() + "  Direction:" + pOrders.getTriggerDirection());
                                 pOrders.send();
                             } catch (Exception e) {
                                 // TODO Auto-generated catch block
@@ -1113,27 +1113,45 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         et_m_high_f.setText(highf + "");
         et_m_low_f.setText(lowf + "");
 
-//        new Thread(new Runnable() {
-//
-//            @Override
-//            public void run() {
-//                // TODO Auto-generated method stub
-//                nOrders = new NormalOrders();
-//                //发送开始设置命令
-//                while (true) {
-//                    if (MainActivity.readThread.getJudge_startSetting() != 0) {
-//                        MainActivity.readThread.setJudge_startSetting(0);
-//                        break;
-//                    } else {
-//                        try {
-//                            nOrders.send(startSetting, MainActivity.ds);
-//                            Thread.sleep(100);
-//                        } catch (Exception e) {
-//                            // TODO Auto-generated catch block
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                nOrders = new NormalOrders();
+                //发送开始设置命令
+                while (true) {
+                    if (MainActivity.readThread.getJudge_startSetting() != 0) {
+                        MainActivity.readThread.setJudge_startSetting(0);
+                        break;
+                    } else {
+                        try {
+                            nOrders.send(startSetting, MainActivity.ds);
+                            Thread.sleep(100);
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                //                //发送设置参数0
+                try {
+                    pOrders.setTriggerMode(0);
+                    pOrders.setTriggerDirection(-1);
+                    pOrders.setTriggerpulsenum((byte) 20);
+//						pOrders.setFilename("file1.raw".getBytes());
+                    pOrders.setTriggerdistance(2);
+                    pOrders.setM_time_wnd(Short.parseShort(et_timeWindow.getText().toString()));
+                    pOrders.setDelay_time_DELAY(Short.parseShort(et_delay.getText().toString()));
+                    Log.d(TAG, "run:  -- TriggerMode:" + pOrders.getTriggerMode() + "  Direction:" + pOrders.getTriggerDirection());
+                    pOrders.send();
+                } catch (Exception e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+            }
+        }).start();
+
 //
 //                //发送设置参数
 //                try {
@@ -1426,7 +1444,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
           mainPeremeterOrdersEditor.putString("singleDistance",et_singleDistance.getText().toString());
           mainPeremeterOrdersEditor.putString("samplingInterval",et_samplingInterval.getText().toString());
         * */
-        Log.d(TAG, "init: ----- "+mainPeremeterOrders.getString("numberOfPulse", "20"));
+        Log.d(TAG, "init: ----- " + mainPeremeterOrders.getString("numberOfPulse", "20"));
         et_numberOfPulse.setText(mainPeremeterOrders.getString("numberOfPulse", "20"));
         et_singlePulse.setText(mainPeremeterOrders.getString("singlePulse", "500"));
         et_singleDistance.setText(mainPeremeterOrders.getString("singleDistance", "0.3"));
@@ -1595,16 +1613,16 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         if (tv_settingPath.getText().toString().length() < 3) {
             Toast.makeText(this, "路径不能为空", Toast.LENGTH_SHORT).show();
         } else {
-            if (!rd_timing.isChecked()){
-                if (rd_oneWay.isChecked()){
+            if (!rd_timing.isChecked()) {
+                if (rd_oneWay.isChecked()) {
                     openTheWheel(0);
-                }else if (rd_twoWays.isChecked()){
+                } else if (rd_twoWays.isChecked()) {
                     openTheWheel(1);
                 }
                 sendTripNum(et_numberOfPulse.getText().toString());
-                mainPeremeterOrdersEditor.putInt("triggerMode",1);
-            }else{
-                mainPeremeterOrdersEditor.putInt("triggerMode",0);
+                mainPeremeterOrdersEditor.putInt("triggerMode", 1);
+            } else {
+                mainPeremeterOrdersEditor.putInt("triggerMode", 0);
             }
             path = tv_settingPath.getText().toString();
             file = new File(path + "/" + tv_storeFile.getText().toString());
@@ -1716,11 +1734,11 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 
 //
 
-                        try{
+                        try {
                             MainActivity.writeHeadThread.setSample_wnd(Integer.parseInt(et_timeWindow.getText().toString()));
                             MainActivity.writeHeadThread.setTimedelay(Short.parseShort(et_delay.getText().toString()));
-                        }catch (Exception e){
-                            Toast.makeText(SettingActivity.this,"写入模块未正确初始化！",Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                            Toast.makeText(SettingActivity.this, "写入模块未正确初始化！", Toast.LENGTH_SHORT).show();
                         }
 
 
@@ -2247,7 +2265,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "run:  -- TriggerMode:"+pOrders.getTriggerMode()+"  Direction:"+pOrders.getTriggerDirection());
+                Log.d(TAG, "run:  -- TriggerMode:" + pOrders.getTriggerMode() + "  Direction:" + pOrders.getTriggerDirection());
 //                try {
 //                    outputStream.write(pOrders.getBuf());
 //                } catch (IOException e) {
@@ -2258,9 +2276,10 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         }).start();
     }
 
-    private void openTheWheel(){
+    private void openTheWheel() {
         openTheWheel(0);
     }
+
     private void openTheWheel(int num) {
         rd_oneWay.setEnabled(true);
         rd_twoWays.setEnabled(true);
@@ -2273,16 +2292,16 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 //                et_samplingInterval.setEnabled(true);
 
         //默认选中单向触发
-        if (num == 0){
+        if (num == 0) {
             rd_oneWay.setChecked(true);
             rd_twoWays.setChecked(false);
-        }else{
+        } else {
             rd_oneWay.setChecked(false);
             rd_twoWays.setChecked(true);
         }
 
         pOrders.setTriggerDirection(num);
-        mainPeremeterOrdersEditor.putInt("isWheel", num+1);//0-定时器，1-单向，2-双向
+        mainPeremeterOrdersEditor.putInt("isWheel", num + 1);//0-定时器，1-单向，2-双向
         new Thread(new Runnable() {
 
             @Override

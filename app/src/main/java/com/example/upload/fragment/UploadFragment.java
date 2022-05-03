@@ -728,18 +728,20 @@ public class UploadFragment extends Fragment {
             case TO_SCAN_RESULT:
                 if (resultCode == mActivity.RESULT_OK) {
                     String result = data.getStringExtra(CaptureActivity.EXTRA_STRING);
-                    JSONObject jsonObj = JSON.parseObject(result);
-                    dangqiangId = jsonObj.getString("dangqiangId");
-                    dangqiangBianhao = jsonObj.getString("dangqiangBianhao");
-                    dangqiangLeixing = jsonObj.getString("dangqiangLeixing");
-                    dangqiangGao = jsonObj.getString("dangqiangGao");
-                    dangqiangKuan = jsonObj.getString("dangqiangKuan");
-                    dangqiangHoudu = jsonObj.getString("dangqiangHoudu");
-                    cexianBianhao = jsonObj.getString("cexianBianhao");
-                    cexianFangxiang = jsonObj.getString("cexianFangxiang");
-                    cexianQidian = jsonObj.getString("cexianQidian");
-                    cexianZhongdian = jsonObj.getString("cexianZhongdian");
-                    dangqiangWeizhi = jsonObj.getString("dangqiangWeizhi");
+                    JSONObject jsonObj = null;
+                    try{
+                        jsonObj = JSON.parseObject(result);
+                        dangqiangId = jsonObj.getString("dangqiangId");
+                        dangqiangBianhao = jsonObj.getString("dangqiangBianhao");
+                        dangqiangLeixing = jsonObj.getString("dangqiangLeixing");
+                        dangqiangGao = jsonObj.getString("dangqiangGao");
+                        dangqiangKuan = jsonObj.getString("dangqiangKuan");
+                        dangqiangHoudu = jsonObj.getString("dangqiangHoudu");
+                        cexianBianhao = jsonObj.getString("cexianBianhao");
+                        cexianFangxiang = jsonObj.getString("cexianFangxiang");
+                        cexianQidian = jsonObj.getString("cexianQidian");
+                        cexianZhongdian = jsonObj.getString("cexianZhongdian");
+                        dangqiangWeizhi = jsonObj.getString("dangqiangWeizhi");
 //                    wall.setDangqiangWeizhi(dangqiangWeizhi);
 //                    wall.setDangqiangBianhao(dangqiangBianhao);
 //                    wall.setDangqiangLeixing(dangqiangLeixing);
@@ -752,31 +754,35 @@ public class UploadFragment extends Fragment {
 //                    wall.setCexianZhongdian(cexianZhongdian);
 
 //                    tv_dqid.setText(dangqiangId);
-                    tv_dqbh.setText(dangqiangBianhao);
-                    tv_dqtype.setText(dangqiangLeixing);
-                    tv_dqheight.setText(dangqiangGao);
-                    tv_dqwidth.setText(dangqiangKuan);
-                    tv_dqthk.setText(dangqiangHoudu);
+                        tv_dqbh.setText(dangqiangBianhao);
+                        tv_dqtype.setText(dangqiangLeixing);
+                        tv_dqheight.setText(dangqiangGao);
+                        tv_dqwidth.setText(dangqiangKuan);
+                        tv_dqthk.setText(dangqiangHoudu);
 //                    tv_cxbh.setText(cexianBianhao);
 //                    tv_cxorient.setText(cexianFangxiang);
 //                    tv_cxstart.setText(cexianQidian);
 //                    tv_cxstop.setText(cexianZhongdian);
-                    tv_dqloc.setText(dangqiangWeizhi);
+                        tv_dqloc.setText(dangqiangWeizhi);
 
-                    mainPreferenceEditor.putString("dqbh", dangqiangBianhao);
-                    mainPreferenceEditor.putString("dqtype", dangqiangLeixing);
-                    mainPreferenceEditor.putString("dqheight", dangqiangGao);
-                    mainPreferenceEditor.putString("dqwidth", dangqiangKuan);
-                    mainPreferenceEditor.putString("dqthk", dangqiangHoudu);
-                    mainPreferenceEditor.putString("dqloc", dangqiangWeizhi);
-                    mainPreferenceEditor.apply();
-                    scaninfo.setVisibility(View.VISIBLE);
-                    ((TextView) scaninfo.findViewById(R.id.scan_tv_dqbh)).setText(dangqiangBianhao);
-                    ((TextView) scaninfo.findViewById(R.id.scan_tv_dqtype)).setText(dangqiangLeixing);
-                    ((TextView) scaninfo.findViewById(R.id.scan_tv_dqheight)).setText(dangqiangGao);
-                    ((TextView) scaninfo.findViewById(R.id.scan_tv_dqwidth)).setText(dangqiangKuan);
-                    ((TextView) scaninfo.findViewById(R.id.scan_tv_dqthk)).setText(dangqiangHoudu);
-
+                        mainPreferenceEditor.putString("dqbh", dangqiangBianhao);
+                        mainPreferenceEditor.putString("dqtype", dangqiangLeixing);
+                        mainPreferenceEditor.putString("dqheight", dangqiangGao);
+                        mainPreferenceEditor.putString("dqwidth", dangqiangKuan);
+                        mainPreferenceEditor.putString("dqthk", dangqiangHoudu);
+                        mainPreferenceEditor.putString("dqloc", dangqiangWeizhi);
+                        mainPreferenceEditor.apply();
+                        scaninfo.setVisibility(View.VISIBLE);
+                        ((TextView) scaninfo.findViewById(R.id.scan_tv_dqbh)).setText(dangqiangBianhao);
+                        ((TextView) scaninfo.findViewById(R.id.scan_tv_dqtype)).setText(dangqiangLeixing);
+                        ((TextView) scaninfo.findViewById(R.id.scan_tv_dqheight)).setText(dangqiangGao);
+                        ((TextView) scaninfo.findViewById(R.id.scan_tv_dqwidth)).setText(dangqiangKuan);
+                        ((TextView) scaninfo.findViewById(R.id.scan_tv_dqthk)).setText(dangqiangHoudu);
+                    }catch (Exception e){
+                        Log.d(TAG, "error "+e);
+                        Toast.makeText(mActivity,"请扫描正确二维码",Toast.LENGTH_SHORT).show();
+                        break;
+                    }
                 }
                 break;
             default:

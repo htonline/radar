@@ -517,7 +517,7 @@
     </LinearLayout>
     <FrameLayout
         android:layout_gravity="center"
-        android:background="#fff"
+        android:background="#efe2c1"
         android:id="@+id/scannerInfo"
         android:layout_width="@dimen/mydialogScanWidth"
         android:layout_height="@dimen/mydialogScanHeight">
