@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.example.entity.Wall;
+import com.example.upload.utils.FileUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,7 +48,7 @@ public class OkHttpTools {
         json.put("beizhu",wall.getBeizhu());
         RequestBody formBody = RequestBody.create(JSON, String.valueOf(json));
         Request request = new Request.Builder()
-                .url("http://39.105.125.51:8001/api/phoneOperate/addJianceData")
+                .url(FileUtils.IP+"api/phoneOperate/addJianceData")
                 .addHeader("Authorization",wall.getToken())
                 .post(formBody)
                 .build();

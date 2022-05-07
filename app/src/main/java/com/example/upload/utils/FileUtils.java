@@ -3,6 +3,7 @@ package com.example.upload.utils;
 import android.util.Log;
 
 import java.io.*;
+import java.security.MessageDigest;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -15,6 +16,7 @@ import java.util.concurrent.*;
  *
  */
 public class FileUtils {
+    public static final String IP = "http://192.168.3.117:8013/";
     private static final String TAG = "FileUtils";
     /**
      * 当前目录路径
@@ -38,7 +40,6 @@ public class FileUtils {
         char[] src = str.toCharArray();
         System.arraycopy(src, 0, chs, length - src.length, src.length);
         return new String(chs);
-
     }
 
     /**
@@ -234,7 +235,7 @@ public class FileUtils {
      * @return 拆分后的文件名列表
      * @throws IOException
      */
-    public List<String> splitBySize(File file, int byteSize)
+    public List<String> splitBySize(File file, int byteSize,String path)
             throws IOException {
         List<String> parts = new ArrayList<String>();
         int count = (int) Math.ceil(file.length() / (double) byteSize);
@@ -248,8 +249,8 @@ public class FileUtils {
             String partFileName = file.getName() + "."
                     + leftPad((i + 1) + "", countLen, '0') + "."+ sumcount+".part";
             threadPool.execute(new SplitRunnable(byteSize, (long)i * (long)byteSize,
-                    partFileName, file));
-            parts.add(file.getParent() +"/"+partFileName);
+                    partFileName, file,path));
+            parts.add(path +"/"+partFileName);
         }
         while (threadPool.getActiveCount() != 0){
             try {
@@ -330,13 +331,15 @@ public class FileUtils {
         String partFileName;
         File originFile;
         long startPos;
+        String path;
 
         public SplitRunnable(int byteSize, long startPos, String partFileName,
-                             File originFile) {
+                             File originFile,String path) {
             this.startPos = startPos;
             this.byteSize = byteSize;
             this.partFileName = partFileName;
             this.originFile = originFile;
+            this.path = path;
         }
 
         public void run() {
@@ -344,7 +347,7 @@ public class FileUtils {
             OutputStream os;
             try {
                 rFile = new RandomAccessFile(originFile, "r");
-                partFileName = originFile.getParent() +"/"+partFileName;
+                partFileName = path +"/"+partFileName;
                 byte[] b = new byte[byteSize];
                 rFile.seek(startPos);// 移动指针到每“段”开头
                 int s = rFile.read(b);
@@ -390,6 +393,64 @@ public class FileUtils {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static Boolean deleteFile(File file) {
+        //判断文件不为null或文件目录存在
+        if (file == null || !file.exists()) {
+            return false;
+        }
+        File[] files = file.listFiles();
+        for (File f : files) {
+            if (f.isDirectory()) {
+                deleteFile(f);
+            } else {
+                f.delete();
+            }
+        }
+        file.delete();
+        return true;
+    }
+
+    public static byte[] getByte(File file) throws IOException {
+        // 得到文件长度
+        byte[] b = new byte[(int) file.length()];
+        InputStream in = null;
+        try {
+            in = new FileInputStream(file);
+            try {
+                System.out.println(in.read(b));
+            } catch (IOException e) {
+
+            }
+        } catch (Exception e) {
+
+            return null;
+        } finally {
+            in.close();
+        }
+        return b;
+    }
+    public static String getMd5(byte[] bytes) {
+        // 16进制字符
+        char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+        try {
+            MessageDigest mdTemp = MessageDigest.getInstance("MD5");
+            mdTemp.update(bytes);
+            byte[] md = mdTemp.digest();
+            int j = md.length;
+            char[] str = new char[j * 2];
+            int k = 0;
+            // 移位 输出字符串
+            for (byte byte0 : md) {
+                str[k++] = hexDigits[byte0 >>> 4 & 0xf];
+                str[k++] = hexDigits[byte0 & 0xf];
+            }
+            return new String(str);
+        } catch (Exception e) {
+
+        }
+        return null;
     }
 
 }

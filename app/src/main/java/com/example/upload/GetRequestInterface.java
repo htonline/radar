@@ -4,6 +4,7 @@ import android.util.ArrayMap;
 
 import com.example.upload.convertor.UpLoadFileType;
 import com.example.upload.entity.FileExists;
+import com.example.upload.entity.FileMdRes;
 import com.example.upload.entity.UpFilePath;
 import com.example.upload.entity.UserInfoLogin;
 import com.example.upload.entity.Userinfo;
@@ -23,18 +24,21 @@ import retrofit2.http.POST;
 import retrofit2.http.Part;
 
 public interface GetRequestInterface {
-    @POST("auth/phonelogin")
+    @POST("auth/loginByNoCode")
     Call<UserInfoLogin> getUserInfo(@Body RequestBody userinfo);
 
     @UpLoadFileType
-    @POST("api/phoneOperate/updateWenjian")
+    @POST("api/upload/updateFile")
     Observable<Object> upLoadOneFile(@Body ArrayMap<String, Object> params, @Header("Authorization") String token);
 
     @Multipart
-    @POST("api/phoneOperate/updateWenjianBySplit")
+    @POST("api/upload/updateFileBySplit")
     Call<UpFilePath> uploadOneFileBySplit(@Part MultipartBody.Part file, @Header("Authorization") String token);
 
     @POST("api/phoneOperate/searchFile")
     Call<FileExists> getFileExists(@Body RequestBody filename, @Header("Authorization") String token);
+
+    @POST("api/upload/verifyFile")
+    Call<FileMdRes> verifyFile(@Body RequestBody filemd5, @Header("Authorization") String token);
 
 }

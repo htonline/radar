@@ -37,6 +37,7 @@ import com.example.upload.convertor.FileConverterFactory;
 import com.example.upload.entity.UpFilePath;
 import com.example.upload.entity.UserInfoLogin;
 import com.example.upload.up.LoadCallBack;
+import com.example.upload.utils.FileUtils;
 import com.google.gson.Gson;
 
 import java.io.File;
@@ -303,7 +304,7 @@ public class UploadNoQrCodeFragment extends Fragment {
                 .addConverterFactory(new FileConverterFactory())
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
-                .baseUrl("http://39.105.125.51:8001/")
+                .baseUrl(FileUtils.IP)
                 .build();
         GetRequestInterface loadService = retrofit.create(GetRequestInterface.class);
         Observable.merge(Observable.create(loadOnSubscribe), loadService.upLoadOneFile(params,user_token))

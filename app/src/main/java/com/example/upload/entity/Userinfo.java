@@ -8,9 +8,16 @@ public class Userinfo {
     private String username;
     @SerializedName("password")
     private String password;
+    @SerializedName("code")
+    private String code;
+    @SerializedName("uuid")
+    private String uuid = "";
+
     public Userinfo(String name, String pwd){
         username = name;
         password = pwd;
+        code = "";
+        uuid = "";
     }
     public String getUsername() {
         return username;

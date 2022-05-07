@@ -92,9 +92,5 @@ public class ShowProgressThread extends Thread{
                 startnum += 1;
             }
         }
-        msg = Message.obtain();
-        msg.what = 2;
-        msg.arg2 = (int) position;
-        handler.sendMessage(msg);
     }
 }

@@ -48,6 +48,8 @@ import com.example.upload.UpLoadFileListAdapter;
 import com.example.upload.convertor.FileConverterFactory;
 import com.example.upload.entity.FileExists;
 import com.example.upload.entity.FileInfo;
+import com.example.upload.entity.FileMd5;
+import com.example.upload.entity.FileMdRes;
 import com.example.upload.entity.UpFilePath;
 import com.example.upload.entity.UpLoadFileInfo;
 import com.example.upload.entity.UserInfoLogin;
@@ -60,6 +62,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -221,7 +224,7 @@ public class UploadFragment extends Fragment {
         mainPreferences = mActivity.getSharedPreferences("uploadfrgInfo", 0);
         mainPreferenceEditor = mainPreferences.edit();
         mretrofit = new Retrofit.Builder()
-                .baseUrl("http://39.105.125.51:8001/")
+                .baseUrl(FileUtils.IP)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         mgetRequestInterface = mretrofit.create(GetRequestInterface.class);
@@ -253,23 +256,29 @@ public class UploadFragment extends Fragment {
                     if (user_token == "") {
                         Toast.makeText(getActivity(), "请先登录", Toast.LENGTH_SHORT).show();
                     } else {
-                        File file = new File(urlString);
-                        if (file.length() > 70 * 1024 * 1024) {
-                            FileUtils utils = new FileUtils();
-                            try {
-                                List<String> files = utils.splitBySize(file, 60 * 1024 * 1024);
-                                searchToUpFile(0, files.size() - 1, files);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            searchFile(mgetRequestInterface, file.getName(), user_token, new GetCallBack() {
-                                @Override
-                                public void doThing() {
-                                    uploadOneFile(file, user_token);
-                                }
-                            });
-                        }
+                        searchFile(mgetRequestInterface, urlString, user_token);
+//                        if (file.length() > 70 * 1024 * 1024) {
+//                            File filepath = new File(file.getName()+"_");
+//                            List<String> files = new ArrayList<>();
+//                            if (filepath.exists() && filepath.isDirectory()){
+//                                files = Arrays.asList(filepath.list());
+//                            }else {
+//                                FileUtils utils = new FileUtils();
+//                                try {
+//                                    files = utils.splitBySize(file, 20 * 1024 * 1024,filepath.getAbsolutePath());
+//                                } catch (IOException e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//                            searchToUpFile(0, files.size() - 1, files);
+//                        } else {
+//                            searchFile(mgetRequestInterface, file.getName(), user_token, new GetCallBack() {
+//                                @Override
+//                                public void doThing() {
+//                                    uploadOneFile(file, user_token);
+//                                }
+//                            });
+//                        }
                     }
                 }
             }
@@ -289,20 +298,20 @@ public class UploadFragment extends Fragment {
         if (start > stop) {
             return;
         }
-        searchFile(mgetRequestInterface, files.get(start), user_token, new GetCallBack() {
+//        searchFile(mgetRequestInterface, files.get(start), user_token, new GetCallBack() {
+//            @Override
+//            public void doThing() {
+        t = new ShowProgressThread(listPosition, start, stop,
+                false, 100, adapter, mfileInfos, uiHandler);
+        t.start();
+        uploadFileBySplit(mgetRequestInterface, new File(files.get(start)), user_token, new GetCallBack() {
             @Override
             public void doThing() {
-                t = new ShowProgressThread(listPosition, start, stop,
-                        false, 100, adapter, mfileInfos, uiHandler);
-                t.start();
-                uploadFileBySplit(mgetRequestInterface, new File(files.get(start)), user_token, new GetCallBack() {
-                    @Override
-                    public void doThing() {
-                        searchToUpFile(start + 1, stop, files);
-                    }
-                });
+                searchToUpFile(start + 1, stop, files);
             }
         });
+//            }
+//        });
     }
 
     @Nullable
@@ -339,9 +348,9 @@ public class UploadFragment extends Fragment {
         ib_touch_show.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (scaninfo.getVisibility() == View.VISIBLE){
+                if (scaninfo.getVisibility() == View.VISIBLE) {
                     scaninfo.setVisibility(View.GONE);
-                }else{
+                } else {
                     scaninfo.setVisibility(View.VISIBLE);
                 }
             }
@@ -486,27 +495,54 @@ public class UploadFragment extends Fragment {
         ((TextView) scaninfo.findViewById(R.id.scan_tv_dqthk)).setText(dangqiangHoudu);
     }
 
-    private void searchFile(GetRequestInterface getRequestInterface, String filename, String user_token, GetCallBack<String> back) {
-        FileInfo info = new FileInfo();
+    private void searchFile(GetRequestInterface getRequestInterface, String filename, String user_token) {
+        FileMd5 md5 = new FileMd5();
         File file = new File(filename);
-        info.setFilename(tv_dqbh.getText().toString() + "-" + file.getName());
+        md5.setFilename(tv_dqbh.getText().toString() + "-" + file.getName());
+        try {
+            md5.setMd5("");//FileUtils.getMd5(FileUtils.getByte(file)
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        md5.setLen(file.length());
         Gson gson = new Gson();
-        RequestBody body = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), gson.toJson(info));
-        Call<FileExists> call = getRequestInterface.getFileExists(body, user_token);
-        call.enqueue(new Callback<FileExists>() {
+        RequestBody body = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), gson.toJson(md5));
+        Call<FileMdRes> call = getRequestInterface.verifyFile(body, user_token);
+        call.enqueue(new Callback<FileMdRes>() {
             @Override
-            public void onResponse(Call<FileExists> call, Response<FileExists> response) {
+            public void onResponse(Call<FileMdRes> call, Response<FileMdRes> response) {
                 if (response.body() != null) {
-                    if (response.body().getFileExist().equals("true")) {
+                    if (response.body().getExits().equals("file")) {
                         String[] str = file.getName().split("\\.");
                         Toast.makeText(mActivity, "服务器已有该文件", Toast.LENGTH_SHORT).show();
                         msg = Message.obtain();
                         msg.what = 2;
-                        msg.obj = urlrawpath = tv_dqbh.getText().toString() + "-" + str[0]+"."+str[1];
+                        msg.obj = urlrawpath = tv_dqbh.getText().toString() + "-" + str[0] + "." + str[1];
                         msg.arg2 = listPosition;
                         uiHandler.sendMessage(msg);
                     } else {
-                        back.doThing();
+                        Toast.makeText(mActivity,"正在上传",Toast.LENGTH_SHORT).show();
+                        if (file.length() > 70 * 1024 * 1024) {
+                            File filepath = new File(file.getParent()+"/"+file.getName() + "_");
+                            List<String> files = new ArrayList<>();
+                            if (filepath.exists() && filepath.isDirectory()) {
+                                File[] files1 = filepath.listFiles();
+                                for (File f : files1){
+                                    files.add(f.getAbsolutePath());
+                                }
+                            } else {
+                                filepath.mkdir();
+                                FileUtils utils = new FileUtils();
+                                try {
+                                    files = utils.splitBySize(file, 20 * 1024 * 1024, filepath.getAbsolutePath());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            searchToUpFile(Integer.parseInt(response.body().getCount()), files.size()-1, files);
+                        } else {
+                            uploadOneFile(file,user_token);
+                        }
 //                        if (file.length() > 70 * 1024 * 1024){
 //                            uploadFileBySplit(getRequestInterface,file,user_token);
 //                        }else {
@@ -518,7 +554,7 @@ public class UploadFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<FileExists> call, Throwable t) {
+            public void onFailure(Call<FileMdRes> call, Throwable t) {
                 Toast.makeText(mActivity, "校验文件错误！:" + t.toString(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -533,7 +569,7 @@ public class UploadFragment extends Fragment {
 //                .addInterceptor(getHeader())
                 .addNetworkInterceptor(getResponseIntercept()).build();
         mretrofit = new Retrofit.Builder()
-                .baseUrl("http://39.105.125.51:8001/")
+                .baseUrl(FileUtils.IP)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -551,25 +587,19 @@ public class UploadFragment extends Fragment {
                         Log.e(TAG, "Exception " + e);
                     }
                 } else {
-                    callBack.doThing();
-                    String[] sts = file.getName().split("\\.");
-                    if (response.body().getAvatar().equals(tv_dqbh.getText().toString() + "-" + sts[0] + "." + sts[1])) {
+                    String[] sts = response.body().getAvatar().split("\\.");
+                    if (sts[sts.length - 1].equals("true")) {
                         t.setIsfinished(true);
-                        ArrayList<File> files = FileUtils.getDirFilesForPrefix(file.getParent(), sts[0] + "." + sts[1] + ".");
-                        for (File f : files) {
-                            try {
-                                f.delete();
-                            } catch (Exception e) {
-                                Log.e(TAG, "onResponse: " + e.toString());
-                            }
-                        }
+                        String pathfile = file.getParent();
+                        FileUtils.deleteFile(new File(pathfile));
                         msg = Message.obtain();
                         msg.what = 2;
                         msg.obj = urlrawpath = response.body().getAvatar();
                         msg.arg2 = listPosition;
                         uiHandler.sendMessage(msg);
+                    }else {
+                        callBack.doThing();
                     }
-
                 }
             }
 
@@ -602,7 +632,7 @@ public class UploadFragment extends Fragment {
                 .addConverterFactory(new FileConverterFactory())
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
-                .baseUrl("http://39.105.125.51:8001/")
+                .baseUrl(FileUtils.IP)
                 .build();
         GetRequestInterface loadService = retrofit.create(GetRequestInterface.class);
         Observable.merge(Observable.create(loadOnSubscribe), loadService.upLoadOneFile(params, user_token))
@@ -729,7 +759,7 @@ public class UploadFragment extends Fragment {
                 if (resultCode == mActivity.RESULT_OK) {
                     String result = data.getStringExtra(CaptureActivity.EXTRA_STRING);
                     JSONObject jsonObj = null;
-                    try{
+                    try {
                         jsonObj = JSON.parseObject(result);
                         dangqiangId = jsonObj.getString("dangqiangId");
                         dangqiangBianhao = jsonObj.getString("dangqiangBianhao");
@@ -778,9 +808,9 @@ public class UploadFragment extends Fragment {
                         ((TextView) scaninfo.findViewById(R.id.scan_tv_dqheight)).setText(dangqiangGao);
                         ((TextView) scaninfo.findViewById(R.id.scan_tv_dqwidth)).setText(dangqiangKuan);
                         ((TextView) scaninfo.findViewById(R.id.scan_tv_dqthk)).setText(dangqiangHoudu);
-                    }catch (Exception e){
-                        Log.d(TAG, "error "+e);
-                        Toast.makeText(mActivity,"请扫描正确二维码",Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        Log.d(TAG, "error " + e);
+                        Toast.makeText(mActivity, "请扫描正确二维码", Toast.LENGTH_SHORT).show();
                         break;
                     }
                 }

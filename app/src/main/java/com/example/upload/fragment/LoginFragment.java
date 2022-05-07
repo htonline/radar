@@ -23,6 +23,7 @@ import com.example.ladarmonitor.R;
 import com.example.upload.GetRequestInterface;
 import com.example.upload.entity.UserInfoLogin;
 import com.example.upload.entity.Userinfo;
+import com.example.upload.utils.FileUtils;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -97,7 +98,7 @@ public class LoginFragment extends Fragment {
     }
     public void login(){
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://39.105.125.51:8001/")
+                .baseUrl(FileUtils.IP)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         GetRequestInterface getRequestInterface = retrofit.create(GetRequestInterface.class);

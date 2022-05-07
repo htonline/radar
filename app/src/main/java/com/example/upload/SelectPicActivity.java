@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.helper.UploadUtil;
 import com.example.ladarmonitor.R;
+import com.example.upload.utils.FileUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,7 +52,7 @@ public class SelectPicActivity extends Activity implements OnClickListener, Uplo
     /***
      * 这里的这个URL是我服务器的javaEE环境URL
      */
-    private static String requestURL = "http://39.105.125.51:8001/api/phoneOperate/updateTupian";
+    private static String requestURL = FileUtils.IP+"api/phoneOperate/updateTupian";
     /***
      * 使用照相机拍照获取图片
      */
