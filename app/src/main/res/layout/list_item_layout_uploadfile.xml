@@ -17,7 +17,7 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:layout_weight="3"
             android:orientation="horizontal">
 
             <LinearLayout
@@ -31,12 +31,12 @@
                     android:layout_weight="1"
                     android:background="@drawable/tv_bg"
                     android:gravity="center"
-                    android:text="测线编号"
+                    android:text="@string/detectionLineBiaohao"
                     android:textColor="#000"
                     android:textSize="@dimen/textmydialogssmallSize" />
 
                 <TextView
-                    android:id="@+id/tv_cxstart"
+                    android:id="@+id/detectionLineBiaohao"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="起始里程"
+                android:text="@string/detectionStartingDistance"
                 android:textColor="#000"
                 android:textSize="@dimen/textmydialogssmallSize" />
 
@@ -62,7 +62,7 @@
                 android:background="#000" />
 
             <EditText
-                android:id="@+id/tv_cxbh"
+                android:id="@+id/detectionStartingDistance"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -85,7 +85,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="终止里程"
+                android:text="@string/detectionEndingDistance"
                 android:textColor="#000"
                 android:textSize="@dimen/textmydialogssmallSize" />
 
@@ -95,7 +95,7 @@
                 android:background="#000" />
 
             <EditText
-                android:id="@+id/tv_cxorient"
+                android:id="@+id/detectionEndingDistance"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -107,7 +107,28 @@
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:background="#000" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/detectionLength"
+                android:textColor="#000"
+                android:textSize="@dimen/textmydialogssmallSize" />
 
+            <TextView
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#000" />
+
+            <EditText
+                android:id="@+id/detectionLength"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="#000"
+                android:textSize="@dimen/textmydialogssmallSize" />
             <TextView
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
@@ -117,7 +138,7 @@
         <LinearLayout
             android:layout_width="80dp"
             android:layout_height="wrap_content"
-            android:layout_weight="2">
+            android:layout_weight="1.5">
 
             <LinearLayout
                 android:layout_width="0dp"

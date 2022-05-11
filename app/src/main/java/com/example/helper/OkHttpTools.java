@@ -4,7 +4,9 @@ import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.example.entity.Wall;
+import com.example.upload.entity.DetectionInformation;
 import com.example.upload.utils.FileUtils;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,33 +25,16 @@ public class OkHttpTools {
     //创建OkHttpClient对象
     private final OkHttpClient client = new OkHttpClient();
 
-    public String UploadWallData(Wall wall) throws JSONException {
+    public String UploadWallData(DetectionInformation information, String token) throws JSONException {
 
 
         MediaType JSON = MediaType.parse("application/json;charset=utf-8");
-        JSONObject json = new JSONObject();
-        //创建请求体并传递参数
-        json.put("dangqiangWeizhi",wall.getDangqiangWeizhi());
-        json.put("dangqiangGao",wall.getDangqiangGao());
-        json.put("dangqiangBianhao",wall.getDangqiangBianhao());
-        json.put("dangqiangLeixing",wall.getDangqiangLeixing());
-        json.put("cexianFangxiang",wall.getCexianFangxiang());
-        json.put("dangqiangHoudu",wall.getDangqiangHoudu());
-        json.put("dangqiangKuan",wall.getDangqiangKuan());
-        json.put("cexianBianhao",wall.getCexianBianhao());
-        json.put("cexianQidian",wall.getCexianQidian());
-        json.put("cexianZhongdian",wall.getCexianZhongdian());
-        json.put("zhujiXuhao",wall.getZhujiXuhao());
-        json.put("jiancerenyuanName",wall.getJiancerenyuanName());
-        json.put("shujuwenjianName",wall.getShujuwenjianName());
-        json.put("zhaopianOne",wall.getZhaopianOne());
-        json.put("zhaopianTwo",wall.getZhaopianOne());
-        json.put("zhaopianThree",wall.getZhaopianOne());
-        json.put("beizhu",wall.getBeizhu());
-        RequestBody formBody = RequestBody.create(JSON, String.valueOf(json));
+        Gson gson = new Gson();
+        String s = gson.toJson(information);
+        RequestBody formBody = RequestBody.create(JSON,s);
         Request request = new Request.Builder()
-                .url(FileUtils.IP+"api/phoneOperate/addJianceData")
-                .addHeader("Authorization",wall.getToken())
+                .url(FileUtils.IP+"api/detectionInformation")
+                .addHeader("Authorization",token)
                 .post(formBody)
                 .build();
         Response respon = null;

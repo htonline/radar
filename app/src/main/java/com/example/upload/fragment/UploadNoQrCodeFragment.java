@@ -426,11 +426,11 @@ public class UploadNoQrCodeFragment extends Fragment {
                 OkHttpTools tools = new OkHttpTools();
 //                Log.d(TAG, wall+"");
                 String result = null;
-                try {
-                    result = tools.UploadWallData(wall);
-                } catch (JSONException | org.json.JSONException e) {
-                    e.printStackTrace();
-                }
+//                try {
+////                    result = tools.UploadWallData(wall);
+//                } catch (JSONException | org.json.JSONException e) {
+//                    e.printStackTrace();
+//                }
 //                        handler.sendEmptyMessage(1);
 //                        Log.d(TAG, "============="+result);
 //                OkHttpTools tools =  new OkHttpTools();

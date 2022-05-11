@@ -63,9 +63,10 @@ public class UpLoadFileListAdapter extends BaseAdapter {
         } else {
             view = View.inflate(mcontext, R.layout.list_item_layout_uploadfile, null);
             holer = new ViewHoler();
-            holer.mtv_cxbh = view.findViewById(R.id.tv_cxstart);
-            holer.met_start = view.findViewById(R.id.tv_cxbh);
-            holer.met_stop = view.findViewById(R.id.tv_cxorient);
+            holer.mtv_cxbh = view.findViewById(R.id.detectionLineBiaohao);
+            holer.met_start = view.findViewById(R.id.detectionStartingDistance);
+            holer.met_stop = view.findViewById(R.id.detectionEndingDistance);
+            holer.met_length = view.findViewById(R.id.detectionLength);
             holer.mbtn_searchPathRadarFile = view.findViewById(R.id.my_dialog_addFile);
             holer.mtv_radarFileName = view.findViewById(R.id.tv_pathoffile);
             holer.mtv_uploadProgress = view.findViewById(R.id.upload_percent);
@@ -120,6 +121,7 @@ public class UpLoadFileListAdapter extends BaseAdapter {
         TextView mtv_cxbh;
         EditText met_start;
         EditText met_stop;
+        EditText met_length;
         ImageButton mbtn_searchPathRadarFile;
         TextView mtv_radarFileName;
         TextView mtv_uploadProgress;

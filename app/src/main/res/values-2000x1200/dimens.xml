@@ -5,7 +5,7 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
 <!--    <dimen name="dialog_small_size"></dimen>-->
-
+    <dimen name="textsmallSize">10sp</dimen>
     <dimen name="textNormSize">20sp</dimen>
     <dimen name="textLargeSize">10sp</dimen>
     <dimen name="textTitleLargeSize">30sp</dimen>
@@ -19,7 +19,7 @@
     <dimen name="mydialogHeight">700dp</dimen>
 
     <dimen name="mydialogScanWidth">700dp</dimen>
-    <dimen name="mydialogScanHeight">400dp</dimen>
+    <dimen name="mydialogScanHeight">500dp</dimen>
 
     <dimen name="batteryNomalWidth">170dp</dimen>
     <dimen name="batteryNomalHeight">40dp</dimen>

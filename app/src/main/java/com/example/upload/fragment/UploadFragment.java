@@ -46,10 +46,12 @@ import com.example.helper.zbar.CaptureActivity;
 import com.example.ladarmonitor.R;
 import com.example.upload.UpLoadFileListAdapter;
 import com.example.upload.convertor.FileConverterFactory;
+import com.example.upload.entity.DetectionInformation;
 import com.example.upload.entity.FileExists;
 import com.example.upload.entity.FileInfo;
 import com.example.upload.entity.FileMd5;
 import com.example.upload.entity.FileMdRes;
+import com.example.upload.entity.TestInformation;
 import com.example.upload.entity.UpFilePath;
 import com.example.upload.entity.UpLoadFileInfo;
 import com.example.upload.entity.UserInfoLogin;
@@ -114,18 +116,19 @@ public class UploadFragment extends Fragment {
     private ImageView ib_login;
     //    private TextView mtv_up_percent;
     private AsyncTask asyncTask2;
-    private Wall wall;
+
+    private TextView mTv_project_name;
     //    private TextView tv_dqid;
-    private TextView tv_dqbh;
-    private TextView tv_dqtype;
-    private TextView tv_dqheight;
-    private TextView tv_dqwidth;
-    private TextView tv_dqthk;
+//    private TextView tv_dqbh;
+//    private TextView tv_dqtype;
+//    private TextView tv_dqheight;
+//    private TextView tv_dqwidth;
+//    private TextView tv_dqthk;
     //    private EditText tv_cxbh;
 //    private EditText tv_cxorient;
 //    private TextView tv_cxstart;
 //    private TextView tv_cxstop;
-    private TextView tv_dqloc;
+//    private TextView tv_dqloc;
     private TextView mtv_login_username;
     WifiTool wifiAdmin;
     private String urlrawpath;
@@ -156,17 +159,8 @@ public class UploadFragment extends Fragment {
     private CallBackToDo backToDo;
     protected static final int TO_SCAN_RESULT = 2;
     public static final String defaultPath = "/storage/emulated/0/datas";
-    private String dangqiangId;
-    private String dangqiangBianhao;
-    private String dangqiangLeixing;
-    private String dangqiangGao;
-    private String dangqiangKuan;
-    private String cexianBianhao;
-    private String dangqiangHoudu;
-    private String cexianFangxiang;
-    private String cexianZhongdian;
-    private String cexianQidian;
-    private String dangqiangWeizhi;
+    private TestInformation testInformation;
+    private DetectionInformation detectionInformation;
     private FrameLayout scaninfo;
     private SharedPreferences mainPreferences;
     private SharedPreferences.Editor mainPreferenceEditor;
@@ -332,12 +326,13 @@ public class UploadFragment extends Fragment {
 //        tv_cxstart = view.findViewById(R.id.tv_cxstart);
 //        tv_cxstop = view.findViewById(R.id.tv_cxstop);
 //        tv_dqid = findViewById(R.id.tv_dqid);
-        tv_dqbh = view.findViewById(R.id.tv_dqbh);
-        tv_dqheight = view.findViewById(R.id.tv_dqheight);
-        tv_dqthk = view.findViewById(R.id.tv_dqthk);
-        tv_dqtype = view.findViewById(R.id.tv_dqtype);
-        tv_dqwidth = view.findViewById(R.id.tv_dqwidth);
-        tv_dqloc = view.findViewById(R.id.tv_dqloc);
+        mTv_project_name = view.findViewById(R.id.project_name);
+//        tv_dqbh = view.findViewById(R.id.tv_dqbh);
+//        tv_dqheight = view.findViewById(R.id.tv_dqheight);
+//        tv_dqthk = view.findViewById(R.id.tv_dqthk);
+//        tv_dqtype = view.findViewById(R.id.tv_dqtype);
+//        tv_dqwidth = view.findViewById(R.id.tv_dqwidth);
+//        tv_dqloc = view.findViewById(R.id.tv_dqloc);
         et_detect_username = view.findViewById(R.id.et_detect_username);
         et_mainServerNum = view.findViewById(R.id.et_mainServerNum);
         et_remark = view.findViewById(R.id.et_remark);
@@ -411,7 +406,7 @@ public class UploadFragment extends Fragment {
 //                } else Toast.makeText(mActivity, "请先登录", Toast.LENGTH_SHORT).show();
 //            }
 //        });
-        wall = new Wall();
+
 //        ib_upload_file.setImageResource(R.drawable.uploadfiled);
         uploadpath = null;
         abtn_my_dialog_cancel = (Button) view.findViewById(R.id.btn_my_dialog_cancel);
@@ -474,31 +469,47 @@ public class UploadFragment extends Fragment {
     }
 
     private void initText() {
-        dangqiangBianhao = mainPreferences.getString("dqbh", null);
-        dangqiangLeixing = mainPreferences.getString("dqtype", null);
-        dangqiangGao = mainPreferences.getString("dqheight", null);
-        dangqiangKuan = mainPreferences.getString("dqwidth", null);
-        dangqiangHoudu = mainPreferences.getString("dqthk", null);
-        dangqiangWeizhi = mainPreferences.getString("dqloc", null);
-
-        tv_dqbh.setText(dangqiangBianhao);
-        tv_dqtype.setText(dangqiangLeixing);
-        tv_dqheight.setText(dangqiangGao);
-        tv_dqwidth.setText(dangqiangKuan);
-        tv_dqthk.setText(dangqiangHoudu);
-        tv_dqloc.setText(dangqiangWeizhi);
-
-        ((TextView) scaninfo.findViewById(R.id.scan_tv_dqbh)).setText(dangqiangBianhao);
-        ((TextView) scaninfo.findViewById(R.id.scan_tv_dqtype)).setText(dangqiangLeixing);
-        ((TextView) scaninfo.findViewById(R.id.scan_tv_dqheight)).setText(dangqiangGao);
-        ((TextView) scaninfo.findViewById(R.id.scan_tv_dqwidth)).setText(dangqiangKuan);
-        ((TextView) scaninfo.findViewById(R.id.scan_tv_dqthk)).setText(dangqiangHoudu);
+//        testInformation = mainPreferences.getS;
+        Gson gson = new Gson();
+        testInformation = gson.fromJson(mainPreferences.getString("testinformation", ""), TestInformation.class);
+        if (testInformation==null){
+            testInformation = new TestInformation();
+        }
+        mTv_project_name.setText(testInformation.getProjectName());
+        initScanInfo(testInformation);
+    }
+    private void initScanInfo(TestInformation testInformation){
+        ((TextView) scaninfo.findViewById(R.id.test_infor_id)).setText(""+testInformation.getTestInforId());
+        ((TextView) scaninfo.findViewById(R.id.test_id)).setText(""+testInformation.getTestId());
+        ((TextView) scaninfo.findViewById(R.id.test_time)).setText(""+testInformation.getTestTime());
+        ((TextView) scaninfo.findViewById(R.id.test_starting_distance)).setText(""+testInformation.getTestStartingDistance());
+        ((TextView) scaninfo.findViewById(R.id.test_ending_distance)).setText(""+testInformation.getTestEndingDistance());
+        ((TextView) scaninfo.findViewById(R.id.test_length)).setText(""+testInformation.getTestLength());
+        ((TextView) scaninfo.findViewById(R.id.wall_rock_type)).setText(""+testInformation.getWallRockType());
+        ((TextView) scaninfo.findViewById(R.id.support_tickness)).setText(""+testInformation.getSupportTickness());
+        ((TextView) scaninfo.findViewById(R.id.separation_distance)).setText(""+testInformation.getSeparationDistance());
+        ((TextView) scaninfo.findViewById(R.id.mesh_distance)).setText(""+testInformation.getMeshDistance());
+        ((TextView) scaninfo.findViewById(R.id.annular_bar_distance)).setText(""+testInformation.getAnnularBarDistance());
+        ((TextView) scaninfo.findViewById(R.id.reinfor_prt_tickness)).setText(""+testInformation.getReinforPrtTickness());
+        ((TextView) scaninfo.findViewById(R.id.sec_line_arch_tickness)).setText(""+testInformation.getSecLineArchTickness());
+        ((TextView) scaninfo.findViewById(R.id.sec_line_wall_tickness)).setText(""+testInformation.getSecLineWallTickness());
+        ((TextView) scaninfo.findViewById(R.id.sec_line_inver_arch_tickness)).setText(""+testInformation.getSecLineInverArchTickness());
+        ((TextView) scaninfo.findViewById(R.id.sec_line_filer_tickness)).setText(""+testInformation.getSecLineFilerTickness());
+        ((TextView) scaninfo.findViewById(R.id.project_name)).setText(""+testInformation.getProjectName());
+        ((TextView) scaninfo.findViewById(R.id.section_name)).setText(""+testInformation.getSectionName());
+        ((TextView) scaninfo.findViewById(R.id.tunnel_name)).setText(""+testInformation.getTunnelName());
+        ((TextView) scaninfo.findViewById(R.id.worksite_name)).setText(""+testInformation.getWorksiteName());
+        ((TextView) scaninfo.findViewById(R.id.statute)).setText(""+testInformation.getStatute());
+        ((TextView) scaninfo.findViewById(R.id.beizhu1)).setText(""+testInformation.getBeizhu1());
+        ((TextView) scaninfo.findViewById(R.id.beizhu2)).setText(""+testInformation.getBeizhu2());
+        ((TextView) scaninfo.findViewById(R.id.beizhu3)).setText(""+testInformation.getBeizhu3());
+        ((TextView) scaninfo.findViewById(R.id.beizhu4)).setText(""+testInformation.getBeizhu4());
     }
 
     private void searchFile(GetRequestInterface getRequestInterface, String filename, String user_token) {
         FileMd5 md5 = new FileMd5();
         File file = new File(filename);
-        md5.setFilename(tv_dqbh.getText().toString() + "-" + file.getName());
+        md5.setFilename(mTv_project_name.getText().toString() + "-" + file.getName());
         try {
             md5.setMd5("");//FileUtils.getMd5(FileUtils.getByte(file)
         } catch (Exception e) {
@@ -517,7 +528,7 @@ public class UploadFragment extends Fragment {
                         Toast.makeText(mActivity, "服务器已有该文件", Toast.LENGTH_SHORT).show();
                         msg = Message.obtain();
                         msg.what = 2;
-                        msg.obj = urlrawpath = tv_dqbh.getText().toString() + "-" + str[0] + "." + str[1];
+                        msg.obj = urlrawpath = mTv_project_name.getText().toString() + "-" + str[0] + "." + str[1];
                         msg.arg2 = listPosition;
                         uiHandler.sendMessage(msg);
                     } else {
@@ -575,7 +586,7 @@ public class UploadFragment extends Fragment {
                 .build();
         getRequestInterface = mretrofit.create(GetRequestInterface.class);
         RequestBody body = RequestBody.create(MediaType.parse("application/octet-stream"), file);
-        MultipartBody.Part part = MultipartBody.Part.createFormData("file", tv_dqbh.getText().toString() + "-" + file.getName(), body);
+        MultipartBody.Part part = MultipartBody.Part.createFormData("file", mTv_project_name.getText().toString() + "-" + file.getName(), body);
         Call<UpFilePath> upFilePathCall = getRequestInterface.uploadOneFileBySplit(part, user_token);
         upFilePathCall.enqueue(new Callback<UpFilePath>() {
             @Override
@@ -592,9 +603,11 @@ public class UploadFragment extends Fragment {
                         t.setIsfinished(true);
                         String pathfile = file.getParent();
                         FileUtils.deleteFile(new File(pathfile));
+                        String filepath =response.body().getAvatar();
+                        String[] paths =filepath.split("\\.");
                         msg = Message.obtain();
                         msg.what = 2;
-                        msg.obj = urlrawpath = response.body().getAvatar();
+                        msg.obj = urlrawpath = paths[0]+paths[1];
                         msg.arg2 = listPosition;
                         uiHandler.sendMessage(msg);
                     }else {
@@ -758,57 +771,15 @@ public class UploadFragment extends Fragment {
             case TO_SCAN_RESULT:
                 if (resultCode == mActivity.RESULT_OK) {
                     String result = data.getStringExtra(CaptureActivity.EXTRA_STRING);
-                    JSONObject jsonObj = null;
-                    try {
-                        jsonObj = JSON.parseObject(result);
-                        dangqiangId = jsonObj.getString("dangqiangId");
-                        dangqiangBianhao = jsonObj.getString("dangqiangBianhao");
-                        dangqiangLeixing = jsonObj.getString("dangqiangLeixing");
-                        dangqiangGao = jsonObj.getString("dangqiangGao");
-                        dangqiangKuan = jsonObj.getString("dangqiangKuan");
-                        dangqiangHoudu = jsonObj.getString("dangqiangHoudu");
-                        cexianBianhao = jsonObj.getString("cexianBianhao");
-                        cexianFangxiang = jsonObj.getString("cexianFangxiang");
-                        cexianQidian = jsonObj.getString("cexianQidian");
-                        cexianZhongdian = jsonObj.getString("cexianZhongdian");
-                        dangqiangWeizhi = jsonObj.getString("dangqiangWeizhi");
-//                    wall.setDangqiangWeizhi(dangqiangWeizhi);
-//                    wall.setDangqiangBianhao(dangqiangBianhao);
-//                    wall.setDangqiangLeixing(dangqiangLeixing);
-//                    wall.setDangqiangGao(dangqiangGao);
-//                    wall.setDangqiangKuan(dangqiangKuan);
-//                    wall.setDangqiangHoudu(dangqiangHoudu);
-//                    wall.setCexianBianhao(cexianBianhao);
-//                    wall.setCexianFangxiang(cexianFangxiang);
-//                    wall.setCexianQidian(cexianQidian);
-//                    wall.setCexianZhongdian(cexianZhongdian);
-
-//                    tv_dqid.setText(dangqiangId);
-                        tv_dqbh.setText(dangqiangBianhao);
-                        tv_dqtype.setText(dangqiangLeixing);
-                        tv_dqheight.setText(dangqiangGao);
-                        tv_dqwidth.setText(dangqiangKuan);
-                        tv_dqthk.setText(dangqiangHoudu);
-//                    tv_cxbh.setText(cexianBianhao);
-//                    tv_cxorient.setText(cexianFangxiang);
-//                    tv_cxstart.setText(cexianQidian);
-//                    tv_cxstop.setText(cexianZhongdian);
-                        tv_dqloc.setText(dangqiangWeizhi);
-
-                        mainPreferenceEditor.putString("dqbh", dangqiangBianhao);
-                        mainPreferenceEditor.putString("dqtype", dangqiangLeixing);
-                        mainPreferenceEditor.putString("dqheight", dangqiangGao);
-                        mainPreferenceEditor.putString("dqwidth", dangqiangKuan);
-                        mainPreferenceEditor.putString("dqthk", dangqiangHoudu);
-                        mainPreferenceEditor.putString("dqloc", dangqiangWeizhi);
-                        mainPreferenceEditor.apply();
+                    Log.d(TAG, "onActivityResult:  --> "+result);
+                    Gson gson = new Gson();
+                    try{
+                        testInformation = gson.fromJson(result, TestInformation.class);
                         scaninfo.setVisibility(View.VISIBLE);
-                        ((TextView) scaninfo.findViewById(R.id.scan_tv_dqbh)).setText(dangqiangBianhao);
-                        ((TextView) scaninfo.findViewById(R.id.scan_tv_dqtype)).setText(dangqiangLeixing);
-                        ((TextView) scaninfo.findViewById(R.id.scan_tv_dqheight)).setText(dangqiangGao);
-                        ((TextView) scaninfo.findViewById(R.id.scan_tv_dqwidth)).setText(dangqiangKuan);
-                        ((TextView) scaninfo.findViewById(R.id.scan_tv_dqthk)).setText(dangqiangHoudu);
-                    } catch (Exception e) {
+                        initScanInfo(testInformation);
+                        mainPreferenceEditor.putString("testinformation",result);
+                        mainPreferenceEditor.apply();
+                    }catch (Exception e){
                         Log.d(TAG, "error " + e);
                         Toast.makeText(mActivity, "请扫描正确二维码", Toast.LENGTH_SHORT).show();
                         break;
@@ -830,11 +801,13 @@ public class UploadFragment extends Fragment {
                 int i = 0;
                 List<String> results = new ArrayList<>();
                 for (UpLoadFileInfo info : mfileInfos) {
-                    EditText et_start = lv_uploadfile.getChildAt(i).findViewById(R.id.tv_cxbh);
-                    EditText et_stop = lv_uploadfile.getChildAt(i).findViewById(R.id.tv_cxorient);
+                    EditText et_start = lv_uploadfile.getChildAt(i).findViewById(R.id.detectionStartingDistance);
+                    EditText et_stop = lv_uploadfile.getChildAt(i).findViewById(R.id.detectionEndingDistance);
+                    EditText et_length = lv_uploadfile.getChildAt(i).findViewById(R.id.detectionLength);
                     i++;
                     if (TextUtils.isEmpty(et_start.getText())
                             && TextUtils.isEmpty(et_stop.getText())
+                            && TextUtils.isEmpty(et_length.getText())
                             && TextUtils.isEmpty(info.getFilePath())
                             && TextUtils.isEmpty(info.getPhotoPath())) {
                         continue;
@@ -843,36 +816,34 @@ public class UploadFragment extends Fragment {
                             || TextUtils.isEmpty(et_stop.getText())
                             || TextUtils.isEmpty(info.getFileRemotePath())
                             || TextUtils.isEmpty(info.getPhotoRemotePath()))) {
-                        Log.d(TAG, "doInBackground:  --> -1");
                         results.add("-1");
                         return results;
                     }
                     info.setStartKM(et_start.getText().toString());
                     info.setStopKM(et_stop.getText().toString());
-                    Wall wall = new Wall();
-                    wall.setDangqiangWeizhi(dangqiangWeizhi);
-                    wall.setDangqiangBianhao(dangqiangBianhao);
-                    wall.setDangqiangLeixing(dangqiangLeixing);
-                    wall.setDangqiangGao(dangqiangGao);
-                    wall.setDangqiangKuan(dangqiangKuan);
-                    wall.setDangqiangHoudu(dangqiangHoudu);
-//                    wall.setCexianBianhao(cexianBianhao);
-//                    wall.setCexianFangxiang(cexianFangxiang);
-//                    wall.setCexianQidian(cexianQidian);
-                    wall.setCexianZhongdian(cexianZhongdian);
-                    wall.setCexianBianhao(info.getStartKM());
-                    wall.setCexianFangxiang(info.getStopKM());
-                    wall.setCexianQidian(info.getCxbh());
-                    wall.setShujuwenjianName(info.getFileRemotePath());
-                    wall.setZhaopianOne(info.getPhotoRemotePath());
-                    wall.setJiancerenyuanName(et_detect_username.getText().toString());
-                    wall.setZhujiXuhao(et_mainServerNum.getText().toString());
-                    wall.setBeizhu(et_remark.getText().toString() + "备注");
-                    wall.setToken(user_token);
+                    info.setLinelength(et_length.getText().toString());
+
+                    DetectionInformation deteInfo = new DetectionInformation();
+                    deteInfo.setTunnelName(testInformation.getTunnelName());
+                    deteInfo.setSectionName(testInformation.getSectionName());
+                    deteInfo.setProjectName(testInformation.getProjectName());
+                    deteInfo.setTestId(testInformation.getTestId());
+                    deteInfo.setWorksiteName(testInformation.getWorksiteName());
+
+                    deteInfo.setDetectionStartingDistance(info.getStartKM());
+                    deteInfo.setDetectionEndingDistance(info.getStopKM());
+                    deteInfo.setDetectionLength(info.getLinelength());
+                    deteInfo.setDetectionLineBiaohao(info.getCxbh());
+                    deteInfo.setDetectionData(info.getFileRemotePath());
+                    deteInfo.setDetectionPhotos(info.getPhotoRemotePath());
+//                    wall.setJiancerenyuanName(et_detect_username.getText().toString());
+//                    wall.setZhujiXuhao(et_mainServerNum.getText().toString());
+//                    wall.setBeizhu(et_remark.getText().toString() + "备注");
+//                    wall.setToken(user_token);
 //                Log.d(TAG, wall+"");
                     String result = null;
                     try {
-                        result = tools.UploadWallData(wall);
+                        result = tools.UploadWallData(deteInfo,user_token);
                         results.add(result);
                     } catch (JSONException | org.json.JSONException e) {
                         e.printStackTrace();

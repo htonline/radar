@@ -94,7 +94,7 @@
                     </LinearLayout>
 
                     <TextView
-                        android:id="@+id/tv_dqbh"
+                        android:id="@+id/project_name"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"

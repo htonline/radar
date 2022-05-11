@@ -5,6 +5,7 @@ public class UpLoadFileInfo {
     private String startKM;
     private String stopKM;
     private String filePath;
+    private String linelength;
     private String uploadpercent ="0.0%";
 
     public String getUploadpercent() {
@@ -87,6 +88,14 @@ public class UpLoadFileInfo {
 
     public String getPhotoPath() {
         return photoPath;
+    }
+
+    public String getLinelength() {
+        return linelength;
+    }
+
+    public void setLinelength(String linelength) {
+        this.linelength = linelength;
     }
 
     public void setPhotoPath(String photoPath) {

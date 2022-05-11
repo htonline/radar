@@ -16,10 +16,6 @@
             android:text="扫码信息"/>
         <View
             android:layout_width="match_parent"
-            android:layout_height="15dp"
-            />
-        <View
-            android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#000"/>
         <LinearLayout
@@ -31,16 +27,16 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="@dimen/textNormSize"
+                android:textSize="@dimen/textsmallSize"
                 android:background="@drawable/tv_bg"
-                android:text="项目名称"/>
+                android:text="@string/test_infor_id"/>
             <TextView
                 android:gravity="center"
-                android:id="@+id/scan_tv_dqbh"
+                android:id="@+id/test_infor_id"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:textSize="@dimen/textNormSize"
+                android:textSize="@dimen/textsmallSize"
                 android:background="@drawable/tv_bg"/>
         </LinearLayout>
         <LinearLayout
@@ -52,16 +48,16 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="@dimen/textNormSize"
+                android:textSize="@dimen/textsmallSize"
                 android:background="@drawable/tv_bg"
-                android:text="检测内容"/>
+                android:text="@string/test_id"/>
             <TextView
                 android:gravity="center"
-                android:id="@+id/scan_tv_dqtype"
+                android:id="@+id/test_id"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:textSize="@dimen/textNormSize"
+                android:textSize="@dimen/textsmallSize"
                 android:background="@drawable/tv_bg"/>
         </LinearLayout>
         <LinearLayout
@@ -73,16 +69,16 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="@dimen/textNormSize"
+                android:textSize="@dimen/textsmallSize"
                 android:background="@drawable/tv_bg"
-                android:text="项目编号"/>
+                android:text="@string/test_time"/>
             <TextView
                 android:gravity="center"
-                android:id="@+id/scan_tv_dqheight"
+                android:id="@+id/test_time"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:textSize="@dimen/textNormSize"
+                android:textSize="@dimen/textsmallSize"
                 android:background="@drawable/tv_bg"/>
         </LinearLayout>
         <LinearLayout
@@ -94,16 +90,16 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="@dimen/textNormSize"
+                android:textSize="@dimen/textsmallSize"
                 android:background="@drawable/tv_bg"
-                android:text="检测日期"/>
+                android:text="@string/test_starting_distance"/>
             <TextView
                 android:gravity="center"
-                android:id="@+id/scan_tv_dqwidth"
+                android:id="@+id/test_starting_distance"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:textSize="@dimen/textNormSize"
+                android:textSize="@dimen/textsmallSize"
                 android:background="@drawable/tv_bg"/>
         </LinearLayout>
         <LinearLayout
@@ -115,22 +111,439 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="@dimen/textNormSize"
+                android:textSize="@dimen/textsmallSize"
                 android:background="@drawable/tv_bg"
-                android:text="检测标准"/>
+                android:text="@string/test_ending_distance"/>
             <TextView
                 android:gravity="center"
-                android:id="@+id/scan_tv_dqthk"
+                android:id="@+id/test_ending_distance"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:textSize="@dimen/textNormSize"
+                android:textSize="@dimen/textsmallSize"
                 android:background="@drawable/tv_bg"/>
         </LinearLayout>
-        <View
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#000"/>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"
+                android:text="@string/test_length"/>
+            <TextView
+                android:gravity="center"
+                android:id="@+id/test_length"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"
+                android:text="@string/wall_rock_type"/>
+            <TextView
+                android:gravity="center"
+                android:id="@+id/wall_rock_type"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"
+                android:text="@string/support_tickness"/>
+            <TextView
+                android:gravity="center"
+                android:id="@+id/support_tickness"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"
+                android:text="@string/separation_distance"/>
+            <TextView
+                android:gravity="center"
+                android:id="@+id/separation_distance"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"
+                android:text="@string/mesh_distance"/>
+            <TextView
+                android:gravity="center"
+                android:id="@+id/mesh_distance"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"
+                android:text="@string/annular_bar_distance"/>
+            <TextView
+                android:gravity="center"
+                android:id="@+id/annular_bar_distance"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"
+                android:text="@string/reinfor_prt_tickness"/>
+            <TextView
+                android:gravity="center"
+                android:id="@+id/reinfor_prt_tickness"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"
+                android:text="@string/sec_line_arch_tickness"/>
+            <TextView
+                android:gravity="center"
+                android:id="@+id/sec_line_arch_tickness"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"
+                android:text="@string/sec_line_wall_tickness"/>
+            <TextView
+                android:gravity="center"
+                android:id="@+id/sec_line_wall_tickness"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"
+                android:text="@string/sec_line_inver_arch_tickness"/>
+            <TextView
+                android:gravity="center"
+                android:id="@+id/sec_line_inver_arch_tickness"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"
+                android:text="@string/sec_line_filer_tickness"/>
+            <TextView
+                android:gravity="center"
+                android:id="@+id/sec_line_filer_tickness"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"
+                android:text="@string/project_name"/>
+            <TextView
+                android:gravity="center"
+                android:id="@+id/project_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"
+                android:text="@string/section_name"/>
+            <TextView
+                android:gravity="center"
+                android:id="@+id/section_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"
+                android:text="@string/tunnel_name"/>
+            <TextView
+                android:gravity="center"
+                android:id="@+id/tunnel_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"
+                android:text="@string/worksite_name"/>
+            <TextView
+                android:gravity="center"
+                android:id="@+id/worksite_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"
+                android:text="@string/statute"/>
+            <TextView
+                android:gravity="center"
+                android:id="@+id/statute"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"
+                android:text="@string/beizhu1"/>
+            <TextView
+                android:gravity="center"
+                android:id="@+id/beizhu1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"
+                android:text="@string/beizhu2"/>
+            <TextView
+                android:gravity="center"
+                android:id="@+id/beizhu2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"
+                android:text="@string/beizhu3"/>
+            <TextView
+                android:gravity="center"
+                android:id="@+id/beizhu3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"
+                android:text="@string/beizhu4"/>
+            <TextView
+                android:gravity="center"
+                android:id="@+id/beizhu4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="@dimen/textsmallSize"
+                android:background="@drawable/tv_bg"/>
+        </LinearLayout>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="5dp"/>

@@ -52,7 +52,7 @@ public class SelectPicActivity extends Activity implements OnClickListener, Uplo
     /***
      * 这里的这个URL是我服务器的javaEE环境URL
      */
-    private static String requestURL = FileUtils.IP+"api/phoneOperate/updateTupian";
+    private static String requestURL = FileUtils.IP+"api/upload/updatePhoto";
     /***
      * 使用照相机拍照获取图片
      */
@@ -216,7 +216,7 @@ public class SelectPicActivity extends Activity implements OnClickListener, Uplo
             UploadUtil uploadUtil = UploadUtil.getInstance();;
             uploadUtil.setOnUploadProcessListener(this);  //设置监听器监听上传状态
             Map<String, String> params = new HashMap<String, String>();
-            params.put("orderId", "11111");
+//            params.put("orderId", "11111");
             uploadUtil.uploadFile( picPath,fileKey, requestURL,params,temptoken);
     }
 
