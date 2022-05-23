@@ -64,8 +64,10 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -140,7 +142,6 @@ public class UploadFragment extends Fragment {
     private Retrofit mretrofit;
     private GetRequestInterface mgetRequestInterface;
     private int choseImgUp = 0;
-    private int tag_is_uploadraw = 0;
     private int tag_is_uploadimg01 = 0;
     private int tag_is_uploadimg02 = 1;
     private int tag_is_uploadimg03 = 1;
@@ -151,6 +152,7 @@ public class UploadFragment extends Fragment {
     private EditText et_mainServerNum;//主机序号
     private EditText et_remark;
 
+    private boolean isuploadcancel = false;
     private ListView lv_uploadfile;
     private int listPosition;
     private UpLoadFileListAdapter adapter;
@@ -166,31 +168,31 @@ public class UploadFragment extends Fragment {
     private FrameLayout scaninfo;
     private SharedPreferences mainPreferences;
     private SharedPreferences.Editor mainPreferenceEditor;
-    private ShowProgressThread t;
     private Message msg;
+    private HashMap<Integer, UploadThread> map;
 
-    class UiHandler extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 1:
-                    mfileInfos.get(msg.arg2).setUploadpercent(msg.arg1 + "%");
-                    adapter.notifyDataSetChanged();
-                    break;
-                case 2:
-                    int listposition = msg.arg2;
-                    String url = (String) msg.obj;
-                    mfileInfos.get(listposition).setUploadpercent("100.0%");
-                    mfileInfos.get(listposition).setFileRemotePath(url);
-                    mfileInfos.get(listposition).setIsfileup(true);
-                    adapter.notifyDataSetChanged();
-                    Toast.makeText(mActivity, "上传雷达数据成功", Toast.LENGTH_LONG).show();
-                    break;
-            }
-        }
-    }
-
-    private Handler uiHandler = new UiHandler();
+//    class UiHandler extends Handler {
+//        @Override
+//        public void handleMessage(Message msg) {
+//            switch (msg.what) {
+//                case 1:
+//                    mfileInfos.get(msg.arg2).setUploadpercent(msg.arg1 + "%");
+//                    adapter.notifyDataSetChanged();
+//                    break;
+//                case 2:
+//                    int listposition = msg.arg2;
+//                    String url = (String) msg.obj;
+//                    mfileInfos.get(listposition).setUploadpercent("100.0%");
+//                    mfileInfos.get(listposition).setFileRemotePath(url);
+//                    mfileInfos.get(listposition).setIsfileup(true);
+//                    adapter.notifyDataSetChanged();
+//                    Toast.makeText(mActivity, "上传雷达数据成功", Toast.LENGTH_LONG).show();
+//                    break;
+//            }
+//        }
+//    }
+//
+//    private Handler uiHandler = new UiHandler();
 
     public void runFirst() {
         if (SDK_INT < Build.VERSION_CODES.P) {
@@ -215,23 +217,46 @@ public class UploadFragment extends Fragment {
         mActivity = getActivity();
         Bundle bundle = getArguments();
         userInfoLogin = (UserInfoLogin) bundle.getSerializable("userinfologin");
-        initFileInfosData();
         tools = new OkHttpTools();
         mainPreferences = mActivity.getSharedPreferences("uploadfrgInfo", 0);
         mainPreferenceEditor = mainPreferences.edit();
+        initFileInfosData();
         mretrofit = new Retrofit.Builder()
                 .baseUrl(FileUtils.IP)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         mgetRequestInterface = mretrofit.create(GetRequestInterface.class);
+        map = new HashMap<>();
     }
 
     private void initFileInfosData() {
         mfileInfos = new ArrayList<>();
-        for (int i = 0; i < 13; i++) {
-            UpLoadFileInfo info = new UpLoadFileInfo();
-            info.setCxbh(fileinfoarray[i]);
-            mfileInfos.add(info);
+        if (TextUtils.isEmpty(mainPreferences.getString("cxbh0", ""))) {
+            for (int i = 0; i < 13; i++) {
+                UpLoadFileInfo info = new UpLoadFileInfo();
+                info.setCxbh(fileinfoarray[i]);
+                mfileInfos.add(info);
+            }
+        } else {
+            for (int i = 0; i < 13; i++) {
+                UpLoadFileInfo info = new UpLoadFileInfo();
+
+                info.setCxbh(mainPreferences.getString("cxbh" + i, ""));
+                info.setStartKM(mainPreferences.getString("startKM" + i, ""));
+                info.setStopKM(mainPreferences.getString("stopKM" + i, ""));
+                info.setFilePath(mainPreferences.getString("filePath" + i, ""));
+                info.setLinelength(mainPreferences.getString("linelength" + i, ""));
+
+                info.setUploadpercent(mainPreferences.getString("uploadpercent" + i, "0.0%"));
+                info.setIsfileup(mainPreferences.getBoolean("isfileup" + i, false));
+                info.setFileRemotePath(mainPreferences.getString("fileRemotePath" + i, ""));
+                info.setPhotoPath(mainPreferences.getString("photoPath" + i, ""));
+
+                info.setPhotoRemotePath(mainPreferences.getString("photoRemotePath" + i, ""));
+                info.setIsphotoup(mainPreferences.getBoolean("isphotoup" + i, false));
+
+                mfileInfos.add(info);
+            }
         }
         backToDo = new CallBackToDo() {
             @Override
@@ -252,29 +277,11 @@ public class UploadFragment extends Fragment {
                     if (user_token == "") {
                         Toast.makeText(getActivity(), "请先登录", Toast.LENGTH_SHORT).show();
                     } else {
-                        searchFile(mgetRequestInterface, urlString, user_token);
-//                        if (file.length() > 70 * 1024 * 1024) {
-//                            File filepath = new File(file.getName()+"_");
-//                            List<String> files = new ArrayList<>();
-//                            if (filepath.exists() && filepath.isDirectory()){
-//                                files = Arrays.asList(filepath.list());
-//                            }else {
-//                                FileUtils utils = new FileUtils();
-//                                try {
-//                                    files = utils.splitBySize(file, 20 * 1024 * 1024,filepath.getAbsolutePath());
-//                                } catch (IOException e) {
-//                                    e.printStackTrace();
-//                                }
-//                            }
-//                            searchToUpFile(0, files.size() - 1, files);
-//                        } else {
-//                            searchFile(mgetRequestInterface, file.getName(), user_token, new GetCallBack() {
-//                                @Override
-//                                public void doThing() {
-//                                    uploadOneFile(file, user_token);
-//                                }
-//                            });
-//                        }
+//                        searchFile(mgetRequestInterface, urlString, user_token);
+                        UploadThread thread = new UploadThread(position, false, adapter, mfileInfos, user_token
+                                , mgetRequestInterface, mTv_project_name.getText().toString(), mActivity);
+                        thread.start();
+                        map.put(position, thread);
                     }
                 }
             }
@@ -287,28 +294,18 @@ public class UploadFragment extends Fragment {
                 startActivityForResult(intent, TO_SELECT_PHOTO);
                 choseImgUp = 1;
             }
+
+            @Override
+            public void callBackCancelUpload(int position) {
+//                listPosition = position;
+//                isuploadcancel = true;
+//                Log.d(TAG, "callBackCancelUpload:  --- "+isuploadcancel);
+                UploadThread uploadThread = map.get(position);
+                uploadThread.setShut(true);
+            }
         };
     }
 
-    private void searchToUpFile(int start, int stop, List<String> files) {
-        if (start > stop) {
-            return;
-        }
-//        searchFile(mgetRequestInterface, files.get(start), user_token, new GetCallBack() {
-//            @Override
-//            public void doThing() {
-        t = new ShowProgressThread(listPosition, start, stop,
-                false, 100, adapter, mfileInfos, uiHandler);
-        t.start();
-        uploadFileBySplit(mgetRequestInterface, new File(files.get(start)), user_token, new GetCallBack() {
-            @Override
-            public void doThing() {
-                searchToUpFile(start + 1, stop, files);
-            }
-        });
-//            }
-//        });
-    }
 
     @Nullable
     @Override
@@ -417,6 +414,39 @@ public class UploadFragment extends Fragment {
             public void onClick(View view) {
 //                wifiAdmin.openWifi();
 //                Toast.makeText(MyDialogActivity.this,"wifi已打开",Toast.LENGTH_SHORT).show();
+                for (int i = 0; i < 13; i++) {
+                    EditText et_start = lv_uploadfile.getChildAt(i).findViewById(R.id.detectionStartingDistance);
+                    EditText et_stop = lv_uploadfile.getChildAt(i).findViewById(R.id.detectionEndingDistance);
+                    EditText et_length = lv_uploadfile.getChildAt(i).findViewById(R.id.detectionLength);
+
+                    if (!TextUtils.isEmpty(et_start.getText().toString())) {
+                        mfileInfos.get(i).setStartKM(et_start.getText().toString());
+                    }
+                    if (!TextUtils.isEmpty(et_stop.getText().toString())) {
+                        mfileInfos.get(i).setStopKM(et_stop.getText().toString());
+                    }
+                    if (!TextUtils.isEmpty(et_length.getText().toString())) {
+                        mfileInfos.get(i).setLinelength(et_length.getText().toString());
+                    }
+
+                    mainPreferenceEditor.putString("cxbh" + i, mfileInfos.get(i).getCxbh());
+                    mainPreferenceEditor.putString("startKM" + i, mfileInfos.get(i).getStartKM());
+                    mainPreferenceEditor.putString("stopKM" + i, mfileInfos.get(i).getStopKM());
+                    mainPreferenceEditor.putString("filePath" + i, mfileInfos.get(i).getFilePath());
+                    mainPreferenceEditor.putString("linelength" + i, mfileInfos.get(i).getLinelength());
+
+                    mainPreferenceEditor.putString("uploadpercent" + i, mfileInfos.get(i).getUploadpercent());
+                    mainPreferenceEditor.putBoolean("isfileup" + i, mfileInfos.get(i).getIsfileup());
+                    mainPreferenceEditor.putString("fileRemotePath" + i, mfileInfos.get(i).getFileRemotePath());
+                    mainPreferenceEditor.putString("photoPath" + i, mfileInfos.get(i).getPhotoPath());
+
+                    mainPreferenceEditor.putString("photoRemotePath" + i, mfileInfos.get(i).getPhotoRemotePath());
+                    mainPreferenceEditor.putBoolean("isphotoup" + i, mfileInfos.get(i).getIsphotoup());
+
+                }
+
+                mainPreferenceEditor.apply();
+
                 mActivity.finish();
             }
         });
@@ -474,7 +504,7 @@ public class UploadFragment extends Fragment {
 //        testInformation = mainPreferences.getS;
         Gson gson = new Gson();
         testInformation = gson.fromJson(mainPreferences.getString("testinformation", ""), TestInformation.class);
-        if (testInformation==null){
+        if (testInformation == null) {
             testInformation = new TestInformation();
         }
         mTv_project_name.setText(testInformation.getProjectName());
@@ -483,254 +513,44 @@ public class UploadFragment extends Fragment {
     }
 
     private void initScanInfo_Device() {
-        String antmodel = mainPreferences.getString("antModel","");
-        String antbianhao = mainPreferences.getString("antBianhao","");
-        String pcmodel = mainPreferences.getString("pcModel","");
-        String pcbianhao = mainPreferences.getString("pcBianhao","");
-        ((TextView)scaninfo.findViewById(R.id.antModel)).setText(antmodel);
-        ((TextView)scaninfo.findViewById(R.id.antBianhao)).setText(antbianhao);
-        ((TextView)scaninfo.findViewById(R.id.pcModel)).setText(pcmodel);
-        ((TextView)scaninfo.findViewById(R.id.pcBianhao)).setText(pcbianhao);
+        String antmodel = mainPreferences.getString("antModel", "");
+        String antbianhao = mainPreferences.getString("antBianhao", "");
+        String pcmodel = mainPreferences.getString("pcModel", "");
+        String pcbianhao = mainPreferences.getString("pcBianhao", "");
+        ((TextView) scaninfo.findViewById(R.id.antModel)).setText(antmodel);
+        ((TextView) scaninfo.findViewById(R.id.antBianhao)).setText(antbianhao);
+        ((TextView) scaninfo.findViewById(R.id.pcModel)).setText(pcmodel);
+        ((TextView) scaninfo.findViewById(R.id.pcBianhao)).setText(pcbianhao);
     }
 
-    private void initScanInfo(TestInformation testInformation){
-        ((TextView) scaninfo.findViewById(R.id.test_infor_id)).setText(""+testInformation.getTestInforId());
-        ((TextView) scaninfo.findViewById(R.id.test_id)).setText(""+testInformation.getTestId());
-        ((TextView) scaninfo.findViewById(R.id.test_time)).setText(""+testInformation.getTestTime());
-        ((TextView) scaninfo.findViewById(R.id.test_starting_distance)).setText(""+testInformation.getTestStartingDistance());
-        ((TextView) scaninfo.findViewById(R.id.test_ending_distance)).setText(""+testInformation.getTestEndingDistance());
-        ((TextView) scaninfo.findViewById(R.id.test_length)).setText(""+testInformation.getTestLength());
-        ((TextView) scaninfo.findViewById(R.id.wall_rock_type)).setText(""+testInformation.getWallRockType());
-        ((TextView) scaninfo.findViewById(R.id.support_tickness)).setText(""+testInformation.getSupportTickness());
-        ((TextView) scaninfo.findViewById(R.id.separation_distance)).setText(""+testInformation.getSeparationDistance());
-        ((TextView) scaninfo.findViewById(R.id.mesh_distance)).setText(""+testInformation.getMeshDistance());
-        ((TextView) scaninfo.findViewById(R.id.annular_bar_distance)).setText(""+testInformation.getAnnularBarDistance());
-        ((TextView) scaninfo.findViewById(R.id.reinfor_prt_tickness)).setText(""+testInformation.getReinforPrtTickness());
-        ((TextView) scaninfo.findViewById(R.id.sec_line_arch_tickness)).setText(""+testInformation.getSecLineArchTickness());
-        ((TextView) scaninfo.findViewById(R.id.sec_line_wall_tickness)).setText(""+testInformation.getSecLineWallTickness());
-        ((TextView) scaninfo.findViewById(R.id.sec_line_inver_arch_tickness)).setText(""+testInformation.getSecLineInverArchTickness());
-        ((TextView) scaninfo.findViewById(R.id.sec_line_filer_tickness)).setText(""+testInformation.getSecLineFilerTickness());
-        ((TextView) scaninfo.findViewById(R.id.project_name)).setText(""+testInformation.getProjectName());
-        ((TextView) scaninfo.findViewById(R.id.section_name)).setText(""+testInformation.getSectionName());
-        ((TextView) scaninfo.findViewById(R.id.tunnel_name)).setText(""+testInformation.getTunnelName());
-        ((TextView) scaninfo.findViewById(R.id.worksite_name)).setText(""+testInformation.getWorksiteName());
-        ((TextView) scaninfo.findViewById(R.id.statute)).setText(""+testInformation.getStatute());
-        ((TextView) scaninfo.findViewById(R.id.beizhu1)).setText(""+testInformation.getBeizhu1());
-        ((TextView) scaninfo.findViewById(R.id.beizhu2)).setText(""+testInformation.getBeizhu2());
-        ((TextView) scaninfo.findViewById(R.id.beizhu3)).setText(""+testInformation.getBeizhu3());
-        ((TextView) scaninfo.findViewById(R.id.beizhu4)).setText(""+testInformation.getBeizhu4());
+    private void initScanInfo(TestInformation testInformation) {
+        ((TextView) scaninfo.findViewById(R.id.test_infor_id)).setText("" + testInformation.getTestInforId());
+        ((TextView) scaninfo.findViewById(R.id.test_id)).setText("" + testInformation.getTestId());
+        ((TextView) scaninfo.findViewById(R.id.test_time)).setText("" + testInformation.getTestTime());
+        ((TextView) scaninfo.findViewById(R.id.test_starting_distance)).setText("" + testInformation.getTestStartingDistance());
+        ((TextView) scaninfo.findViewById(R.id.test_ending_distance)).setText("" + testInformation.getTestEndingDistance());
+        ((TextView) scaninfo.findViewById(R.id.test_length)).setText("" + testInformation.getTestLength());
+        ((TextView) scaninfo.findViewById(R.id.wall_rock_type)).setText("" + testInformation.getWallRockType());
+        ((TextView) scaninfo.findViewById(R.id.support_tickness)).setText("" + testInformation.getSupportTickness());
+        ((TextView) scaninfo.findViewById(R.id.separation_distance)).setText("" + testInformation.getSeparationDistance());
+        ((TextView) scaninfo.findViewById(R.id.mesh_distance)).setText("" + testInformation.getMeshDistance());
+        ((TextView) scaninfo.findViewById(R.id.annular_bar_distance)).setText("" + testInformation.getAnnularBarDistance());
+        ((TextView) scaninfo.findViewById(R.id.reinfor_prt_tickness)).setText("" + testInformation.getReinforPrtTickness());
+        ((TextView) scaninfo.findViewById(R.id.sec_line_arch_tickness)).setText("" + testInformation.getSecLineArchTickness());
+        ((TextView) scaninfo.findViewById(R.id.sec_line_wall_tickness)).setText("" + testInformation.getSecLineWallTickness());
+        ((TextView) scaninfo.findViewById(R.id.sec_line_inver_arch_tickness)).setText("" + testInformation.getSecLineInverArchTickness());
+        ((TextView) scaninfo.findViewById(R.id.sec_line_filer_tickness)).setText("" + testInformation.getSecLineFilerTickness());
+        ((TextView) scaninfo.findViewById(R.id.project_name)).setText("" + testInformation.getProjectName());
+        ((TextView) scaninfo.findViewById(R.id.section_name)).setText("" + testInformation.getSectionName());
+        ((TextView) scaninfo.findViewById(R.id.tunnel_name)).setText("" + testInformation.getTunnelName());
+        ((TextView) scaninfo.findViewById(R.id.worksite_name)).setText("" + testInformation.getWorksiteName());
+        ((TextView) scaninfo.findViewById(R.id.statute)).setText("" + testInformation.getStatute());
+        ((TextView) scaninfo.findViewById(R.id.beizhu1)).setText("" + testInformation.getBeizhu1());
+        ((TextView) scaninfo.findViewById(R.id.beizhu2)).setText("" + testInformation.getBeizhu2());
+        ((TextView) scaninfo.findViewById(R.id.beizhu3)).setText("" + testInformation.getBeizhu3());
+        ((TextView) scaninfo.findViewById(R.id.beizhu4)).setText("" + testInformation.getBeizhu4());
     }
 
-    private void searchFile(GetRequestInterface getRequestInterface, String filename, String user_token) {
-        FileMd5 md5 = new FileMd5();
-        File file = new File(filename);
-        md5.setFilename(mTv_project_name.getText().toString() + "-" + file.getName());
-        try {
-            md5.setMd5("");//FileUtils.getMd5(FileUtils.getByte(file)
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        md5.setLen(file.length());
-        Gson gson = new Gson();
-        RequestBody body = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), gson.toJson(md5));
-        Call<FileMdRes> call = getRequestInterface.verifyFile(body, user_token);
-        call.enqueue(new Callback<FileMdRes>() {
-            @Override
-            public void onResponse(Call<FileMdRes> call, Response<FileMdRes> response) {
-                if (response.body() != null) {
-                    if (response.body().getExits().equals("file")) {
-                        String[] str = file.getName().split("\\.");
-                        Toast.makeText(mActivity, "服务器已有该文件", Toast.LENGTH_SHORT).show();
-                        msg = Message.obtain();
-                        msg.what = 2;
-                        msg.obj = urlrawpath = mTv_project_name.getText().toString() + "-" + str[0] + "." + str[1];
-                        msg.arg2 = listPosition;
-                        uiHandler.sendMessage(msg);
-                    } else {
-                        Toast.makeText(mActivity,"正在上传",Toast.LENGTH_SHORT).show();
-                        if (file.length() > 70 * 1024 * 1024) {
-                            File filepath = new File(file.getParent()+"/"+file.getName() + "_");
-                            List<String> files = new ArrayList<>();
-                            if (filepath.exists() && filepath.isDirectory()) {
-                                File[] files1 = filepath.listFiles();
-                                for (File f : files1){
-                                    files.add(f.getAbsolutePath());
-                                }
-                            } else {
-                                filepath.mkdir();
-                                FileUtils utils = new FileUtils();
-                                try {
-                                    files = utils.splitBySize(file, 20 * 1024 * 1024, filepath.getAbsolutePath());
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            searchToUpFile(Integer.parseInt(response.body().getCount()), files.size()-1, files);
-                        } else {
-                            uploadOneFile(file,user_token);
-                        }
-//                        if (file.length() > 70 * 1024 * 1024){
-//                            uploadFileBySplit(getRequestInterface,file,user_token);
-//                        }else {
-//                            uploadOneFile(file,user_token);
-//                        }
-
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<FileMdRes> call, Throwable t) {
-                Toast.makeText(mActivity, "校验文件错误！:" + t.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
-    }
-
-    private void uploadFileBySplit(GetRequestInterface getRequestInterface, File file, String user_token, GetCallBack callBack) {
-        OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(60000, TimeUnit.SECONDS)
-                .readTimeout(60000, TimeUnit.SECONDS)
-                .writeTimeout(60000, TimeUnit.SECONDS)
-//                .addInterceptor(getHeader())
-                .addNetworkInterceptor(getResponseIntercept()).build();
-        mretrofit = new Retrofit.Builder()
-                .baseUrl(FileUtils.IP)
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        getRequestInterface = mretrofit.create(GetRequestInterface.class);
-        RequestBody body = RequestBody.create(MediaType.parse("application/octet-stream"), file);
-        MultipartBody.Part part = MultipartBody.Part.createFormData("file", mTv_project_name.getText().toString() + "-" + file.getName(), body);
-        Call<UpFilePath> upFilePathCall = getRequestInterface.uploadOneFileBySplit(part, user_token);
-        upFilePathCall.enqueue(new Callback<UpFilePath>() {
-            @Override
-            public void onResponse(Call<UpFilePath> call, Response<UpFilePath> response) {
-                if (response.body() == null) {
-                    try {
-                        Toast.makeText(mActivity, "" + response.errorBody().string(), Toast.LENGTH_LONG).show();
-                    } catch (Exception e) {
-                        Log.e(TAG, "Exception " + e);
-                    }
-                } else {
-                    String[] sts = response.body().getAvatar().split("\\.");
-                    if (sts[sts.length - 1].equals("true")) {
-                        t.setIsfinished(true);
-                        String pathfile = file.getParent();
-                        FileUtils.deleteFile(new File(pathfile));
-                        String filepath =response.body().getAvatar();
-                        String[] paths =filepath.split("\\.");
-                        msg = Message.obtain();
-                        msg.what = 2;
-                        msg.obj = urlrawpath = paths[0]+paths[1];
-                        msg.arg2 = listPosition;
-                        uiHandler.sendMessage(msg);
-                    }else {
-                        callBack.doThing();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<UpFilePath> call, Throwable t) {
-                Toast.makeText(mActivity, "上传失败", Toast.LENGTH_LONG).show();
-                Log.d(TAG, "onResponse: " + t);
-            }
-        });
-    }
-
-    public void uploadOneFile(File file, String user_token) {
-        LoadOnSubscribe loadOnSubscribe = new LoadOnSubscribe();
-        ArrayMap<String, Object> params = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-            params = new ArrayMap<>();
-        }
-        List<String> files1 = new ArrayList<>();
-        files1.add(file.getAbsolutePath());
-        params.put("files", files1);
-        params.put("LoadOnSubscribe", loadOnSubscribe);
-        OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(60000, TimeUnit.MILLISECONDS)
-                .readTimeout(60000, TimeUnit.MILLISECONDS)
-                .writeTimeout(60000, TimeUnit.MILLISECONDS)
-//                .addInterceptor(getHeader())
-                .addNetworkInterceptor(getResponseIntercept()).build();
-        Retrofit retrofit = new Retrofit.Builder()
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(new FileConverterFactory())
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(client)
-                .baseUrl(FileUtils.IP)
-                .build();
-        GetRequestInterface loadService = retrofit.create(GetRequestInterface.class);
-        Observable.merge(Observable.create(loadOnSubscribe), loadService.upLoadOneFile(params, user_token))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new LoadCallBack<Object>() {
-                    @Override
-                    protected void onProgress(String percent) {
-//                        mtv_up_percent.setText(percent + "%");
-                        mfileInfos.get(listPosition).setUploadpercent(percent + "%");
-                        adapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    protected void onSuccess(Object t) {
-                        Toast.makeText(mActivity, "上传成功", Toast.LENGTH_LONG).show();
-                        tag_is_uploadraw = 1;
-                        Gson gson = new Gson();
-                        String str = gson.toJson(t);
-                        UpFilePath path = gson.fromJson(str, UpFilePath.class);
-                        urlrawpath = path.getAvatar();
-                        mfileInfos.get(listPosition).setFileRemotePath(urlrawpath);
-                        mfileInfos.get(listPosition).setIsfileup(true);
-                        adapter.notifyDataSetChanged();
-//                        ib_upload_file.setImageResource(R.drawable.upload_file_03);
-                    }
-                });
-
-//        Log.d(TAG, "uploadOneFile:  --> path :"+file.getAbsolutePath());
-//        RequestBody body = RequestBody
-//                .create(MediaType.parse("application/octet-stream"),file);
-//        MultipartBody.Part part = MultipartBody.Part.createFormData("file",file.getName(),body);
-//        Retrofit retrofit = new Retrofit.Builder()
-//                .baseUrl("http://39.105.125.51:8001/")
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build();
-//        GetRequestInterface getRequestInterface = retrofit.create(GetRequestInterface.class);
-//        Call<UpFilePath> upFilePathCall = getRequestInterface.upLoadOneFile(part,user_token);
-//        upFilePathCall.enqueue(new Callback<UpFilePath>() {
-//            @Override
-//            public void onResponse(Call<UpFilePath> call, Response<UpFilePath> response) {
-//                if (response.body() == null){
-//                    try {
-//                        Toast.makeText(mActivity,""+response.errorBody().string(),Toast.LENGTH_LONG).show();
-//                    }catch (Exception e){
-//                        Log.e(TAG, "Exception "+e);
-//                    }
-//                }else {
-//                    Toast.makeText(mActivity,"上传雷达数据成功",Toast.LENGTH_LONG).show();
-//                    urlrawpath = response.body().getAvatar();
-//                    ib_upload_file.setImageResource(R.drawable.upload_file_03);
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<UpFilePath> call, Throwable t) {
-//                Toast.makeText(mActivity,"上传失败",Toast.LENGTH_LONG).show();
-//                Log.d(TAG, "onResponse: "+t);
-//            }
-//        });
-    }
-
-    private HttpLoggingInterceptor getResponseIntercept() {
-        return new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-            @Override
-            public void log(String message) {
-
-            }
-        }).setLevel(HttpLoggingInterceptor.Level.BODY);
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -786,16 +606,24 @@ public class UploadFragment extends Fragment {
             case TO_SCAN_RESULT:
                 if (resultCode == mActivity.RESULT_OK) {
                     String result = data.getStringExtra(CaptureActivity.EXTRA_STRING);
-                    Log.d(TAG, "onActivityResult:  --> "+result);
+                    Log.d(TAG, "onActivityResult:  --> " + result);
                     Gson gson = new Gson();
-                    try{
+                    try {
                         testInformation = gson.fromJson(result, TestInformation.class);
                         scaninfo.setVisibility(View.VISIBLE);
-                        updateDeviceInfo(testInformation.getBeizhu24(),testInformation.getBeizhu25());
+                        updateDeviceInfo(testInformation.getBeizhu24(), testInformation.getBeizhu25());
                         initScanInfo(testInformation);
-                        mainPreferenceEditor.putString("testinformation",result);
+                        mfileInfos = new ArrayList<>();
+                        for (int i = 0; i < 13; i++) {
+                            UpLoadFileInfo info = new UpLoadFileInfo();
+                            info.setCxbh(fileinfoarray[i]);
+                            mfileInfos.add(info);
+                        }
+                        adapter = new UpLoadFileListAdapter(mActivity, backToDo, mfileInfos);
+                        lv_uploadfile.setAdapter(adapter);
+                        mainPreferenceEditor.putString("testinformation", result);
                         mainPreferenceEditor.apply();
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         Log.d(TAG, "error " + e);
                         Toast.makeText(mActivity, "请扫描正确二维码", Toast.LENGTH_SHORT).show();
                         break;
@@ -859,7 +687,7 @@ public class UploadFragment extends Fragment {
 //                Log.d(TAG, wall+"");
                     String result = null;
                     try {
-                        result = tools.UploadWallData(deteInfo,user_token);
+                        result = tools.UploadWallData(deteInfo, user_token);
                         results.add(result);
                     } catch (JSONException | org.json.JSONException e) {
                         e.printStackTrace();
@@ -926,7 +754,7 @@ public class UploadFragment extends Fragment {
         };
     }
 
-    private void updateDeviceInfo(String id1, String id2){
+    private void updateDeviceInfo(String id1, String id2) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(FileUtils.IP)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -935,23 +763,23 @@ public class UploadFragment extends Fragment {
 
         FormBody.Builder builder = new FormBody.Builder();
         FormBody.Builder builder2 = new FormBody.Builder();
-        builder.add("id",id1);
-        builder2.add("id",id2);
+        builder.add("id", id1);
+        builder2.add("id", id2);
         RequestBody body = builder.build();
         RequestBody body2 = builder2.build();
-        Call<DeviceRes> call = getRequestInterface.queryDeviceInformation(body,user_token);
-        Call<DeviceRes> call2 = getRequestInterface.queryDeviceInformation(body2,user_token);
+        Call<DeviceRes> call = getRequestInterface.queryDeviceInformation(body, user_token);
+        Call<DeviceRes> call2 = getRequestInterface.queryDeviceInformation(body2, user_token);
         call.enqueue(new Callback<DeviceRes>() {
             @Override
             public void onResponse(Call<DeviceRes> call, Response<DeviceRes> response) {
-                try{
-                    ((TextView)scaninfo.findViewById(R.id.antModel)).setText(response.body().getDeviceModel());
-                    ((TextView)scaninfo.findViewById(R.id.antBianhao)).setText(response.body().getDeviceBianhao());
-                    mainPreferenceEditor.putString("antModel",response.body().getDeviceModel());
-                    mainPreferenceEditor.putString("antBianhao",response.body().getDeviceBianhao());
+                try {
+                    ((TextView) scaninfo.findViewById(R.id.antModel)).setText(response.body().getDeviceModel());
+                    ((TextView) scaninfo.findViewById(R.id.antBianhao)).setText(response.body().getDeviceBianhao());
+                    mainPreferenceEditor.putString("antModel", response.body().getDeviceModel());
+                    mainPreferenceEditor.putString("antBianhao", response.body().getDeviceBianhao());
                     mainPreferenceEditor.apply();
-                }catch (Exception e){
-                    Log.e(TAG, "onResponse: "+e);
+                } catch (Exception e) {
+                    Log.e(TAG, "onResponse: " + e);
                 }
 
             }
@@ -964,14 +792,14 @@ public class UploadFragment extends Fragment {
         call2.enqueue(new Callback<DeviceRes>() {
             @Override
             public void onResponse(Call<DeviceRes> call, Response<DeviceRes> response) {
-                try{
-                    ((TextView)scaninfo.findViewById(R.id.pcModel)).setText(response.body().getDeviceModel());
-                    ((TextView)scaninfo.findViewById(R.id.pcBianhao)).setText(response.body().getDeviceBianhao());
-                    mainPreferenceEditor.putString("pcModel",response.body().getDeviceModel());
-                    mainPreferenceEditor.putString("pcBianhao",response.body().getDeviceBianhao());
+                try {
+                    ((TextView) scaninfo.findViewById(R.id.pcModel)).setText(response.body().getDeviceModel());
+                    ((TextView) scaninfo.findViewById(R.id.pcBianhao)).setText(response.body().getDeviceBianhao());
+                    mainPreferenceEditor.putString("pcModel", response.body().getDeviceModel());
+                    mainPreferenceEditor.putString("pcBianhao", response.body().getDeviceBianhao());
                     mainPreferenceEditor.apply();
-                }catch (Exception e){
-                    Log.e(TAG, "onResponse: "+e);
+                } catch (Exception e) {
+                    Log.e(TAG, "onResponse: " + e);
                 }
             }
 

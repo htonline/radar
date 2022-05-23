@@ -6,7 +6,26 @@ public class UpLoadFileInfo {
     private String stopKM;
     private String filePath;
     private String linelength;
-    private String uploadpercent ="0.0%";
+    private String uploadpercent = "0.0%";
+    private Boolean isfileup = false;
+    private String fileRemotePath;
+    private String photoPath;
+    private String photoRemotePath;
+    private Boolean isphotoup = false;
+
+    public UpLoadFileInfo() {
+        this.cxbh = "";
+        this.startKM = "";
+        this.stopKM = "";
+        this.filePath = "";
+        this.linelength = "";
+        this.uploadpercent = "0.0%";
+        this.isfileup = false;
+        this.fileRemotePath = "";
+        this.photoPath = "";
+        this.photoRemotePath = "";
+        this.isphotoup = false;
+    }
 
     public String getUploadpercent() {
         return uploadpercent;
@@ -16,11 +35,6 @@ public class UpLoadFileInfo {
         this.uploadpercent = uploadpercent;
     }
 
-    private Boolean isfileup = false;
-    private String fileRemotePath;
-    private String photoPath;
-    private String photoRemotePath;
-    private Boolean isphotoup =false;
 
     public Boolean getIsfileup() {
         return isfileup;
@@ -100,5 +114,22 @@ public class UpLoadFileInfo {
 
     public void setPhotoPath(String photoPath) {
         this.photoPath = photoPath;
+    }
+
+    @Override
+    public String toString() {
+        return "UpLoadFileInfo{" +
+                "cxbh='" + cxbh + '\'' +
+                ", startKM='" + startKM + '\'' +
+                ", stopKM='" + stopKM + '\'' +
+                ", filePath='" + filePath + '\'' +
+                ", linelength='" + linelength + '\'' +
+                ", uploadpercent='" + uploadpercent + '\'' +
+                ", isfileup=" + isfileup +
+                ", fileRemotePath='" + fileRemotePath + '\'' +
+                ", photoPath='" + photoPath + '\'' +
+                ", photoRemotePath='" + photoRemotePath + '\'' +
+                ", isphotoup=" + isphotoup +
+                '}';
     }
 }

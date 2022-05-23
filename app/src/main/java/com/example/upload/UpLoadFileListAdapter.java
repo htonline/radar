@@ -67,6 +67,7 @@ public class UpLoadFileListAdapter extends BaseAdapter {
             holer.met_start = view.findViewById(R.id.detectionStartingDistance);
             holer.met_stop = view.findViewById(R.id.detectionEndingDistance);
             holer.met_length = view.findViewById(R.id.detectionLength);
+            holer.mbtn_uploadcancel = view.findViewById(R.id.imb_uploadcancel);
             holer.mbtn_searchPathRadarFile = view.findViewById(R.id.my_dialog_addFile);
             holer.mtv_radarFileName = view.findViewById(R.id.tv_pathoffile);
             holer.mtv_uploadProgress = view.findViewById(R.id.upload_percent);
@@ -83,6 +84,9 @@ public class UpLoadFileListAdapter extends BaseAdapter {
             }
         }
         holer.mtv_cxbh.setText(mfileInfos.get(position).getCxbh());
+        holer.met_start.setText(mfileInfos.get(position).getStartKM());
+        holer.met_stop.setText(mfileInfos.get(position).getStopKM());
+        holer.met_length.setText(mfileInfos.get(position).getLinelength());
         if (mfileInfos.get(position).getFilePath() != null) {
             String[] sts = mfileInfos.get(position).getFilePath().split("/");
             holer.mtv_radarFileName.setText(sts[sts.length - 1]);
@@ -114,6 +118,12 @@ public class UpLoadFileListAdapter extends BaseAdapter {
                 mtoDo.callBackdoUploadPhoto(position);
             }
         });
+        holer.mbtn_uploadcancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mtoDo.callBackCancelUpload(position);
+            }
+        });
         return view;
     }
 
@@ -122,6 +132,7 @@ public class UpLoadFileListAdapter extends BaseAdapter {
         EditText met_start;
         EditText met_stop;
         EditText met_length;
+        ImageButton mbtn_uploadcancel;
         ImageButton mbtn_searchPathRadarFile;
         TextView mtv_radarFileName;
         TextView mtv_uploadProgress;

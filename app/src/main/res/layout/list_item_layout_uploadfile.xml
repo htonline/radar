@@ -177,7 +177,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2">
-
+                <ImageButton
+                    android:id="@+id/imb_uploadcancel"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/uploadcancel"/>
                 <TextView
                     android:id="@+id/tv_pathoffile"
                     android:layout_width="0dp"
