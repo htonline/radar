@@ -3,6 +3,7 @@ package com.example.upload;
 import android.util.ArrayMap;
 
 import com.example.upload.convertor.UpLoadFileType;
+import com.example.upload.entity.DeviceRes;
 import com.example.upload.entity.FileExists;
 import com.example.upload.entity.FileMdRes;
 import com.example.upload.entity.UpFilePath;
@@ -17,6 +18,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
@@ -40,5 +42,8 @@ public interface GetRequestInterface {
 
     @POST("api/upload/verifyFile")
     Call<FileMdRes> verifyFile(@Body RequestBody filemd5, @Header("Authorization") String token);
+
+    @POST("api/deviceInformation/queryDeviceInformation")
+    Call<DeviceRes> queryDeviceInformation(@Body RequestBody id, @Header("Authorization") String token);
 
 }

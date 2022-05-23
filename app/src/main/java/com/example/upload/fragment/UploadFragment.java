@@ -47,6 +47,7 @@ import com.example.ladarmonitor.R;
 import com.example.upload.UpLoadFileListAdapter;
 import com.example.upload.convertor.FileConverterFactory;
 import com.example.upload.entity.DetectionInformation;
+import com.example.upload.entity.DeviceRes;
 import com.example.upload.entity.FileExists;
 import com.example.upload.entity.FileInfo;
 import com.example.upload.entity.FileMd5;
@@ -73,6 +74,7 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -477,7 +479,20 @@ public class UploadFragment extends Fragment {
         }
         mTv_project_name.setText(testInformation.getProjectName());
         initScanInfo(testInformation);
+        initScanInfo_Device();
     }
+
+    private void initScanInfo_Device() {
+        String antmodel = mainPreferences.getString("antModel","");
+        String antbianhao = mainPreferences.getString("antBianhao","");
+        String pcmodel = mainPreferences.getString("pcModel","");
+        String pcbianhao = mainPreferences.getString("pcBianhao","");
+        ((TextView)scaninfo.findViewById(R.id.antModel)).setText(antmodel);
+        ((TextView)scaninfo.findViewById(R.id.antBianhao)).setText(antbianhao);
+        ((TextView)scaninfo.findViewById(R.id.pcModel)).setText(pcmodel);
+        ((TextView)scaninfo.findViewById(R.id.pcBianhao)).setText(pcbianhao);
+    }
+
     private void initScanInfo(TestInformation testInformation){
         ((TextView) scaninfo.findViewById(R.id.test_infor_id)).setText(""+testInformation.getTestInforId());
         ((TextView) scaninfo.findViewById(R.id.test_id)).setText(""+testInformation.getTestId());
@@ -776,6 +791,7 @@ public class UploadFragment extends Fragment {
                     try{
                         testInformation = gson.fromJson(result, TestInformation.class);
                         scaninfo.setVisibility(View.VISIBLE);
+                        updateDeviceInfo(testInformation.getBeizhu24(),testInformation.getBeizhu25());
                         initScanInfo(testInformation);
                         mainPreferenceEditor.putString("testinformation",result);
                         mainPreferenceEditor.apply();
@@ -908,5 +924,61 @@ public class UploadFragment extends Fragment {
                 }
             }
         };
+    }
+
+    private void updateDeviceInfo(String id1, String id2){
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(FileUtils.IP)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        GetRequestInterface getRequestInterface = retrofit.create(GetRequestInterface.class);
+
+        FormBody.Builder builder = new FormBody.Builder();
+        FormBody.Builder builder2 = new FormBody.Builder();
+        builder.add("id",id1);
+        builder2.add("id",id2);
+        RequestBody body = builder.build();
+        RequestBody body2 = builder2.build();
+        Call<DeviceRes> call = getRequestInterface.queryDeviceInformation(body,user_token);
+        Call<DeviceRes> call2 = getRequestInterface.queryDeviceInformation(body2,user_token);
+        call.enqueue(new Callback<DeviceRes>() {
+            @Override
+            public void onResponse(Call<DeviceRes> call, Response<DeviceRes> response) {
+                try{
+                    ((TextView)scaninfo.findViewById(R.id.antModel)).setText(response.body().getDeviceModel());
+                    ((TextView)scaninfo.findViewById(R.id.antBianhao)).setText(response.body().getDeviceBianhao());
+                    mainPreferenceEditor.putString("antModel",response.body().getDeviceModel());
+                    mainPreferenceEditor.putString("antBianhao",response.body().getDeviceBianhao());
+                    mainPreferenceEditor.apply();
+                }catch (Exception e){
+                    Log.e(TAG, "onResponse: "+e);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<DeviceRes> call, Throwable t) {
+
+            }
+        });
+        call2.enqueue(new Callback<DeviceRes>() {
+            @Override
+            public void onResponse(Call<DeviceRes> call, Response<DeviceRes> response) {
+                try{
+                    ((TextView)scaninfo.findViewById(R.id.pcModel)).setText(response.body().getDeviceModel());
+                    ((TextView)scaninfo.findViewById(R.id.pcBianhao)).setText(response.body().getDeviceBianhao());
+                    mainPreferenceEditor.putString("pcModel",response.body().getDeviceModel());
+                    mainPreferenceEditor.putString("pcBianhao",response.body().getDeviceBianhao());
+                    mainPreferenceEditor.apply();
+                }catch (Exception e){
+                    Log.e(TAG, "onResponse: "+e);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DeviceRes> call, Throwable t) {
+
+            }
+        });
     }
 }

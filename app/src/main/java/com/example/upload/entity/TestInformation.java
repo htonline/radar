@@ -116,6 +116,149 @@ public class TestInformation implements Serializable {
     @SerializedName("beizhu15")
     private String beizhu15;//beizhu15
 
+    private String beizhu16;
+    private String beizhu17;
+    private String beizhu18;
+    private String beizhu19;
+    private String beizhu20;
+    private String beizhu21;
+    private String beizhu22;
+    private String beizhu23;
+    private String beizhu24;
+    private String beizhu25;
+
+    @Override
+    public String toString() {
+        return "TestInformation{" +
+                "testInforId=" + testInforId +
+                ", testId='" + testId + '\'' +
+                ", testTime=" + testTime +
+                ", testStartingDistance='" + testStartingDistance + '\'' +
+                ", testEndingDistance='" + testEndingDistance + '\'' +
+                ", testLength='" + testLength + '\'' +
+                ", wallRockType='" + wallRockType + '\'' +
+                ", supportTickness='" + supportTickness + '\'' +
+                ", separationDistance='" + separationDistance + '\'' +
+                ", meshDistance='" + meshDistance + '\'' +
+                ", annularBarDistance='" + annularBarDistance + '\'' +
+                ", reinforPrtTickness='" + reinforPrtTickness + '\'' +
+                ", secLineArchTickness='" + secLineArchTickness + '\'' +
+                ", secLineWallTickness='" + secLineWallTickness + '\'' +
+                ", secLineInverArchTickness='" + secLineInverArchTickness + '\'' +
+                ", secLineFilerTickness='" + secLineFilerTickness + '\'' +
+                ", projectName='" + projectName + '\'' +
+                ", sectionName='" + sectionName + '\'' +
+                ", tunnelName='" + tunnelName + '\'' +
+                ", worksiteName='" + worksiteName + '\'' +
+                ", statute='" + statute + '\'' +
+                ", beizhu1='" + beizhu1 + '\'' +
+                ", beizhu2='" + beizhu2 + '\'' +
+                ", beizhu3='" + beizhu3 + '\'' +
+                ", beizhu4='" + beizhu4 + '\'' +
+                ", beizhu5='" + beizhu5 + '\'' +
+                ", beizhu6='" + beizhu6 + '\'' +
+                ", beizhu7='" + beizhu7 + '\'' +
+                ", beizhu8='" + beizhu8 + '\'' +
+                ", beizhu9='" + beizhu9 + '\'' +
+                ", beizhu10='" + beizhu10 + '\'' +
+                ", beizhu11='" + beizhu11 + '\'' +
+                ", beizhu12='" + beizhu12 + '\'' +
+                ", beizhu13='" + beizhu13 + '\'' +
+                ", beizhu14='" + beizhu14 + '\'' +
+                ", beizhu15='" + beizhu15 + '\'' +
+                ", beizhu16='" + beizhu16 + '\'' +
+                ", beizhu17='" + beizhu17 + '\'' +
+                ", beizhu18='" + beizhu18 + '\'' +
+                ", beizhu19='" + beizhu19 + '\'' +
+                ", beizhu20='" + beizhu20 + '\'' +
+                ", beizhu21='" + beizhu21 + '\'' +
+                ", beizhu22='" + beizhu22 + '\'' +
+                ", beizhu23='" + beizhu23 + '\'' +
+                ", beizhu24='" + beizhu24 + '\'' +
+                ", beizhu25='" + beizhu25 + '\'' +
+                '}';
+    }
+
+    public String getBeizhu16() {
+        return beizhu16;
+    }
+
+    public void setBeizhu16(String beizhu16) {
+        this.beizhu16 = beizhu16;
+    }
+
+    public String getBeizhu17() {
+        return beizhu17;
+    }
+
+    public void setBeizhu17(String beizhu17) {
+        this.beizhu17 = beizhu17;
+    }
+
+    public String getBeizhu18() {
+        return beizhu18;
+    }
+
+    public void setBeizhu18(String beizhu18) {
+        this.beizhu18 = beizhu18;
+    }
+
+    public String getBeizhu19() {
+        return beizhu19;
+    }
+
+    public void setBeizhu19(String beizhu19) {
+        this.beizhu19 = beizhu19;
+    }
+
+    public String getBeizhu20() {
+        return beizhu20;
+    }
+
+    public void setBeizhu20(String beizhu20) {
+        this.beizhu20 = beizhu20;
+    }
+
+    public String getBeizhu21() {
+        return beizhu21;
+    }
+
+    public void setBeizhu21(String beizhu21) {
+        this.beizhu21 = beizhu21;
+    }
+
+    public String getBeizhu22() {
+        return beizhu22;
+    }
+
+    public void setBeizhu22(String beizhu22) {
+        this.beizhu22 = beizhu22;
+    }
+
+    public String getBeizhu23() {
+        return beizhu23;
+    }
+
+    public void setBeizhu23(String beizhu23) {
+        this.beizhu23 = beizhu23;
+    }
+
+    public String getBeizhu24() {
+        return beizhu24;
+    }
+
+    public void setBeizhu24(String beizhu24) {
+        this.beizhu24 = beizhu24;
+    }
+
+    public String getBeizhu25() {
+        return beizhu25;
+    }
+
+    public void setBeizhu25(String beizhu25) {
+        this.beizhu25 = beizhu25;
+    }
+
     public Long getTestInforId() {
         return testInforId;
     }
@@ -404,45 +547,4 @@ public class TestInformation implements Serializable {
         this.beizhu15 = beizhu15;
     }
 
-    @Override
-    public String toString() {
-        return "TestInformation{" +
-                "testInforId=" + testInforId +
-                ", testId='" + testId + '\'' +
-                ", testTime=" + testTime +
-                ", testStartingDistance='" + testStartingDistance + '\'' +
-                ", testEndingDistance='" + testEndingDistance + '\'' +
-                ", testLength='" + testLength + '\'' +
-                ", wallRockType='" + wallRockType + '\'' +
-                ", supportTickness='" + supportTickness + '\'' +
-                ", separationDistance='" + separationDistance + '\'' +
-                ", meshDistance='" + meshDistance + '\'' +
-                ", annularBarDistance='" + annularBarDistance + '\'' +
-                ", reinforPrtTickness='" + reinforPrtTickness + '\'' +
-                ", secLineArchTickness='" + secLineArchTickness + '\'' +
-                ", secLineWallTickness='" + secLineWallTickness + '\'' +
-                ", secLineInverArchTickness='" + secLineInverArchTickness + '\'' +
-                ", secLineFilerTickness='" + secLineFilerTickness + '\'' +
-                ", projectName='" + projectName + '\'' +
-                ", sectionName='" + sectionName + '\'' +
-                ", tunnelName='" + tunnelName + '\'' +
-                ", worksiteName='" + worksiteName + '\'' +
-                ", statute='" + statute + '\'' +
-                ", beizhu1='" + beizhu1 + '\'' +
-                ", beizhu2='" + beizhu2 + '\'' +
-                ", beizhu3='" + beizhu3 + '\'' +
-                ", beizhu4='" + beizhu4 + '\'' +
-                ", beizhu5='" + beizhu5 + '\'' +
-                ", beizhu6='" + beizhu6 + '\'' +
-                ", beizhu7='" + beizhu7 + '\'' +
-                ", beizhu8='" + beizhu8 + '\'' +
-                ", beizhu9='" + beizhu9 + '\'' +
-                ", beizhu10='" + beizhu10 + '\'' +
-                ", beizhu11='" + beizhu11 + '\'' +
-                ", beizhu12='" + beizhu12 + '\'' +
-                ", beizhu13='" + beizhu13 + '\'' +
-                ", beizhu14='" + beizhu14 + '\'' +
-                ", beizhu15='" + beizhu15 + '\'' +
-                '}';
-    }
 }

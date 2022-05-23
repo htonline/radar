@@ -50,10 +50,10 @@
     <string name="tunnel_name">隧道名称</string>
     <string name="worksite_name">工点名称</string>
     <string name="statute">状态</string>
-    <string name="beizhu1">备注1</string>
-    <string name="beizhu2">备注2</string>
-    <string name="beizhu3">备注3</string>
-    <string name="beizhu4">备注4</string>
+    <string name="beizhu1">隧道编号</string>
+    <string name="beizhu2">隧道起始里程</string>
+    <string name="beizhu3">隧道结束里程</string>
+    <string name="beizhu4">隧道长度</string>
     <string name="beizhu5">备注5</string>
 
     <string name="beizhu6">备注6</string>
@@ -67,6 +67,7 @@
     <string name="beizhu13">备注13</string>
     <string name="beizhu14">备注14</string>
     <string name="beizhu15">备注15</string>
+
 
     <!--    detectionInformation对应string-->
     <string name="detectionId">ID</string>
