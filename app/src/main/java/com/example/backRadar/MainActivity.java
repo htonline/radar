@@ -79,7 +79,7 @@ import org.w3c.dom.Text;
 
 
 public class MainActivity extends Activity {
-    private int tagForCloseSetting=0;
+    private int tagForCloseSetting = 0;
     private static RandomAccessFile mrafRaw;
     private static RandomAccessFile mrafColor;
     private WriteBodyThread writeBodyThread;
@@ -97,14 +97,14 @@ public class MainActivity extends Activity {
     private LeftFragmentOfMainActivity lFragment;
     private RightFragmentOfMainActivity rFragment;
     private ImageButton ibtn_startAndSuspend;
-//    private TextView tv_numofSave;
+    //    private TextView tv_numofSave;
     private ImageButton ibtn_wifi;
     private ImageButton ibtn_setting;
     private ImageButton ibtn_stop;
     private ImageButton ibtn_upload;
     private ColoursView coloursView = null;
     private RadarView radarView = null;
-    private int IfSaveTheRadar=0;
+    private int IfSaveTheRadar = 0;
     private EditText met_radarName = null;
 
     private TextView tv_numberOfReceive = null;
@@ -143,7 +143,6 @@ public class MainActivity extends Activity {
 //    static WriteThread writeThread = null;
 //	JudgeHaveThread judgeHaveThread=null;
 //	JudgeMetalThread judgeMetalThread=null;
-
 
 
     //判断是否点击过停止按钮，如果点击过点击开始按钮的时候弹出对话框询问是否覆盖
@@ -219,66 +218,66 @@ public class MainActivity extends Activity {
 
 
     private final String[] items = {"现场检测人员", "专业设置人员"};
-    private final String[] itemsForUpload = {"扫码填写模式", "手动填写模式"};
-    private byte[] Rwcolorgap = new byte[Const_NumberOfVerticalDatas*2];
-    private byte[] colorgap = new byte[Const_NumberOfVerticalDatas*2];
+    private final String[] itemsForUpload = {"扫码填写模式", "手动填写模式", "电子所专用模式"};
+    private byte[] Rwcolorgap = new byte[Const_NumberOfVerticalDatas * 2];
+    private byte[] colorgap = new byte[Const_NumberOfVerticalDatas * 2];
 
-    int ddi=0 ;
+    int ddi = 0;
     //记录当前数据是第几道
     private int numberOfLogo;
     //记录实际收到多少道数据
-    private volatile int counterOfReal=1;
+    private volatile int counterOfReal = 1;
 
     //点击两次退出程序，判断间隔时间
     private long firstTime = 0;
     //判断有无物体
-    private int temppnum=1;
+    private int temppnum = 1;
     private int judge_haveOrNot = -1;
-    int ttti =0;
+    int ttti = 0;
     private Handler handlerOfColour = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
-                    if (clickOrNot != 0){
+                    if (clickOrNot != 0) {
                         reciveData = (short[]) msg.obj;
                         int tempJudge = msg.arg1;
-                        if (tempJudge==1){
-                            judge_MartOrNot=true;
+                        if (tempJudge == 1) {
+                            judge_MartOrNot = true;
                             markNumber++;
                             tv_markNumber.setText(markNumber + "");
                         }
                         for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
                             colorGap[i] = reciveData[i];
                             RawcolorGap[i] = reciveData[i];
-                            Rwcolorgap[2*i]=shortToByte(reciveData[i])[0];
-                            Rwcolorgap[2*i+1]=shortToByte(reciveData[i])[1];
+                            Rwcolorgap[2 * i] = shortToByte(reciveData[i])[0];
+                            Rwcolorgap[2 * i + 1] = shortToByte(reciveData[i])[1];
                         }
-                        if(judge_MartOrNot){
-                            Rwcolorgap[0]=(byte) 0xff;
-                            Rwcolorgap[1]= (byte) 0x00;
-                            Rwcolorgap[2]=(byte) 0xff;
-                            Rwcolorgap[3]=(byte) 0x00;
-                            Rwcolorgap[4]= (byte) 0xff;
-                            Rwcolorgap[5]=(byte) 0x00;
-                            Rwcolorgap[6]=(byte) 0xff;
-                            Rwcolorgap[7]=(byte) 0x00;
+                        if (judge_MartOrNot) {
+                            Rwcolorgap[0] = (byte) 0xff;
+                            Rwcolorgap[1] = (byte) 0x00;
+                            Rwcolorgap[2] = (byte) 0xff;
+                            Rwcolorgap[3] = (byte) 0x00;
+                            Rwcolorgap[4] = (byte) 0xff;
+                            Rwcolorgap[5] = (byte) 0x00;
+                            Rwcolorgap[6] = (byte) 0xff;
+                            Rwcolorgap[7] = (byte) 0x00;
                         }
 //                    if (mrafRaw == null) Log.d(TAG, "handleMessage: !!!!!!!!!!!");
-                        writeBodyThreadRaw = new WriteBodyThread(mrafRaw,Rwcolorgap);
+                        writeBodyThreadRaw = new WriteBodyThread(mrafRaw, Rwcolorgap);
                         writeBodyThreadRaw.setGetCallBack(new GetCallBack() {
                             @Override
                             public void doThing() {
                                 GetCallBack.super.doThing();
                             }
                         });
-                        if (IfSaveTheRadar==1){
+                        if (IfSaveTheRadar == 1) {
                             poolRaw.execute(writeBodyThreadRaw);
                         }
 //                    writeThread.setRwcolorgap(Rwcolorgap);
                         battery = reciveData[512];
 //                    Log.d(TAG, "handleMessage:  --> battery --> "+battery);
-                        int mbtr_num = (int)((float)(battery / 100)*1.1 - 20) * 10;
+                        int mbtr_num = (int) ((float) (battery / 100) * 1.1 - 20) * 10;
                         myBatterView.setPro(mbtr_num);
 //				judgeHaveThread.setColorGap(colorGap);
 //				judgeMetalThread.setColorGap(colorGap);
@@ -312,28 +311,28 @@ public class MainActivity extends Activity {
                             }
                         } else {
                             for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
-                                int color = ((colorGap[i]) / 256)+128;
+                                int color = ((colorGap[i]) / 256) + 128;
                                 colorList[i] = Color.rgb(color, color, color);
 //                            TempColorList[i] = (short) (colorGap[i]);
-                                colorgap[2*i]=shortToByte(colorGap[i])[0];
-                                colorgap[2*i+1]=shortToByte(colorGap[i])[1];
+                                colorgap[2 * i] = shortToByte(colorGap[i])[0];
+                                colorgap[2 * i + 1] = shortToByte(colorGap[i])[1];
                             }
                         }
-                        if(judge_MartOrNot){
-                            colorgap[0]=(byte) 0xff;
-                            colorgap[1]= (byte) 0x00;
-                            colorgap[2]=(byte) 0xff;
-                            colorgap[3]=(byte) 0x00;
-                            colorgap[4]= (byte) 0xff;
-                            colorgap[5]=(byte) 0x00;
-                            colorgap[6]=(byte) 0xff;
-                            colorgap[7]=(byte) 0x00;
+                        if (judge_MartOrNot) {
+                            colorgap[0] = (byte) 0xff;
+                            colorgap[1] = (byte) 0x00;
+                            colorgap[2] = (byte) 0xff;
+                            colorgap[3] = (byte) 0x00;
+                            colorgap[4] = (byte) 0xff;
+                            colorgap[5] = (byte) 0x00;
+                            colorgap[6] = (byte) 0xff;
+                            colorgap[7] = (byte) 0x00;
                         }
 //                    writeThread.setColorgap(colorgap);
 //                    writeThread.setJudgeIfRepeat(false);
 //                    writeThread.setJudgeNumber(3);
 //                    writeThread.setJudgeIfRepeat(true);
-                        writeBodyThread = new WriteBodyThread(mrafColor,colorgap);
+                        writeBodyThread = new WriteBodyThread(mrafColor, colorgap);
                         writeBodyThread.setGetCallBack(new GetCallBack() {
                             @Override
                             public void doThing() {
@@ -341,8 +340,8 @@ public class MainActivity extends Activity {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        counterOfReal+=1;
-                                        tv_numSave.setText(""+counterOfReal);
+                                        counterOfReal += 1;
+                                        tv_numSave.setText("" + counterOfReal);
                                     }
                                 });
                             }
@@ -442,11 +441,10 @@ public class MainActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_main);
         fManager = getFragmentManager();
-        checkPermission();
         lFragment = new LeftFragmentOfMainActivity();
         init();
-        poolRaw =null;
-        pool=null;
+        poolRaw = null;
+        pool = null;
 
         ibtn_startAndSuspend.setOnClickListener(new OnClickListener() {
 
@@ -467,7 +465,7 @@ public class MainActivity extends Activity {
                         public void onClick(DialogInterface dialog, int which) {
                             // TODO Auto-generated method stub
                             File file = new File(tv_path.getText().toString());
-                            File file_copy = new File(tv_path.getText().toString()+"-copy");
+                            File file_copy = new File(tv_path.getText().toString() + "-copy");
                             if (file.exists() && file.isFile()) {
                                 if (file.delete()) {
                                     try {
@@ -479,7 +477,7 @@ public class MainActivity extends Activity {
                                     }
                                 }
                             }
-                            if (IfSaveTheRadar==1&&file_copy.exists() && file_copy.isFile()) {
+                            if (IfSaveTheRadar == 1 && file_copy.exists() && file_copy.isFile()) {
                                 if (file_copy.delete()) {
                                     try {
                                         file_copy.createNewFile();
@@ -508,8 +506,8 @@ public class MainActivity extends Activity {
                             try {
                                 mrafColor = new RandomAccessFile(tv_path.getText().toString(), "rw");
                                 pool = Executors.newFixedThreadPool(1);//建立一个无界队列的线程池
-                                if (IfSaveTheRadar==1){
-                                    mrafRaw = new RandomAccessFile(tv_path.getText().toString()+"-copy","rw");
+                                if (IfSaveTheRadar == 1) {
+                                    mrafRaw = new RandomAccessFile(tv_path.getText().toString() + "-copy", "rw");
                                     poolRaw = Executors.newFixedThreadPool(1);
                                 }
                             } catch (FileNotFoundException e) {
@@ -523,7 +521,7 @@ public class MainActivity extends Activity {
                                 writeHeadThread.setTimedelay(Short.parseShort(tv_delay.getText().toString()));
                                 writeHeadThread.setSample_wnd(Integer.parseInt(tv_timeWindow.getText().toString()));
                                 pool.execute(writeHeadThread);
-                                if (IfSaveTheRadar==1){
+                                if (IfSaveTheRadar == 1) {
                                     writeHeadThreadRaw = new WriteHeadThread(mrafRaw);
                                     writeHeadThreadRaw.setTimedelay(Short.parseShort(tv_delay.getText().toString()));
                                     writeHeadThreadRaw.setSample_wnd(Integer.parseInt(tv_timeWindow.getText().toString()));
@@ -533,7 +531,7 @@ public class MainActivity extends Activity {
                                 //可以打标
                                 btn_mark.setEnabled(true);
                                 counterOfReal = 0;
-                                tv_numberOfReceive.setText(""+0);//收包数量置空
+                                tv_numberOfReceive.setText("" + 0);//收包数量置空
                                 new Thread(new Runnable() {
 
                                     @Override
@@ -575,8 +573,8 @@ public class MainActivity extends Activity {
                 } else {
                     if (counter == 0) {
                         File file = new File(tv_path.getText().toString());
-                        File file_copy = new File(tv_path.getText().toString()+"-copy");
-                        if (IfSaveTheRadar==1&&!file_copy.exists()) {
+                        File file_copy = new File(tv_path.getText().toString() + "-copy");
+                        if (IfSaveTheRadar == 1 && !file_copy.exists()) {
                             try {
                                 file_copy.createNewFile();
                             } catch (IOException e) {
@@ -616,7 +614,7 @@ public class MainActivity extends Activity {
                         writeHeadThread.setTimedelay(Short.parseShort(tv_delay.getText().toString()));
                         writeHeadThread.setSample_wnd(Integer.parseInt(tv_timeWindow.getText().toString()));
                         pool.execute(writeHeadThread);
-                        if (IfSaveTheRadar==1){
+                        if (IfSaveTheRadar == 1) {
                             writeHeadThreadRaw = new WriteHeadThread(mrafRaw);
                             writeHeadThreadRaw.setTimedelay(Short.parseShort(tv_delay.getText().toString()));
                             writeHeadThreadRaw.setSample_wnd(Integer.parseInt(tv_timeWindow.getText().toString()));
@@ -626,7 +624,7 @@ public class MainActivity extends Activity {
                         //可以打标
                         btn_mark.setEnabled(true);
                         counterOfReal = 0;
-                        tv_numberOfReceive.setText(""+0);//收包数量置空
+                        tv_numberOfReceive.setText("" + 0);//收包数量置空
                         new Thread(new Runnable() {
 
                             @Override
@@ -702,7 +700,6 @@ public class MainActivity extends Activity {
         getSharedPreferences("battery", 0).edit().putInt("battery", -1).commit();
         Arrays.fill(colorGap, (short) 0);
         Arrays.fill(colorList, (short) 0);
-
         coeGain = 1;
 
 
@@ -739,10 +736,10 @@ public class MainActivity extends Activity {
 //        tv_numofSave = findViewById(R.id.tv_numofSave);
         met_radarName = findViewById(R.id.et_radarName);
         tv_numSave = findViewById(R.id.tv_numOfSave);
-        tv_numSave.setText(""+0);
-        if (mainPeremeterOrders.getInt("triggerMode",0) == 0){
+        tv_numSave.setText("" + 0);
+        if (mainPeremeterOrders.getInt("triggerMode", 0) == 0) {
             tv_triigerMode.setText("时间");
-        }else{
+        } else {
             tv_triigerMode.setText("测距轮");
         }
         tempifbackremove = 0;
@@ -774,17 +771,18 @@ public class MainActivity extends Activity {
 //        }).start();
 
         btn_wifi_connect.setOnClickListener((view) ->
-                new Thread(() -> {
-                    Looper.prepare();
-                    Toast.makeText(MainActivity.this, "等待连接！", Toast.LENGTH_SHORT).show();
+                        new Thread(() -> {
+                            Looper.prepare();
+                            Toast.makeText(MainActivity.this, "等待连接！", Toast.LENGTH_SHORT).show();
 //                    wifiAdmin.addNetwork(wifiAdmin.CreateWifiInfo(met_radarName.getText().toString(), met_radarName.getText().toString(), 3));
-                    wifiAdmin.addNetwork(wifiAdmin.CreateWifiInfo("WGR4002102", "WGR4002102", 3));
-                    while (!wifiAdmin.getCurrentWifiInfo().getSSID().equals(met_radarName.getText().toString())) ;
+                            wifiAdmin.addNetwork(wifiAdmin.CreateWifiInfo("WGR4002102", "WGR4002102", 3));
+                            while (!wifiAdmin.getCurrentWifiInfo().getSSID().equals(met_radarName.getText().toString()))
+                                ;
 //                    if (!intIP2StringIP(wifiAdmin.getCurrentWifiInfo().getIpAddress()).equals(STATICIP)) {
 //                        changeWifiConfiguration(false, "192.168.0.100", 24, "8.8.8.8", "192.168.0.1");
 //                    }
-                    Looper.loop();
-                }).start()
+                            Looper.loop();
+                        }).start()
         );
 
 
@@ -811,6 +809,7 @@ public class MainActivity extends Activity {
         ibtn_setting.setLayoutParams(ibtn_uploadLinearParams);
 
         shareJudge = getSharedPreferences("judge", 0);
+        shareJudge.edit().putBoolean("judge",false).commit();
         shareXRaw = getSharedPreferences("xRaw", 0);
 
         try {
@@ -917,18 +916,18 @@ public class MainActivity extends Activity {
             @Override
             public void showsavefinish() {
                 Looper.prepare();
-                Toast.makeText(MainActivity.this,"存储完成",Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "存储完成", Toast.LENGTH_LONG).show();
                 Looper.loop();
             }
         });
         pool.execute(writeRearThread);
-        if (IfSaveTheRadar==1){
+        if (IfSaveTheRadar == 1) {
             writeRearThreadRaw = new WriteRearThread(mrafRaw);
             writeRearThreadRaw.setShowSaveNum(new ShowSaveFinish() {
                 @Override
                 public void showsavefinish() {
                     Looper.prepare();
-                    Toast.makeText(MainActivity.this,"原始文件存储完成",Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "原始文件存储完成", Toast.LENGTH_LONG).show();
                     Looper.loop();
                 }
             });
@@ -956,7 +955,7 @@ public class MainActivity extends Activity {
                     case 0:
 //                        Log.d(TAG, "onClick: 1111111111111111111111");
                         Intent intent = new Intent(MainActivity.this, MyDialogActivity.class);
-                        intent.putExtra("type",0);
+                        intent.putExtra("type", 0);
                         startActivity(intent);
                         break;
                     case 1:
@@ -964,7 +963,12 @@ public class MainActivity extends Activity {
 //                        Intent intent2 = new Intent(MainActivity.this, MyDialogActivity.class);
 //                        intent2.putExtra("type",1);
 //                        startActivity(intent2);
-                        Toast.makeText(MainActivity.this,"该模式暂未开放！",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "该模式暂未开放！", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 2:
+                        Intent intent3 = new Intent(MainActivity.this, MyDialogActivity.class);
+                        intent3.putExtra("type", 2);
+                        startActivity(intent3);
                         break;
                     default:
                         break;
@@ -1017,7 +1021,7 @@ public class MainActivity extends Activity {
 
     //wifi的点击事件
     public void wifiIbtn(View view) {
-
+        checkPermission();
 
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo wifiNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
@@ -1154,11 +1158,11 @@ public class MainActivity extends Activity {
             tv_timeWindow.setText(mainPeremeterOrders.getString("timeWindow", "1"));
             tv_frequency.setText(mainPeremeterOrders.getString("frequency", "1"));
             tv_delay.setText(mainPeremeterOrders.getString("delay", "100"));
-            IfSaveTheRadar = mainPeremeterOrders.getInt("saveRadar",1);
+            IfSaveTheRadar = mainPeremeterOrders.getInt("saveRadar", 1);
 //            writeThread.setAnoStart(IfSaveTheRadar);
-            if (mainPeremeterOrders.getInt("triggerMode",0) == 0){
+            if (mainPeremeterOrders.getInt("triggerMode", 0) == 0) {
                 tv_triigerMode.setText("时间");
-            }else{
+            } else {
                 tv_triigerMode.setText("测距轮");
             }
             ibtn_startAndSuspend.setImageResource(R.drawable.startgreen2);
@@ -1166,12 +1170,12 @@ public class MainActivity extends Activity {
 
         }
 
-        if (tv_path.getText().length()>5){
+        if (tv_path.getText().length() > 5) {
             try {
                 mrafColor = new RandomAccessFile(tv_path.getText().toString(), "rw");
                 pool = Executors.newFixedThreadPool(1);//建立一个无界队列的线程池
-                if (IfSaveTheRadar==1){
-                    mrafRaw = new RandomAccessFile(tv_path.getText().toString()+"-copy","rw");
+                if (IfSaveTheRadar == 1) {
+                    mrafRaw = new RandomAccessFile(tv_path.getText().toString() + "-copy", "rw");
                     poolRaw = Executors.newFixedThreadPool(1);
                 }
             } catch (FileNotFoundException e) {
@@ -1226,7 +1230,7 @@ public class MainActivity extends Activity {
 //                    writeThread.setTrace_num(Integer.parseInt(tv_numberOfReceive.getText().toString()));
 //                    writeThread.setJudgeNumber(1);
                     pool.execute(new WriteRearThread(mrafColor));
-                    if (IfSaveTheRadar==1){
+                    if (IfSaveTheRadar == 1) {
                         poolRaw.execute(new WriteRearThread(mrafRaw));
                     }
 //                    writeThread.stop();
@@ -1336,7 +1340,6 @@ public class MainActivity extends Activity {
     }
 
     public void checkPermission() {
-        int targetSdkVersion = 0;
         String[] PermissionString = {
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.CAMERA,
@@ -1351,29 +1354,11 @@ public class MainActivity extends Activity {
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.WAKE_LOCK
         };
-        try {
-            final PackageInfo info = this.getPackageManager().getPackageInfo(this.getPackageName(), 0);
-            targetSdkVersion = info.applicationInfo.targetSdkVersion;//获取应用的Target版本
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-//            Log.e("err", "检查权限_err0");
+        boolean isAllGranted = checkPermissionAllGranted(PermissionString);
+        if (isAllGranted) {
+            return;
         }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            //Build.VERSION.SDK_INT是获取当前手机版本 Build.VERSION_CODES.M为6.0系统
-            //如果系统>=6.0
-            if (targetSdkVersion >= Build.VERSION_CODES.M) {
-                //第 1 步: 检查是否有相应的权限
-                boolean isAllGranted = checkPermissionAllGranted(PermissionString);
-                if (isAllGranted) {
-                    //Log.e("err","所有权限已经授权！");
-                    return;
-                }
-                // 一次请求多个权限, 如果其他有权限是已经授予的将会自动忽略掉
-                ActivityCompat.requestPermissions(this,
-                        PermissionString, 1);
-            }
-        }
+        ActivityCompat.requestPermissions(this, PermissionString, 1);
     }
 
     /**
@@ -1418,7 +1403,7 @@ public class MainActivity extends Activity {
         short temp = number;
         byte[] b = new byte[2];
         for (int i = 0; i < b.length; i++) {
-            b[i] = new Short((short) (temp& 0xff)).byteValue();
+            b[i] = new Short((short) (temp & 0xff)).byteValue();
 //                    new Integer(temp & 0xff).byteValue();
             //将最低位保存在最低位
             temp = (short) (temp >> 8); // 向右移8位

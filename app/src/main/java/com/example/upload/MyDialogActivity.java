@@ -17,6 +17,7 @@ import com.example.upload.fragment.LoginFragment;
 import com.example.upload.fragment.UploadFragment;
 import com.example.upload.fragment.UploadNoQrCodeFragment;
 import com.example.ladarmonitor.R;
+import com.example.upload.fragment.UploadTKYDZSFragment;
 
 //import org.json.JSONException;
 //import org.json.JSONObject;
@@ -61,8 +62,8 @@ public class MyDialogActivity extends FragmentActivity {
             fragment = new UploadFragment();
         }else if (type == 1){
             fragment = new UploadNoQrCodeFragment();
-        }else {
-            Toast.makeText(MyDialogActivity.this,"出错了！",Toast.LENGTH_LONG).show();
+        }else if (type ==2 ){
+            fragment = new UploadTKYDZSFragment();
         }
         Bundle bundle = new Bundle();
         bundle.putSerializable("userinfologin",staticuserInfoLogin);

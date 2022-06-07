@@ -5,6 +5,7 @@ import android.util.Log;
 import com.alibaba.fastjson.JSON;
 import com.example.entity.Wall;
 import com.example.upload.entity.DetectionInformation;
+import com.example.upload.entity.TkyDetectionInformation;
 import com.example.upload.utils.FileUtils;
 import com.google.gson.Gson;
 
@@ -34,6 +35,33 @@ public class OkHttpTools {
         RequestBody formBody = RequestBody.create(JSON,s);
         Request request = new Request.Builder()
                 .url(FileUtils.IP+"api/detectionInformation")
+                .addHeader("Authorization",token)
+                .post(formBody)
+                .build();
+        Response respon = null;
+        try (Response response = client.newCall(request).execute()) {
+            //响应成功并返回响应内容
+            if (response.isSuccessful()) {
+                isok=1;
+                return String.valueOf(isok);
+                //此时代码执行在子线程，修改UI的操作使用handler跳转到UI线程
+            }else{
+                return response.toString();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        //响应失败返回" "
+        return "";
+    }
+
+    public String UploadTkyData(TkyDetectionInformation information, String token) throws JSONException {
+        MediaType JSON = MediaType.parse("application/json;charset=utf-8");
+        Gson gson = new Gson();
+        String s = gson.toJson(information);
+        RequestBody formBody = RequestBody.create(JSON,s);
+        Request request = new Request.Builder()
+                .url(FileUtils.IP+"api/tkyDetectionInformation")
                 .addHeader("Authorization",token)
                 .post(formBody)
                 .build();

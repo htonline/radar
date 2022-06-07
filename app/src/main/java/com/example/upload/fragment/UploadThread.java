@@ -85,6 +85,7 @@ public class UploadThread extends Thread {
             isShut = false;
             mfileInfos.get(position).setFilePath(null);
             mfileInfos.get(position).setUploadpercent("0.0%");
+            mfileInfos.get(position).setIsfileup(false);
             adapter.notifyDataSetChanged();
             interrupt();
             return;

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/lyt_scaninfo_item"
+    android:layout_height="wrap_content">
+    <TextView
+        android:background="@drawable/tv_bg"
+        android:id="@+id/tv_scaninfo_key"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/textsmallSize"
+        android:layout_weight="1"/>
+    <TextView
+        android:background="@drawable/tv_bg"
+        android:id="@+id/tv_scaninfo_value"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/textsmallSize"
+        android:layout_weight="2"/>
+
+</LinearLayout>

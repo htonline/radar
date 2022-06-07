@@ -95,9 +95,13 @@ public class UpLoadFileListAdapter extends BaseAdapter {
         }
         if (mfileInfos.get(position).getIsfileup()) {
             holer.mbtn_uploadRadarFile.setImageResource(R.drawable.ok16);
+        }else{
+            holer.mbtn_uploadRadarFile.setImageResource(R.drawable.upload_file);
         }
         if (mfileInfos.get(position).getIsphotoup()) {
             holer.mbtn_uploadPhoto.setImageResource(R.drawable.ok16);
+        }else{
+            holer.mbtn_uploadPhoto.setImageResource(R.drawable.uploadim16);
         }
         holer.mtv_uploadProgress.setText(mfileInfos.get(position).getUploadpercent());
         holer.mbtn_searchPathRadarFile.setOnClickListener(new View.OnClickListener() {

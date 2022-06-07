@@ -28,6 +28,17 @@
     <string name="cxname12">JD2</string>
     <string name="cxname13">JD-2</string>
 
+
+    <string name="tkycxname1">L1</string>
+    <string name="tkycxname2">L2</string>
+    <string name="tkycxname3">L3</string>
+    <string name="tkycxname4">L4</string>
+    <string name="tkycxname5">L5</string>
+    <string name="tkycxname6">L6</string>
+    <string name="tkycxname7">L7</string>
+    <string name="tkycxname8">L8</string>
+    <string name="tkycxname9">L9</string>
+
     <!--TestInformation 报检单对应string-->
     <string name="test_infor_id">ID</string>
     <string name="test_id">报检号</string>
