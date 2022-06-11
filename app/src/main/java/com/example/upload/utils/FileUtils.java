@@ -2,6 +2,8 @@ package com.example.upload.utils;
 
 import android.util.Log;
 
+import com.example.ladarmonitor.BuildConfig;
+
 import java.io.*;
 import java.security.MessageDigest;
 import java.util.*;
@@ -16,7 +18,7 @@ import java.util.concurrent.*;
  *
  */
 public class FileUtils {
-    public static final String IP = "http://192.168.3.117:8013/";
+    public static final String IP = BuildConfig.URL;
     private static final String TAG = "FileUtils";
     /**
      * 当前目录路径

@@ -127,7 +127,7 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onFailure(Call<UserInfoLogin> call, Throwable t) {
-                Toast.makeText(getActivity(), "登录失败" + t.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity, "登录失败" + t.toString(), Toast.LENGTH_SHORT).show();
             }
         });
     }

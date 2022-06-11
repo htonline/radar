@@ -1,5 +1,7 @@
-apply plugin: 'com.android.application'
 
+apply plugin: 'com.android.application'
+def urls = rootProject.ext.url
+def isRealse = rootProject.ext.isRealead
 android {
     compileSdkVersion 28
     buildToolsVersion "30.0.3"
@@ -8,6 +10,15 @@ android {
         applicationId "com.example.ladarmonitor"
         minSdkVersion 26
         targetSdkVersion 28
+        ndk {
+            abiFilters 'armeabi-v7a'
+        }
+        buildConfigField("Boolean","isRealse",String.valueOf(isRealse))
+        if(isRealse){
+            buildConfigField("String","URL", urls.release)
+        }else {
+            buildConfigField("String","URL", urls.debugUrl)
+        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -30,12 +41,10 @@ android {
 //        exclude 'project.properties'
 //        exclude 'com.dtr.zbar.build.ZBarDecoder'
     }
-    defaultConfig {
-        ndk {
-            abiFilters 'armeabi-v7a'
-        }
-    }
     buildTypes {
+        debug {
+
+        }
         release {
             lintOptions {
                 checkReleaseBuilds false

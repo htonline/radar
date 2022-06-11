@@ -1611,121 +1611,126 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 //		Toast.makeText(this, tv_settingPath.getText().toString(), Toast.LENGTH_SHORT).show();
         if (tv_settingPath.getText().toString().length() < 3) {
             Toast.makeText(this, "路径不能为空", Toast.LENGTH_SHORT).show();
-        } else {
-            if (!rd_timing.isChecked()) {
-                if (rd_oneWay.isChecked()) {
-                    openTheWheel(0);
-                } else if (rd_twoWays.isChecked()) {
-                    openTheWheel(1);
-                }
-                sendTripNum(et_numberOfPulse.getText().toString());
-                mainPeremeterOrdersEditor.putInt("triggerMode", 1);
-            } else {
-                mainPeremeterOrdersEditor.putInt("triggerMode", 0);
+            return;
+        }
+        File filepath = new File(tv_settingPath.getText().toString());
+        if (!filepath.exists()){
+            filepath.mkdirs();
+        }
+        if (!rd_timing.isChecked()) {
+            if (rd_oneWay.isChecked()) {
+                openTheWheel(0);
+            } else if (rd_twoWays.isChecked()) {
+                openTheWheel(1);
             }
-            path = tv_settingPath.getText().toString();
-            file = new File(path + "/" + tv_storeFile.getText().toString());
+            sendTripNum(et_numberOfPulse.getText().toString());
+            mainPeremeterOrdersEditor.putInt("triggerMode", 1);
+        } else {
+            mainPeremeterOrdersEditor.putInt("triggerMode", 0);
+        }
+        path = tv_settingPath.getText().toString();
+        file = new File(path + "/" + tv_storeFile.getText().toString());
 //			if (pOrders.getTriggerMode()==(byte)1&&pOrders.getTriggerDirection()==(byte)-1){
 //				Toast.makeText(this, "请检查测距轮触发是否选择完整", Toast.LENGTH_SHORT).show();
 //			}
-            if (tempIfSaveTheRadar == 1)
-                file_copy = new File(path + "/" + tv_storeFile.getText().toString() + "-copy");
-            if (file.exists() || (file_copy != null && file_copy.exists())) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
-                builder.setIcon(R.drawable.warning);
-                builder.setTitle("警告");
-                builder.setMessage("该文件夹下已有该文件，是否覆盖?");
-                builder.setPositiveButton("确定", new OnClickListener() {
+        if (tempIfSaveTheRadar == 1)
+            file_copy = new File(path + "/" + tv_storeFile.getText().toString() + "-copy");
+        if (file.exists() || (file_copy != null && file_copy.exists())) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
+            builder.setIcon(R.drawable.warning);
+            builder.setTitle("警告");
+            builder.setMessage("该文件夹下已有该文件，是否覆盖?");
+            builder.setPositiveButton("确定", new OnClickListener() {
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // TODO Auto-generated method stub
-                        if (file.exists() && file.isFile()) {
-                            if (file.delete()) {
-                                Toast.makeText(SettingActivity.this, "覆盖成功！", Toast.LENGTH_LONG).show();
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // TODO Auto-generated method stub
+                    if (file.exists() && file.isFile()) {
+                        if (file.delete()) {
+                            Toast.makeText(SettingActivity.this, "覆盖成功！", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                    if (file_copy != null && file_copy.exists() && file_copy.isFile()) {
+                        if (file_copy.delete()) {
+                            Toast.makeText(SettingActivity.this, "覆盖成功！", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    SharedPreferences.Editor shareGainData = getSharedPreferences("gainData", 0).edit();
+                    SharedPreferences.Editor shareXRaw = getSharedPreferences("xRaw", 0).edit();
+                    SharedPreferences.Editor shareJudge = getSharedPreferences("judge", 0).edit();
+                    SharedPreferences.Editor shareBackgrdData = getSharedPreferences("backgrdData", 0).edit();
+                    SharedPreferences.Editor shareBRaw = getSharedPreferences("bRaw", 0).edit();
+                    SharedPreferences.Editor shareCoeGain = getSharedPreferences("coeGain", 0).edit();
+
+                    SharedPreferences.Editor shareSumData = getSharedPreferences("sumdata", 0).edit();
+
+                    for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
+                        shareGainData.putInt(i + "", gainData[i]);
+                    }
+                    for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
+                        shareBackgrdData.putInt(i + "", backgrdData[i]);
+                    }
+                    for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
+                        shareSumData.putInt(i + "", sumcolorGap[i]);
+                    }
+
+                    for (int i = 0; i < 17; i++) {
+                        shareXRaw.putFloat(i + "", xRaw[i]);
+                    }
+
+                    for (int i = 0; i < 17; i++) {
+                        shareBRaw.putFloat(i + "", bRaw[i]);
+                    }
+                    shareCoeGain.putFloat("coeGain", coeGain);
+
+                    shareJudge.putBoolean("judge", true);
+                    mainPeremeterOrdersEditor.putString("timeWindow", et_timeWindow.getText().toString());
+                    mainPeremeterOrdersEditor.putString("delay", et_delay.getText().toString());
+                    mainPeremeterOrdersEditor.putString("path", path);
+                    mainPeremeterOrdersEditor.putString("frequency", frequency + "");
+                    mainPeremeterOrdersEditor.putString("nameOfMainFile", et_nameOfMainFile.getText().toString());
+                    mainPeremeterOrdersEditor.putInt("serialNumberOfFile", Integer.parseInt(et_serialNumberOfFile.getText().toString()));
+                    mainPeremeterOrdersEditor.putInt("saveRadar", tempIfSaveTheRadar);
+
+                    sharemfiltermodeEd.putInt("mfiltermode", tempIffliter);
+                    shareifgainEd.putInt("ifgain", tempGain);
+                    shareifbackremoveEd.putInt("ifbackremove", tempBackgrd);
+
+                    sharemhighfEd.putFloat("mhighf", highf);
+                    sharemlowfEd.putFloat("mlowf", lowf);
+
+                    shareGainData.commit();
+                    shareXRaw.commit();
+                    shareJudge.commit();
+                    shareBackgrdData.commit();
+                    shareBRaw.commit();
+                    shareCoeGain.commit();
+
+                    sharemlowfEd.commit();
+                    sharemhighfEd.commit();
+
+                    shareSumData.commit();
+                    sharemfiltermodeEd.commit();
+                    shareifgainEd.commit();
+                    shareifbackremoveEd.commit();
+                    mainPeremeterOrdersEditor.commit();
+                    countNumRadar = 0;
+                    //发送停止采集命令
+                    new Thread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            // TODO Auto-generated method stub
+
+                            try {
+                                nOrders.send(endSetting, MainActivity.ds);
+                            } catch (Exception e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
                             }
                         }
-                        if (file_copy != null && file_copy.exists() && file_copy.isFile()) {
-                            if (file_copy.delete()) {
-                                Toast.makeText(SettingActivity.this, "覆盖成功！", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-
-                        SharedPreferences.Editor shareGainData = getSharedPreferences("gainData", 0).edit();
-                        SharedPreferences.Editor shareXRaw = getSharedPreferences("xRaw", 0).edit();
-                        SharedPreferences.Editor shareJudge = getSharedPreferences("judge", 0).edit();
-                        SharedPreferences.Editor shareBackgrdData = getSharedPreferences("backgrdData", 0).edit();
-                        SharedPreferences.Editor shareBRaw = getSharedPreferences("bRaw", 0).edit();
-                        SharedPreferences.Editor shareCoeGain = getSharedPreferences("coeGain", 0).edit();
-
-                        SharedPreferences.Editor shareSumData = getSharedPreferences("sumdata", 0).edit();
-
-                        for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
-                            shareGainData.putInt(i + "", gainData[i]);
-                        }
-                        for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
-                            shareBackgrdData.putInt(i + "", backgrdData[i]);
-                        }
-                        for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
-                            shareSumData.putInt(i + "", sumcolorGap[i]);
-                        }
-
-                        for (int i = 0; i < 17; i++) {
-                            shareXRaw.putFloat(i + "", xRaw[i]);
-                        }
-
-                        for (int i = 0; i < 17; i++) {
-                            shareBRaw.putFloat(i + "", bRaw[i]);
-                        }
-                        shareCoeGain.putFloat("coeGain", coeGain);
-
-                        shareJudge.putBoolean("judge", true);
-                        mainPeremeterOrdersEditor.putString("timeWindow", et_timeWindow.getText().toString());
-                        mainPeremeterOrdersEditor.putString("delay", et_delay.getText().toString());
-                        mainPeremeterOrdersEditor.putString("path", path);
-                        mainPeremeterOrdersEditor.putString("frequency", frequency + "");
-                        mainPeremeterOrdersEditor.putString("nameOfMainFile", et_nameOfMainFile.getText().toString());
-                        mainPeremeterOrdersEditor.putInt("serialNumberOfFile", Integer.parseInt(et_serialNumberOfFile.getText().toString()));
-                        mainPeremeterOrdersEditor.putInt("saveRadar", tempIfSaveTheRadar);
-
-                        sharemfiltermodeEd.putInt("mfiltermode", tempIffliter);
-                        shareifgainEd.putInt("ifgain", tempGain);
-                        shareifbackremoveEd.putInt("ifbackremove", tempBackgrd);
-
-                        sharemhighfEd.putFloat("mhighf", highf);
-                        sharemlowfEd.putFloat("mlowf", lowf);
-
-                        shareGainData.commit();
-                        shareXRaw.commit();
-                        shareJudge.commit();
-                        shareBackgrdData.commit();
-                        shareBRaw.commit();
-                        shareCoeGain.commit();
-
-                        sharemlowfEd.commit();
-                        sharemhighfEd.commit();
-
-                        shareSumData.commit();
-                        sharemfiltermodeEd.commit();
-                        shareifgainEd.commit();
-                        shareifbackremoveEd.commit();
-                        mainPeremeterOrdersEditor.commit();
-                        countNumRadar = 0;
-                        //发送停止采集命令
-                        new Thread(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                // TODO Auto-generated method stub
-
-                                try {
-                                    nOrders.send(endSetting, MainActivity.ds);
-                                } catch (Exception e) {
-                                    // TODO Auto-generated catch block
-                                    e.printStackTrace();
-                                }
-                            }
-                        }).start();
+                    }).start();
 //                        MainActivity.writeThread.setPath(path + "/" + tv_storeFile.getText().toString());
 //                        MainActivity.writeThread.setPath_ano(path + "/" + tv_storeFile.getText().toString());
 //                        MainActivity.writeThread.setSample_wnd(Integer.parseInt(et_timeWindow.getText().toString()));
@@ -1733,110 +1738,110 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 
 //
 
-                        try {
-                            MainActivity.writeHeadThread.setSample_wnd(Integer.parseInt(et_timeWindow.getText().toString()));
-                            MainActivity.writeHeadThread.setTimedelay(Short.parseShort(et_delay.getText().toString()));
-                        } catch (Exception e) {
-                            Toast.makeText(SettingActivity.this, "写入模块未正确初始化！", Toast.LENGTH_SHORT).show();
-                        }
-
-
-                        finish();
-
+                    try {
+                        MainActivity.writeHeadThread.setSample_wnd(Integer.parseInt(et_timeWindow.getText().toString()));
+                        MainActivity.writeHeadThread.setTimedelay(Short.parseShort(et_delay.getText().toString()));
+                    } catch (Exception e) {
+                        Toast.makeText(SettingActivity.this, "写入模块未正确初始化！", Toast.LENGTH_SHORT).show();
                     }
-                });
 
-                builder.setNegativeButton("取消", new OnClickListener() {
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // TODO Auto-generated method stub
+                    finish();
 
+                }
+            });
+
+            builder.setNegativeButton("取消", new OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // TODO Auto-generated method stub
+
+                }
+            });
+            builder.show();
+        } else {
+            try {
+                file.createNewFile();
+                if (file_copy != null)
+                    file_copy.createNewFile();
+            } catch (IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+            //在settingActivity上存储gainData[],从mainActivity中读取
+            SharedPreferences.Editor shareGainData = getSharedPreferences("gainData", 0).edit();
+            SharedPreferences.Editor shareXRaw = getSharedPreferences("xRaw", 0).edit();
+            SharedPreferences.Editor shareJudge = getSharedPreferences("judge", 0).edit();
+            SharedPreferences.Editor shareBackgrdData = getSharedPreferences("backgrdData", 0).edit();
+            SharedPreferences.Editor shareBRaw = getSharedPreferences("bRaw", 0).edit();
+            SharedPreferences.Editor shareCoeGain = getSharedPreferences("coeGain", 0).edit();
+
+            SharedPreferences.Editor shareSumData = getSharedPreferences("sumdata", 0).edit();
+
+            for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
+                shareGainData.putInt(i + "", gainData[i]);
+            }
+            for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
+                shareBackgrdData.putInt(i + "", backgrdData[i]);
+            }
+            for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
+                shareSumData.putInt(i + "", sumcolorGap[i]);
+
+            }
+            for (int i = 0; i < 17; i++) {
+                shareXRaw.putFloat(i + "", xRaw[i]);
+            }
+
+            for (int i = 0; i < 17; i++) {
+                shareBRaw.putFloat(i + "", bRaw[i]);
+            }
+            shareCoeGain.putFloat("coeGain", coeGain);
+
+            shareJudge.putBoolean("judge", true);
+            mainPeremeterOrdersEditor.putString("timeWindow", et_timeWindow.getText().toString());
+            mainPeremeterOrdersEditor.putString("delay", et_delay.getText().toString());
+            mainPeremeterOrdersEditor.putString("path", path);
+            mainPeremeterOrdersEditor.putString("frequency", frequency + "");
+            mainPeremeterOrdersEditor.putString("nameOfMainFile", et_nameOfMainFile.getText().toString());
+            mainPeremeterOrdersEditor.putInt("serialNumberOfFile", Integer.parseInt(et_serialNumberOfFile.getText().toString()));
+            mainPeremeterOrdersEditor.putInt("saveRadar", tempIfSaveTheRadar);
+            sharemfiltermodeEd.putInt("mfiltermode", tempIffliter);
+            shareifgainEd.putInt("ifgain", tempGain);
+            shareifbackremoveEd.putInt("ifbackremove", tempBackgrd);
+            sharemhighfEd.putFloat("mhighf", highf);
+            sharemlowfEd.putFloat("mlowf", lowf);
+
+            sharemhighfEd.commit();
+            sharemlowfEd.commit();
+            shareGainData.commit();
+            shareXRaw.commit();
+            shareJudge.commit();
+            shareBackgrdData.commit();
+            shareBRaw.commit();
+            shareCoeGain.commit();
+
+            shareSumData.commit();
+            sharemfiltermodeEd.commit();
+            shareifgainEd.commit();
+            shareifbackremoveEd.commit();
+            mainPeremeterOrdersEditor.commit();
+            countNumRadar = 0;
+            //发送停止采集命令
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    // TODO Auto-generated method stub
+
+                    try {
+                        nOrders.send(endSetting, MainActivity.ds);
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
                     }
-                });
-                builder.show();
-            } else {
-                try {
-                    file.createNewFile();
-                    if (file_copy != null)
-                        file_copy.createNewFile();
-                } catch (IOException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
                 }
-                //在settingActivity上存储gainData[],从mainActivity中读取
-                SharedPreferences.Editor shareGainData = getSharedPreferences("gainData", 0).edit();
-                SharedPreferences.Editor shareXRaw = getSharedPreferences("xRaw", 0).edit();
-                SharedPreferences.Editor shareJudge = getSharedPreferences("judge", 0).edit();
-                SharedPreferences.Editor shareBackgrdData = getSharedPreferences("backgrdData", 0).edit();
-                SharedPreferences.Editor shareBRaw = getSharedPreferences("bRaw", 0).edit();
-                SharedPreferences.Editor shareCoeGain = getSharedPreferences("coeGain", 0).edit();
-
-                SharedPreferences.Editor shareSumData = getSharedPreferences("sumdata", 0).edit();
-
-                for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
-                    shareGainData.putInt(i + "", gainData[i]);
-                }
-                for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
-                    shareBackgrdData.putInt(i + "", backgrdData[i]);
-                }
-                for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
-                    shareSumData.putInt(i + "", sumcolorGap[i]);
-
-                }
-                for (int i = 0; i < 17; i++) {
-                    shareXRaw.putFloat(i + "", xRaw[i]);
-                }
-
-                for (int i = 0; i < 17; i++) {
-                    shareBRaw.putFloat(i + "", bRaw[i]);
-                }
-                shareCoeGain.putFloat("coeGain", coeGain);
-
-                shareJudge.putBoolean("judge", true);
-                mainPeremeterOrdersEditor.putString("timeWindow", et_timeWindow.getText().toString());
-                mainPeremeterOrdersEditor.putString("delay", et_delay.getText().toString());
-                mainPeremeterOrdersEditor.putString("path", path);
-                mainPeremeterOrdersEditor.putString("frequency", frequency + "");
-                mainPeremeterOrdersEditor.putString("nameOfMainFile", et_nameOfMainFile.getText().toString());
-                mainPeremeterOrdersEditor.putInt("serialNumberOfFile", Integer.parseInt(et_serialNumberOfFile.getText().toString()));
-                mainPeremeterOrdersEditor.putInt("saveRadar", tempIfSaveTheRadar);
-                sharemfiltermodeEd.putInt("mfiltermode", tempIffliter);
-                shareifgainEd.putInt("ifgain", tempGain);
-                shareifbackremoveEd.putInt("ifbackremove", tempBackgrd);
-                sharemhighfEd.putFloat("mhighf", highf);
-                sharemlowfEd.putFloat("mlowf", lowf);
-
-                sharemhighfEd.commit();
-                sharemlowfEd.commit();
-                shareGainData.commit();
-                shareXRaw.commit();
-                shareJudge.commit();
-                shareBackgrdData.commit();
-                shareBRaw.commit();
-                shareCoeGain.commit();
-
-                shareSumData.commit();
-                sharemfiltermodeEd.commit();
-                shareifgainEd.commit();
-                shareifbackremoveEd.commit();
-                mainPeremeterOrdersEditor.commit();
-                countNumRadar = 0;
-                //发送停止采集命令
-                new Thread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        // TODO Auto-generated method stub
-
-                        try {
-                            nOrders.send(endSetting, MainActivity.ds);
-                        } catch (Exception e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
+            }).start();
 //                MainActivity.writeThread.setPath(path + "/" + tv_storeFile.getText().toString());
 //                MainActivity.writeThread.setSample_wnd(Integer.parseInt(et_timeWindow.getText().toString()));
 //                MainActivity.writeThread.setTimedelay(Short.parseShort(et_delay.getText().toString()));
@@ -1846,10 +1851,10 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 //                MainActivity.writeHeadThread.setTimedelay(Short.parseShort(et_delay.getText().toString()));
 
 
-                finish();
+            finish();
 
-            }
         }
+
     }
 
     //创建路径按钮点击事件
