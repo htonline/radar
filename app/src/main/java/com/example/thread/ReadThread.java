@@ -39,7 +39,7 @@ public class ReadThread implements Runnable {
     DatagramSocket ds = null;
     DatagramPacket dp = null;
     byte b1[] = new byte[1036];
-
+    byte bytes[] = new byte[2060];
     Message message = null;
     byte receive[] = new byte[4];
     byte receiveCC[] = new byte[2];
@@ -140,13 +140,12 @@ public class ReadThread implements Runnable {
                     else //if (receive[0]==0xee&&receive[1]==0xee){
                     {
                         byte[] precision = Arrays.copyOfRange(b1,9,10);
-//                        channelno = Arrays.copyOfRange(b1,6,7);
-////                        char[] pr = byteToChar(precision);
-////                        char[] ch = byteToChar(channelno);
-                        short[] pr = toShortArray(precision);
-//                        String ch = printBytesByStringBuilder(channelno);
+                        if (precision[0] == 0x01){
+                            Log.d(TAG, "run: --------- pr"+precision[0]);
+                        }else if (precision[0] == 0x02){
+                            Log.d(TAG, "run: --------- opr"+precision[0]);
+                        }
 //                        os.write(b1);
-                        Log.d(TAG, "run:  --->  pr:"+Arrays.toString(pr));
                         arrayListOfNewColour = toShortArray(Arrays.copyOfRange(b1, 10, 1036));
 //                        arrayListOfColour = toShortArray(Arrays.copyOfRange(b1, 10, 1036));
                         byte [] neby = new byte[2];
