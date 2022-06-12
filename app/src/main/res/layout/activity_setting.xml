@@ -191,12 +191,11 @@
                             android:textSize="@dimen/textSize"
                             android:layout_weight="1" />
 
-                        <TextView
+                        <Spinner
+                            android:id="@+id/sp_sample_point"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="512"
-
-                            android:textSize="@dimen/textSize" />
+                            android:layout_height="match_parent"
+                            />
                     </LinearLayout>
 
                     <LinearLayout

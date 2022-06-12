@@ -140,11 +140,23 @@ public class MainPeremeterOrders {
 		this.ds=ds;
 		buf[0]=(byte) 0xbb;
 		buf[1]=(byte) 0xbb;
-		buf[4]=0x00;
-		buf[5]=0x02;
-		
 	}
-
+	public void setSamplePoint(int point){
+		switch (point){
+			case 512:
+				buf[4]=0x00;
+				buf[5]=0x02;
+				break;
+			case 1024:
+				buf[4]=0x00;
+				buf[5]=0x04;
+				break;
+//			case 1024:
+//				buf[4]=0x00;
+//				buf[5]=0x04;
+//				break;
+		}
+	}
 
 //	public void calculateTwoPeremeters(){
 //		if (m_time_wnd <= TWND_PARA) {

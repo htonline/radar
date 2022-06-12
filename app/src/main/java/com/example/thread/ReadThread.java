@@ -139,13 +139,14 @@ public class ReadThread implements Runnable {
                     }
                     else //if (receive[0]==0xee&&receive[1]==0xee){
                     {
-                        byte[] precision = Arrays.copyOfRange(b1,4,8);
+                        byte[] precision = Arrays.copyOfRange(b1,9,10);
 //                        channelno = Arrays.copyOfRange(b1,6,7);
 ////                        char[] pr = byteToChar(precision);
 ////                        char[] ch = byteToChar(channelno);
-                        int pr = bytesToInt(precision,0);
+                        short[] pr = toShortArray(precision);
 //                        String ch = printBytesByStringBuilder(channelno);
 //                        os.write(b1);
+                        Log.d(TAG, "run:  --->  pr:"+Arrays.toString(pr));
                         arrayListOfNewColour = toShortArray(Arrays.copyOfRange(b1, 10, 1036));
 //                        arrayListOfColour = toShortArray(Arrays.copyOfRange(b1, 10, 1036));
                         byte [] neby = new byte[2];

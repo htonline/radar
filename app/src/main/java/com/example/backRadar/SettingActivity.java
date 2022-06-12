@@ -139,14 +139,18 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 
     private TextView tv_none = null;
     private Spinner sp_frequency = null;
+    private Spinner sp_sampleponit = null;
     private int frequency = 10;
 
     //	private Spinner sp_oneWay=null;
     private EditText et_timeWindow = null;
     private EditText et_delay = null;
     private List<Integer> listOfFrequency = null;
+    private List<Integer> listOfSamplePoint = null;
     //	private List<String> listOfTheWayOfPulse=null;
     private ArrayAdapter<Integer> adapterOfFrequency = null;
+    private ArrayAdapter<Integer> adapterOfsample = null;
+    private int samplepoint =0;
     //	private ArrayAdapter<String> adapterOfTheWayOfPulse=null;
     private RadioButton rd_timing = null;
     private RadioButton rd_wheel = null;
@@ -790,8 +794,42 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 //
 //			}
 //		});
+        //采样点点击事件
+        sp_sampleponit.setOnItemSelectedListener(new Spinner.OnItemSelectedListener(){
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                samplepoint = Integer.parseInt(adapterOfsample.getItem(position).toString());
+                mainPeremeterOrdersEditor.putInt("index_sample", position);
+                switch (samplepoint){
+                    case 512:
+                        pOrders.setSamplePoint(512);
+                        break;
+                    case 1024:
+                        pOrders.setSamplePoint(1024);
+                        break;
+                }
+                new Thread(new Runnable() {
 
+                    @Override
+                    public void run() {
+                        // TODO Auto-generated method stub
+                        try {
+                            pOrders.send();
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
 
+                    }
+                }).start();
+                mainPeremeterOrdersEditor.commit();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        } );
         //频率点击事件
         sp_frequency.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
             @Override
@@ -1225,6 +1263,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         et_serialNumberOfFile = (EditText) findViewById(R.id.et_serialNumberOfFile);
         tv_storeFile = (TextView) findViewById(R.id.tv_storeFile);
         sp_frequency = (Spinner) findViewById(R.id.sp_frequency);
+        sp_sampleponit = (Spinner) findViewById(R.id.sp_sample_point);
         tv_none = (TextView) findViewById(R.id.tv_none);
 //		sp_oneWay=(Spinner) findViewById(R.id.sp_oneWay);
         et_timeWindow = (EditText) findViewById(R.id.et_timeWindow);
@@ -1412,7 +1451,24 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 
         //以存取的spinner位置作为默认值
         sp_frequency.setSelection(mainPeremeterOrders.getInt("index_frequency", 5), true);
+        listOfSamplePoint = new ArrayList<>();
+        listOfSamplePoint.add(512);
+        listOfSamplePoint.add(1024);
+        adapterOfsample = new ArrayAdapter<>(this,R.layout.spinner_item,listOfSamplePoint);
+        sp_sampleponit.setAdapter(adapterOfsample);
+        sp_sampleponit.setSelection(mainPeremeterOrders.getInt("index_sample", 0),true);
+        samplepoint = Integer.parseInt(adapterOfsample.getItem(mainPeremeterOrders.getInt("index_sample", 0)).toString());
         frequency = Integer.parseInt(adapterOfFrequency.getItem(mainPeremeterOrders.getInt("index_frequency", 5)).toString());
+        switch (samplepoint){
+            case 512:
+                pOrders.setSamplePoint(512);
+                break;
+            case 1024:
+                pOrders.setSamplePoint(1024);
+                break;
+        }
+
+
         if (frequency == 10) {
             pOrders.setFrequency((short) 0x0a00);
         } else if (frequency == 20) {
@@ -1692,7 +1748,6 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
                     mainPeremeterOrdersEditor.putString("nameOfMainFile", et_nameOfMainFile.getText().toString());
                     mainPeremeterOrdersEditor.putInt("serialNumberOfFile", Integer.parseInt(et_serialNumberOfFile.getText().toString()));
                     mainPeremeterOrdersEditor.putInt("saveRadar", tempIfSaveTheRadar);
-
                     sharemfiltermodeEd.putInt("mfiltermode", tempIffliter);
                     shareifgainEd.putInt("ifgain", tempGain);
                     shareifbackremoveEd.putInt("ifbackremove", tempBackgrd);
