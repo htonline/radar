@@ -57,6 +57,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -80,6 +81,14 @@ import org.w3c.dom.Text;
 
 public class MainActivity extends Activity {
     private int tagForCloseSetting = 0;
+
+    private Button mbtn_ddcf;
+    private EditText metv_ddcf;
+    private int ddcf_sum = 0;
+    private boolean isDDCF = false;
+    private int temp_ddcf_sum = 1;
+
+
     private static RandomAccessFile mrafRaw;
     private static RandomAccessFile mrafColor;
     private WriteBodyThread writeBodyThread;
@@ -240,6 +249,13 @@ public class MainActivity extends Activity {
             switch (msg.what) {
                 case 0:
                     if (clickOrNot != 0) {
+                        if (isDDCF){
+                            temp_ddcf_sum ++;
+                            if (temp_ddcf_sum == ddcf_sum){
+                                temp_ddcf_sum = 1;
+                                touchsuspend();
+                            }
+                        }
                         reciveData = (short[]) msg.obj;
                         int tempJudge = msg.arg1;
                         if (tempJudge == 1) {
@@ -450,6 +466,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
+                isDDCF = false;
                 // TODO Auto-generated method stub
                 //第一次点击开启碎片
                 clickOrNot++;
@@ -756,7 +773,271 @@ public class MainActivity extends Activity {
                 Toast.makeText(MainActivity.this, "成功打开wifi", Toast.LENGTH_SHORT).show();
             }
         });
+        mbtn_ddcf = findViewById(R.id.mbtn_ddcf);
+        metv_ddcf = findViewById(R.id.met_ddcf);
+        String ddcfsumd = mainPeremeterOrders.getString("ddcf", "100");
+        metv_ddcf.setText(ddcfsumd);
+        mbtn_ddcf.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (tv_triigerMode.getText().toString().equals("测距轮")){
+                    Toast.makeText(MainActivity.this,"请确认定时器触发！",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (metv_ddcf.getText() != null) {
+                    judge_MartOrNot = true;
+                    markNumber++;
+                    tv_markNumber.setText(markNumber + "");
+                    if (!TextUtils.isEmpty(metv_ddcf.getText().toString())) {
+                        isDDCF = true;
+                        ddcf_sum = Integer.parseInt(metv_ddcf.getText().toString());
+                        mainPeremeterOrdersEditor.putString("ddcf", String.valueOf(ddcf_sum));
+                        mainPeremeterOrdersEditor.commit();
+                        // TODO Auto-generated method stub
+                        //第一次点击开启碎片
+                        clickOrNot++;
 
+                        if (judge_clickStopIbtn) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                            builder.setIcon(R.drawable.warning);
+                            builder.setTitle("警告");
+                            builder.setMessage("是否覆盖原文件?");
+                            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // TODO Auto-generated method stub
+                                    File file = new File(tv_path.getText().toString());
+                                    File file_copy = new File(tv_path.getText().toString() + "-copy");
+                                    if (file.exists() && file.isFile()) {
+                                        if (file.delete()) {
+                                            try {
+                                                file.createNewFile();
+                                            } catch (IOException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                                Toast.makeText(MainActivity.this, "覆盖失败", Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                    }
+                                    if (IfSaveTheRadar == 1 && file_copy.exists() && file_copy.isFile()) {
+                                        if (file_copy.delete()) {
+                                            try {
+                                                file_copy.createNewFile();
+                                            } catch (IOException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                                Toast.makeText(MainActivity.this, "覆盖失败", Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                    }
+
+                                    if (counter == 0) {
+                                        lFragment = new LeftFragmentOfMainActivity();
+//								rFragment=new RightFragmentOfMainActivity();
+                                        //开启事物
+                                        FragmentTransaction fTransaction = fManager.beginTransaction();
+                                        //添加碎片
+                                        fTransaction.add(R.id.fl_containerLeft, lFragment);
+//								fTransaction.add(R.id.fl_containerRight, rFragment);
+//                                //碎片添加到回退栈
+                                        fTransaction.addToBackStack(null);
+                                        //提交
+                                        fTransaction.commit();
+                                        lFragment.drawLines(Integer.parseInt(mainPeremeterOrders.getString("timeWindow", "1")));
+                                    }
+                                    try {
+                                        mrafColor = new RandomAccessFile(tv_path.getText().toString(), "rw");
+                                        pool = Executors.newFixedThreadPool(1);//建立一个无界队列的线程池
+                                        if (IfSaveTheRadar == 1) {
+                                            mrafRaw = new RandomAccessFile(tv_path.getText().toString() + "-copy", "rw");
+                                            poolRaw = Executors.newFixedThreadPool(1);
+                                        }
+                                    } catch (FileNotFoundException e) {
+                                        e.printStackTrace();
+                                    }
+                                    //偶数发送基数暂停
+                                    //第一次点击读取数据线程启动，同时发送命令给下位机开始采集数据
+                                    if (counter == 0) {
+//                                writeThread.setJudgeNumber(1);
+                                        writeHeadThread = new WriteHeadThread(mrafColor);
+                                        writeHeadThread.setTimedelay(Short.parseShort(tv_delay.getText().toString()));
+                                        writeHeadThread.setSample_wnd(Integer.parseInt(tv_timeWindow.getText().toString()));
+                                        pool.execute(writeHeadThread);
+                                        if (IfSaveTheRadar == 1) {
+                                            writeHeadThreadRaw = new WriteHeadThread(mrafRaw);
+                                            writeHeadThreadRaw.setTimedelay(Short.parseShort(tv_delay.getText().toString()));
+                                            writeHeadThreadRaw.setSample_wnd(Integer.parseInt(tv_timeWindow.getText().toString()));
+                                            poolRaw.execute(writeHeadThreadRaw);
+                                        }
+                                        readThread.setNumberOfReceive(0);
+                                        //可以打标
+                                        btn_mark.setEnabled(true);
+                                        counterOfReal = 0;
+                                        tv_numberOfReceive.setText("" + 0);//收包数量置空
+                                        new Thread(new Runnable() {
+
+                                            @Override
+                                            public void run() {
+                                                // TODO Auto-generated method stub
+                                                try {
+                                                    nOrders.send(startCollect, ds);
+                                                } catch (Exception e) {
+                                                    // TODO Auto-generated catch block
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        }).start();
+
+                                        ibtn_startAndSuspend.setImageResource(R.drawable.suspend2);
+                                    }
+
+
+                                    ibtn_setting.setImageResource(R.drawable.settinggray2);
+                                    ibtn_stop.setImageResource(R.drawable.stopred2);
+                                    ibtn_stop.setEnabled(true);
+                                    ibtn_setting.setEnabled(false);
+                                    counter++;
+                                    judge_clickStopIbtn = false;
+                                }
+                            });
+
+                            builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // TODO Auto-generated method stub
+
+                                }
+                            });
+
+                            builder.show();
+
+                        } else {
+                            if (counter == 0) {
+                                File file = new File(tv_path.getText().toString());
+                                File file_copy = new File(tv_path.getText().toString() + "-copy");
+                                if (IfSaveTheRadar == 1 && !file_copy.exists()) {
+                                    try {
+                                        file_copy.createNewFile();
+                                    } catch (IOException e) {
+                                        // TODO Auto-generated catch block
+                                        e.printStackTrace();
+                                    }
+                                }
+                                if (!file.exists()) {
+
+                                    try {
+                                        file.createNewFile();
+                                    } catch (IOException e) {
+                                        // TODO Auto-generated catch block
+                                        e.printStackTrace();
+                                    }
+
+                                }
+                                lFragment = new LeftFragmentOfMainActivity();
+//						rFragment=new RightFragmentOfMainActivity();
+                                //开启事物
+                                FragmentTransaction fTransaction = fManager.beginTransaction();
+                                //添加碎片
+                                fTransaction.add(R.id.fl_containerLeft, lFragment);
+//						fTransaction.add(R.id.fl_containerRight, rFragment);
+//                      //碎片添加到回退栈
+                                fTransaction.addToBackStack(null);
+                                //提交
+                                fTransaction.commit();
+                                lFragment.drawLines(Integer.parseInt(mainPeremeterOrders.getString("timeWindow", "1")));
+
+                            }
+
+                            //偶数发送基数暂停
+                            //第一次点击读取数据线程启动，同时发送命令给下位机开始采集数据
+                            if (counter == 0) {
+                                writeHeadThread = new WriteHeadThread(mrafColor);
+                                writeHeadThread.setTimedelay(Short.parseShort(tv_delay.getText().toString()));
+                                writeHeadThread.setSample_wnd(Integer.parseInt(tv_timeWindow.getText().toString()));
+                                pool.execute(writeHeadThread);
+                                if (IfSaveTheRadar == 1) {
+                                    writeHeadThreadRaw = new WriteHeadThread(mrafRaw);
+                                    writeHeadThreadRaw.setTimedelay(Short.parseShort(tv_delay.getText().toString()));
+                                    writeHeadThreadRaw.setSample_wnd(Integer.parseInt(tv_timeWindow.getText().toString()));
+                                    poolRaw.execute(writeHeadThreadRaw);
+                                }
+                                readThread.setNumberOfReceive(0);
+                                //可以打标
+                                btn_mark.setEnabled(true);
+                                counterOfReal = 0;
+                                tv_numberOfReceive.setText("" + 0);//收包数量置空
+                                new Thread(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        // TODO Auto-generated method stub
+                                        try {
+                                            nOrders.send(startCollect, ds);
+                                        } catch (Exception e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }).start();
+
+                                ibtn_startAndSuspend.setImageResource(R.drawable.suspend2);
+                            }
+                            //除了第一次点击的偶数次，恢复读取数据，发送给下位机继续采样
+                            if (counter % 2 == 0 && counter != 0) {
+                                readThread.resume();
+                                btn_mark.setEnabled(true);
+//						writeThread.setJudgePause(false);
+                                new Thread(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        // TODO Auto-generated method stub
+                                        try {
+                                            nOrders.send(continueCollect, ds);
+                                        } catch (Exception e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }).start();
+
+                                ibtn_startAndSuspend.setImageResource(R.drawable.suspend2);
+
+                            }
+                            //奇数次暂停从下位机读取数据，同时给下位机发送命令暂停采样
+                            if (counter % 2 == 1) {
+                                btn_mark.setEnabled(false);
+                                readThread.suspend();
+//						writeThread.setJudgePause(true);
+                                new Thread(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        // TODO Auto-generated method stub
+                                        try {
+                                            nOrders.send(suspendCollect, ds);
+                                        } catch (Exception e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }).start();
+                                ibtn_startAndSuspend.setImageResource(R.drawable.startgreen2);
+                            }
+
+                            ibtn_setting.setImageResource(R.drawable.settinggray2);
+                            ibtn_stop.setImageResource(R.drawable.stopred2);
+                            ibtn_stop.setEnabled(true);
+                            ibtn_setting.setEnabled(false);
+                            counter++;
+
+                        }
+                    }
+                }
+            }
+        });
 
 //        new Thread(new Runnable() {
 //            @Override
@@ -809,7 +1090,7 @@ public class MainActivity extends Activity {
         ibtn_setting.setLayoutParams(ibtn_uploadLinearParams);
 
         shareJudge = getSharedPreferences("judge", 0);
-        shareJudge.edit().putBoolean("judge",false).commit();
+        shareJudge.edit().putBoolean("judge", false).commit();
         shareXRaw = getSharedPreferences("xRaw", 0);
 
         try {
@@ -1143,11 +1424,11 @@ public class MainActivity extends Activity {
 
         ibtn_startAndSuspend.setEnabled(shareJudge.getBoolean("judge", false));
         readThread.setHandler(handlerOfColour);
-
+        mbtn_ddcf.setEnabled(false);
         if (shareJudge.getBoolean("judge", false)) {
             //再次设置后重置判断参数
             judge_clickStopIbtn = false;
-
+            mbtn_ddcf.setEnabled(true);
 
 //			Toast.makeText(this, "path:"+mainPeremeterOrders.getString("path", "gwh/11")
 //					+"\n timeWindow:"+mainPeremeterOrders.getString("timeWindow", "1")
@@ -1410,6 +1691,33 @@ public class MainActivity extends Activity {
         }
         return b;
     }
+    private void touchsuspend(){
+        if (counter % 2 == 1) {
+            btn_mark.setEnabled(false);
+            readThread.suspend();
+//						writeThread.setJudgePause(true);
+            new Thread(new Runnable() {
 
+                @Override
+                public void run() {
+                    // TODO Auto-generated method stub
+                    try {
+                        nOrders.send(suspendCollect, ds);
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            ibtn_startAndSuspend.setImageResource(R.drawable.startgreen2);
+        }
+
+        ibtn_setting.setImageResource(R.drawable.settinggray2);
+        ibtn_stop.setImageResource(R.drawable.stopred2);
+        ibtn_stop.setEnabled(true);
+        ibtn_setting.setEnabled(false);
+        counter++;
+
+    }
 
 }

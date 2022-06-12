@@ -62,6 +62,7 @@
                 android:background="#000" />
 
             <EditText
+                android:imeOptions="actionDone"
                 android:id="@+id/detectionStartingDistance"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -95,6 +96,7 @@
                 android:background="#000" />
 
             <EditText
+                android:imeOptions="actionDone"
                 android:id="@+id/detectionEndingDistance"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -122,6 +124,7 @@
                 android:background="#000" />
 
             <EditText
+                android:imeOptions="actionDone"
                 android:id="@+id/detectionLength"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

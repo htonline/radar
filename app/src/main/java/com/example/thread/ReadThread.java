@@ -1,8 +1,15 @@
 package com.example.thread;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -65,7 +72,8 @@ public class ReadThread implements Runnable {
         this.ds = ds;
         init();
     }
-
+    File file = new File("storage/emulated/0/ok");
+    FileOutputStream os;
     public void init() {
 
 //    	try {
@@ -75,16 +83,27 @@ public class ReadThread implements Runnable {
 //    			ds.bind(new InetSocketAddress(6000));
 //			}
         dp = new DatagramPacket(b1, b1.length);
-//		} catch (SocketException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-
-
     }
     int tempnum=1;
 
     public void run() {
+        if (!file.exists()){
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+//		} catch (SocketException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+        try {
+            os = new FileOutputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
         while (true) {
             if (judge) {
                 try {
@@ -120,6 +139,13 @@ public class ReadThread implements Runnable {
                     }
                     else //if (receive[0]==0xee&&receive[1]==0xee){
                     {
+                        byte[] precision = Arrays.copyOfRange(b1,4,8);
+//                        channelno = Arrays.copyOfRange(b1,6,7);
+////                        char[] pr = byteToChar(precision);
+////                        char[] ch = byteToChar(channelno);
+                        int pr = bytesToInt(precision,0);
+//                        String ch = printBytesByStringBuilder(channelno);
+//                        os.write(b1);
                         arrayListOfNewColour = toShortArray(Arrays.copyOfRange(b1, 10, 1036));
 //                        arrayListOfColour = toShortArray(Arrays.copyOfRange(b1, 10, 1036));
                         byte [] neby = new byte[2];
@@ -475,5 +501,44 @@ public class ReadThread implements Runnable {
         return value;
     }
 
+    // byte转为char
+    public static char[] byteToChar(byte[] bytes) {
+        Charset charset = Charset.forName("ISO-8859-1");
+        ByteBuffer byteBuffer = ByteBuffer.allocate(bytes.length);
+        byteBuffer.put(bytes);
+        byteBuffer.flip();
+        CharBuffer charBuffer = charset.decode(byteBuffer);
+        return charBuffer.array();
+    }
 
+
+    /**
+     * 根据字节数组，输出对应的格式化字符串
+     * @param bytes 字节数组
+     * @return 字节数组字符串
+     */
+    public static String printBytesByStringBuilder(byte[] bytes){
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (byte aByte : bytes) {
+            stringBuilder.append(byte2String(aByte));
+        }
+
+        return stringBuilder.toString();
+
+    }
+
+    public static String byte2String(byte b){
+
+        return String.format("%02x ",b);
+    }
+
+    public static int bytesToInt(byte[] a){
+        int ans=0;
+        for(int i=0;i<4;i++){
+            ans<<=8;
+            ans|=(a[3-i]&0xff);
+        }
+        return ans;
+    }
 }

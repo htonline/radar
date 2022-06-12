@@ -1,10 +1,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_margin="5sp"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
     <LinearLayout
@@ -57,32 +57,53 @@
             android:text="打标"
             android:textSize="@dimen/textSize" />
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/mbtn_ddcf"
+                android:text="单点触发"></Button>
+
+            <EditText
+                android:id="@+id/met_ddcf"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:imeOptions="actionDone"
+                android:text="100" />
+        </LinearLayout>
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1" />
 
         <LinearLayout
-            android:layout_gravity="center"
-            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
             android:orientation="horizontal">
+
             <com.example.customizingViews.MyBatterView
                 android:id="@+id/MyBatterView"
                 android:layout_width="@dimen/batteryNomalWidth"
                 android:layout_height="@dimen/batteryNomalHeight"
-                android:layout_marginTop="10dp"
                 android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                app:batteryTextSize="@dimen/textSize"
                 app:mCapWidth="4dp"
-                app:showText="true"
-                app:batteryTextSize="@dimen/textSize"/>
+                app:showText="true" />
         </LinearLayout>
+
         <LinearLayout
-            android:layout_gravity="center"
             android:layout_width="wrap_content"
-            android:orientation="vertical"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -116,28 +137,30 @@
                 android:gravity="center"
                 android:text="无线地质雷达采集系统"
                 android:textSize="@dimen/textTitleLargeSize" />
+
             <LinearLayout
-                android:visibility="invisible"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="24dp"
-                    android:id="@+id/btn_openwifi"
-                    android:gravity="center"
-                    android:textSize="@dimen/textsSmallSize"
-                    android:text="打开wifi"/>
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="24dp"
-                    android:id="@+id/btn_connect_wifi"
+                android:orientation="horizontal"
+                android:visibility="invisible">
 
-                    android:textSize="@dimen/textsSmallSize"
-                    android:text="自动连接雷达wifi"/>
+                <Button
+                    android:id="@+id/btn_openwifi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:gravity="center"
+                    android:text="打开wifi"
+                    android:textSize="@dimen/textsSmallSize" />
+
+                <Button
+                    android:id="@+id/btn_connect_wifi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+
+                    android:text="自动连接雷达wifi"
+                    android:textSize="@dimen/textsSmallSize" />
             </LinearLayout>
         </LinearLayout>
-
 
 
     </LinearLayout>
@@ -240,6 +263,7 @@
                 android:layout_height="wrap_content"
                 android:text="Khz"
                 android:textSize="@dimen/textNormSize" />
+
             <TextView
                 android:layout_width="30dp"
                 android:layout_height="wrap_content" />
@@ -309,6 +333,7 @@
                 android:layout_height="wrap_content"
                 android:text="时间"
                 android:textSize="@dimen/textNormSize" />
+
             <TextView
                 android:layout_width="30dp"
                 android:layout_height="wrap_content" />
@@ -324,6 +349,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/textNormSize" />
+
             <TextView
                 android:layout_width="30dp"
                 android:layout_height="wrap_content" />
