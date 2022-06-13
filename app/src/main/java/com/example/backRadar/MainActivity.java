@@ -32,6 +32,7 @@ import com.example.thread.WriteHeadThread;
 import com.example.thread.WriteRearThread;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
@@ -57,6 +58,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -121,6 +123,7 @@ public class MainActivity extends Activity {
     private TextView tv_timeWindow = null;
     private TextView tv_frequency = null;
     private TextView tv_delay = null;
+    private TextView mtv_sample_num = null;
     private TextView tv_markNumber = null;
     private TextView tv_triigerMode = null;
 
@@ -191,6 +194,8 @@ public class MainActivity extends Activity {
     private SharedPreferences shareifbackremove = null;
     SharedPreferences.Editor mainPeremeterOrdersEditor = null;
 
+    private SharedPreferences shareGainData1024 = null;
+    private SharedPreferences shareBackgrdData1024 = null;
     //静态IP地址
     public static final String STATICIP = "192.168.0.100";
 
@@ -199,19 +204,32 @@ public class MainActivity extends Activity {
 
     //一道数据的点数
     public static final int Const_NumberOfVerticalDatas = 512;
+    public static final int Const_NumberOfVerticalDatas_1024 = 1024;
     private int colorList[] = new int[Const_NumberOfVerticalDatas];
     private short colorGap[] = new short[Const_NumberOfVerticalDatas];
     private short RawcolorGap[] = new short[Const_NumberOfVerticalDatas];
+
+    private int colorList1024[] = new int[Const_NumberOfVerticalDatas_1024];
+    private short colorGap1024[] = new short[Const_NumberOfVerticalDatas_1024];
+    private short RawcolorGap1024[] = new short[Const_NumberOfVerticalDatas_1024];
+
     private short TempColorList[] = new short[Const_NumberOfVerticalDatas];
 
 
     private int gainData[] = new int[Const_NumberOfVerticalDatas];
     private int backgrdData[] = new int[Const_NumberOfVerticalDatas];
+
+
+    private int gainData1024[] = new int[Const_NumberOfVerticalDatas_1024];
+    private int backgrdData1024[] = new int[Const_NumberOfVerticalDatas_1024];
+
     private short sumcolorData[] = new short[Const_NumberOfVerticalDatas];
     private float coeGain;
 
     public static final int Const_NEW_NUMBEROFDATA = 513;
     private short reciveData[] = new short[Const_NEW_NUMBEROFDATA];
+    private short reciveData1024[] = new short[Const_NumberOfVerticalDatas_1024];
+
     private short battery = -1;
 
 
@@ -231,6 +249,9 @@ public class MainActivity extends Activity {
     private byte[] Rwcolorgap = new byte[Const_NumberOfVerticalDatas * 2];
     private byte[] colorgap = new byte[Const_NumberOfVerticalDatas * 2];
 
+    private byte[] Rwcolorgap1024 = new byte[Const_NumberOfVerticalDatas_1024 * 2];
+    private byte[] colorgap1024 = new byte[Const_NumberOfVerticalDatas_1024 * 2];
+
     int ddi = 0;
     //记录当前数据是第几道
     private int numberOfLogo;
@@ -244,11 +265,13 @@ public class MainActivity extends Activity {
     private int judge_haveOrNot = -1;
     int ttti = 0;
     private Handler handlerOfColour = new Handler() {
+        @SuppressLint("HandlerLeak")
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
                     if (clickOrNot != 0) {
+                        Dataprocess.setM_samplelength(512);
                         if (isDDCF){
                             temp_ddcf_sum ++;
                             if (temp_ddcf_sum == ddcf_sum){
@@ -256,117 +279,221 @@ public class MainActivity extends Activity {
                                 touchsuspend();
                             }
                         }
-                        reciveData = (short[]) msg.obj;
-                        int tempJudge = msg.arg1;
-                        if (tempJudge == 1) {
-                            judge_MartOrNot = true;
-                            markNumber++;
-                            tv_markNumber.setText(markNumber + "");
-                        }
-                        for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
-                            colorGap[i] = reciveData[i];
-                            RawcolorGap[i] = reciveData[i];
-                            Rwcolorgap[2 * i] = shortToByte(reciveData[i])[0];
-                            Rwcolorgap[2 * i + 1] = shortToByte(reciveData[i])[1];
-                        }
-                        if (judge_MartOrNot) {
-                            Rwcolorgap[0] = (byte) 0xff;
-                            Rwcolorgap[1] = (byte) 0x00;
-                            Rwcolorgap[2] = (byte) 0xff;
-                            Rwcolorgap[3] = (byte) 0x00;
-                            Rwcolorgap[4] = (byte) 0xff;
-                            Rwcolorgap[5] = (byte) 0x00;
-                            Rwcolorgap[6] = (byte) 0xff;
-                            Rwcolorgap[7] = (byte) 0x00;
-                        }
-//                    if (mrafRaw == null) Log.d(TAG, "handleMessage: !!!!!!!!!!!");
-                        writeBodyThreadRaw = new WriteBodyThread(mrafRaw, Rwcolorgap);
-                        writeBodyThreadRaw.setGetCallBack(new GetCallBack() {
-                            @Override
-                            public void doThing() {
-                                GetCallBack.super.doThing();
+                        if (msg.arg2>0){
+                            reciveData = (short[]) msg.obj;
+                            int tempJudge = msg.arg1;
+                            if (tempJudge == 1) {
+                                judge_MartOrNot = true;
+                                markNumber++;
+                                tv_markNumber.setText(markNumber + "");
                             }
-                        });
-                        if (IfSaveTheRadar == 1) {
-                            poolRaw.execute(writeBodyThreadRaw);
-                        }
+                            for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
+                                colorGap[i] = reciveData[i];
+                                RawcolorGap[i] = reciveData[i];
+                                Rwcolorgap[2 * i] = shortToByte(reciveData[i])[0];
+                                Rwcolorgap[2 * i + 1] = shortToByte(reciveData[i])[1];
+                            }
+                            if (judge_MartOrNot) {
+                                Rwcolorgap[0] = (byte) 0xff;
+                                Rwcolorgap[1] = (byte) 0x00;
+                                Rwcolorgap[2] = (byte) 0xff;
+                                Rwcolorgap[3] = (byte) 0x00;
+                                Rwcolorgap[4] = (byte) 0xff;
+                                Rwcolorgap[5] = (byte) 0x00;
+                                Rwcolorgap[6] = (byte) 0xff;
+                                Rwcolorgap[7] = (byte) 0x00;
+                            }
+//                    if (mrafRaw == null) Log.d(TAG, "handleMessage: !!!!!!!!!!!");
+                            writeBodyThreadRaw = new WriteBodyThread(mrafRaw, Rwcolorgap);
+                            writeBodyThreadRaw.setGetCallBack(new GetCallBack() {
+                                @Override
+                                public void doThing() {
+                                    GetCallBack.super.doThing();
+                                }
+                            });
+                            if (IfSaveTheRadar == 1) {
+                                poolRaw.execute(writeBodyThreadRaw);
+                            }
 //                    writeThread.setRwcolorgap(Rwcolorgap);
-                        battery = reciveData[512];
+                            battery = reciveData[512];
 //                    Log.d(TAG, "handleMessage:  --> battery --> "+battery);
-                        int mbtr_num = (int) ((float) (battery / 100) * 1.1 - 20) * 10;
-                        myBatterView.setPro(mbtr_num);
+                            int mbtr_num = (int) ((float) (battery / 100) * 1.1 - 20) * 10;
+                            myBatterView.setPro(mbtr_num);
 //				judgeHaveThread.setColorGap(colorGap);
 //				judgeMetalThread.setColorGap(colorGap);
-                        if (tempifbackremove == 1) {
-                            short[] newnoise = new short[Const_NumberOfVerticalDatas];
-                            for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
-                                newnoise[i] = (short) backgrdData[i];
-                            }
+                            if (tempifbackremove == 1) {
+                                short[] newnoise = new short[Const_NumberOfVerticalDatas];
+                                for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
+                                    newnoise[i] = (short) backgrdData[i];
+                                }
 //                        Log.d(TAG, "------tempifbackremove------------");
-                            float[] noise = dataprocessMain.calm_gainnoiseb(newnoise);
-                            colorGap = dataprocessMain.backgroundRemoveProcess(Const_NumberOfVerticalDatas, colorGap, noise, sumcolorData);
-                        }
+                                float[] noise = dataprocessMain.calm_gainnoiseb(newnoise);
+                                colorGap = dataprocessMain.backgroundRemoveProcess(Const_NumberOfVerticalDatas, colorGap, noise, sumcolorData);
+                            }
 
-                        if (tempShare != 4) {
+                            if (tempShare != 4) {
 //                        Log.d(TAG, "--------tempShare----------");
-                            dataprocessMain.m_filterP.setM_low_f(numlowf);
-                            dataprocessMain.m_filterP.setM_high_f(numhighf);
-                            dataprocessMain.setM_iffilter(true);
-                            dataprocessMain.m_filterP.setM_mode(tempShare);
-                            colorGap = dataprocessMain.dodataprocess(colorGap);
-                        }
-                        if (tempifgain == 1) {
+                                dataprocessMain.m_filterP.setM_low_f(numlowf);
+                                dataprocessMain.m_filterP.setM_high_f(numhighf);
+                                dataprocessMain.setM_iffilter(true);
+                                dataprocessMain.m_filterP.setM_mode(tempShare);
+                                colorGap = dataprocessMain.dodataprocess(colorGap);
+                            }
+                            if (tempifgain == 1) {
 //                        Log.d(TAG, "--------tempifgain----------");
-                            colorGap = dataprocessMain.gainProcess(colorGap, gainData, coeGain, Const_NumberOfVerticalDatas);
-                        }
+                                colorGap = dataprocessMain.gainProcess(colorGap, gainData, coeGain, Const_NumberOfVerticalDatas);
+                            }
 
-                        if (judge_MartOrNot) {
-                            for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
-                                colorList[i] = 0x0000ff;
-                                colorGap[i] = (short) (colorGap[i]);
+                            if (judge_MartOrNot) {
+                                for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
+                                    colorList[i] = 0x0000ff;
+                                    colorGap[i] = (short) (colorGap[i]);
+                                }
+                            } else {
+                                for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
+                                    int color = ((colorGap[i]) / 256) + 128;
+                                    colorList[i] = Color.rgb(color, color, color);
+                                    colorgap[2 * i] = shortToByte(colorGap[i])[0];
+                                    colorgap[2 * i + 1] = shortToByte(colorGap[i])[1];
+                                }
                             }
-                        } else {
-                            for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
-                                int color = ((colorGap[i]) / 256) + 128;
-                                colorList[i] = Color.rgb(color, color, color);
+                            if (judge_MartOrNot) {
+                                colorgap[0] = (byte) 0xff;
+                                colorgap[1] = (byte) 0x00;
+                                colorgap[2] = (byte) 0xff;
+                                colorgap[3] = (byte) 0x00;
+                                colorgap[4] = (byte) 0xff;
+                                colorgap[5] = (byte) 0x00;
+                                colorgap[6] = (byte) 0xff;
+                                colorgap[7] = (byte) 0x00;
+                            }
+                            writeBodyThread = new WriteBodyThread(mrafColor, colorgap);
+                            writeBodyThread.setGetCallBack(new GetCallBack() {
+                                @Override
+                                public void doThing() {
+//                                Log.d(TAG, "doThing:  -------");
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            counterOfReal += 1;
+                                            tv_numSave.setText("" + counterOfReal);
+                                        }
+                                    });
+                                }
+                            });
+                            pool.execute(writeBodyThread);
+                            tv_numberOfReceive.setText(Math.abs(msg.arg2)+ "");
+                            lFragment.drawNewVertical(colorList);
+                            judge_MartOrNot = false;
+                            break;
+                        }else{
+                            Dataprocess.setM_samplelength(Const_NumberOfVerticalDatas_1024);
+                            reciveData1024 = (short[]) msg.obj;
+                            int tempJudge = msg.arg1;
+                            if (tempJudge == 1) {
+                                judge_MartOrNot = true;
+                                markNumber++;
+                                tv_markNumber.setText(markNumber + "");
+                            }
+                            for (int i = 0; i < Const_NumberOfVerticalDatas_1024; i++) {
+                                colorGap1024[i] = reciveData1024[i];
+                                RawcolorGap1024[i] = reciveData1024[i];
+                                Rwcolorgap1024[2 * i] = shortToByte(reciveData1024[i])[0];
+                                Rwcolorgap1024[2 * i + 1] = shortToByte(reciveData1024[i])[1];
+                            }
+                            if (judge_MartOrNot) {
+                                Rwcolorgap1024[0] = (byte) 0xff;
+                                Rwcolorgap1024[1] = (byte) 0x00;
+                                Rwcolorgap1024[2] = (byte) 0xff;
+                                Rwcolorgap1024[3] = (byte) 0x00;
+                                Rwcolorgap1024[4] = (byte) 0xff;
+                                Rwcolorgap1024[5] = (byte) 0x00;
+                                Rwcolorgap1024[6] = (byte) 0xff;
+                                Rwcolorgap1024[7] = (byte) 0x00;
+                            }
+//                    if (mrafRaw == null) Log.d(TAG, "handleMessage: !!!!!!!!!!!");
+                            writeBodyThreadRaw = new WriteBodyThread(mrafRaw, Rwcolorgap1024);
+                            writeBodyThreadRaw.setGetCallBack(new GetCallBack() {
+                                @Override
+                                public void doThing() {
+                                    GetCallBack.super.doThing();
+                                }
+                            });
+                            if (IfSaveTheRadar == 1) {
+                                poolRaw.execute(writeBodyThreadRaw);
+                            }
+//                            battery = reciveData[512];
+//                            int mbtr_num = (int) ((float) (battery / 100) * 1.1 - 20) * 10;
+//                            myBatterView.setPro(mbtr_num);
+                            if (tempifbackremove == 1) {
+                                short[] newnoise = new short[Const_NumberOfVerticalDatas_1024];
+                                for (int i = 0; i < Const_NumberOfVerticalDatas_1024; i++) {
+                                    newnoise[i] = (short) backgrdData1024[i];
+                                }
+                                float[] noise = dataprocessMain.calm_gainnoiseb(newnoise);
+                                colorGap1024 = dataprocessMain.backgroundRemoveProcess(Const_NumberOfVerticalDatas_1024, colorGap1024, noise, sumcolorData);
+                            }
+
+                            if (tempShare != 4) {
+//                        Log.d(TAG, "--------tempShare----------");
+                                dataprocessMain.m_filterP.setM_low_f(numlowf);
+                                dataprocessMain.m_filterP.setM_high_f(numhighf);
+                                dataprocessMain.setM_iffilter(true);
+                                dataprocessMain.m_filterP.setM_mode(tempShare);
+                                colorGap1024 = dataprocessMain.dodataprocess(colorGap1024);
+                            }
+                            if (tempifgain == 1) {
+                                colorGap1024 = dataprocessMain.gainProcess(colorGap1024, gainData1024, coeGain, Const_NumberOfVerticalDatas_1024);
+                            }
+
+                            if (judge_MartOrNot) {
+                                for (int i = 0; i < Const_NumberOfVerticalDatas_1024; i++) {
+                                    colorList1024[i] = 0x0000ff;
+                                    colorGap1024[i] = (short) (colorGap1024[i]);
+                                }
+                            } else {
+                                for (int i = 0; i < Const_NumberOfVerticalDatas_1024; i++) {
+                                    int color = ((colorGap1024[i]) / 256) + 128;
+                                    colorList1024[i] = Color.rgb(color, color, color);
 //                            TempColorList[i] = (short) (colorGap[i]);
-                                colorgap[2 * i] = shortToByte(colorGap[i])[0];
-                                colorgap[2 * i + 1] = shortToByte(colorGap[i])[1];
+                                    colorgap1024[2 * i] = shortToByte(colorGap1024[i])[0];
+                                    colorgap1024[2 * i + 1] = shortToByte(colorGap1024[i])[1];
+                                }
                             }
-                        }
-                        if (judge_MartOrNot) {
-                            colorgap[0] = (byte) 0xff;
-                            colorgap[1] = (byte) 0x00;
-                            colorgap[2] = (byte) 0xff;
-                            colorgap[3] = (byte) 0x00;
-                            colorgap[4] = (byte) 0xff;
-                            colorgap[5] = (byte) 0x00;
-                            colorgap[6] = (byte) 0xff;
-                            colorgap[7] = (byte) 0x00;
-                        }
+                            if (judge_MartOrNot) {
+                                colorgap1024[0] = (byte) 0xff;
+                                colorgap1024[1] = (byte) 0x00;
+                                colorgap1024[2] = (byte) 0xff;
+                                colorgap1024[3] = (byte) 0x00;
+                                colorgap1024[4] = (byte) 0xff;
+                                colorgap1024[5] = (byte) 0x00;
+                                colorgap1024[6] = (byte) 0xff;
+                                colorgap1024[7] = (byte) 0x00;
+                            }
 //                    writeThread.setColorgap(colorgap);
 //                    writeThread.setJudgeIfRepeat(false);
 //                    writeThread.setJudgeNumber(3);
 //                    writeThread.setJudgeIfRepeat(true);
-                        writeBodyThread = new WriteBodyThread(mrafColor, colorgap);
-                        writeBodyThread.setGetCallBack(new GetCallBack() {
-                            @Override
-                            public void doThing() {
+                            writeBodyThread = new WriteBodyThread(mrafColor, colorgap1024);
+                            writeBodyThread.setGetCallBack(new GetCallBack() {
+                                @Override
+                                public void doThing() {
 //                                Log.d(TAG, "doThing:  -------");
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        counterOfReal += 1;
-                                        tv_numSave.setText("" + counterOfReal);
-                                    }
-                                });
-                            }
-                        });
-                        pool.execute(writeBodyThread);
-                        tv_numberOfReceive.setText(msg.arg2 + "");
-                        lFragment.drawNewVertical(colorList);
-                        judge_MartOrNot = false;
-                        break;
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            counterOfReal += 1;
+                                            tv_numSave.setText("" + counterOfReal);
+                                        }
+                                    });
+                                }
+                            });
+                            pool.execute(writeBodyThread);
+                            tv_numberOfReceive.setText(Math.abs(msg.arg2) + "");
+                            lFragment.drawNewVertical1024(colorList1024);
+                            judge_MartOrNot = false;
+                            break;
+                        }
                     }
                 case 1:
                     ibtn_wifi.setImageResource(R.drawable.wifigreen2);
@@ -375,34 +502,6 @@ public class MainActivity extends Activity {
                     ibtn_setting.setEnabled(true);
                     break;
                 case 3:
-//                    int sum_juegeextremum7 = msg.arg1;
-//				int sum_extremum3=msg.arg2;
-//				if (sum_extremum3>0) {
-//					if (judge_haveOrNot==1) {
-//						tv_metalOrNot.setText("金属");
-//					}else if (judge_haveOrNot==0) {
-//						tv_metalOrNot.setText("未检测到物体");
-//					}
-//				}else {
-//					if (sum_juegeextremum5>5) {
-//						tv_metalOrNot.setText("金属");
-//					}else {
-//						if (judge_haveOrNot==1) {
-//							tv_metalOrNot.setText("非金属");
-//						}else if(judge_haveOrNot==0){
-//							tv_metalOrNot.setText("未检测到物体");
-//						}
-////					}
-//				}
-//				if (judge_haveOrNot==0) {
-//					tv_metalOrNot.setText("未检测到物体");
-//				}else if(judge_haveOrNot==1){
-//					if (sum_juegeextremum7<0) {
-//						tv_metalOrNot.setText("非金属");
-//					}else {
-//						tv_metalOrNot.setText("金属");
-//					}
-//				}
                     break;
                 case 4:
                     //有物体
@@ -412,33 +511,7 @@ public class MainActivity extends Activity {
                     //没有物体
                     judge_haveOrNot = 0;
                     break;
-//                case 6:
-//                    judge_MartOrNot = true;
-//                    markNumber++;
-//                    tv_markNumber.setText(markNumber + "");
-//                    colorGap = (short[]) msg.obj;
-//                    if (judge_MartOrNot) {
-//                        colorGap[0] = 0xff;
-//                        colorGap[1] = 0xff;
-//                        colorGap[2] = 0xff;
-//                        colorGap[3] = 0xff;
-//                    }
-////				judgeHaveThread.setColorGap(colorGap);
-////				judgeMetalThread.setColorGap(colorGap);
-//                    if (judge_MartOrNot) {
-//                        for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
-//                            colorList[i] = 0x0000ff;
-//                            colorGap[i] = (short) (colorGap[i] / 256);
-//                        }
-//                    }
-////                    writeThread.setColorGap(colorGap);
-////                    writeThread.setJudgeIfRepeat(false);
-////                    writeThread.setJudgeNumber(3);
-////                    writeThread.setJudgeIfRepeat(true);
-//                    lFragment.drawNewVertical(colorList);
-////				rFragment.drawRadarWave(colorGap,gainData);
-//                    judge_MartOrNot = false;
-//                    break;
+
                 default:
                     break;
             }
@@ -536,11 +609,13 @@ public class MainActivity extends Activity {
 //                                writeThread.setJudgeNumber(1);
                                 writeHeadThread = new WriteHeadThread(mrafColor);
                                 writeHeadThread.setTimedelay(Short.parseShort(tv_delay.getText().toString()));
+                                writeHeadThread.setSample_point(Integer.parseInt(mtv_sample_num.getText().toString()));
                                 writeHeadThread.setSample_wnd(Integer.parseInt(tv_timeWindow.getText().toString()));
                                 pool.execute(writeHeadThread);
                                 if (IfSaveTheRadar == 1) {
                                     writeHeadThreadRaw = new WriteHeadThread(mrafRaw);
                                     writeHeadThreadRaw.setTimedelay(Short.parseShort(tv_delay.getText().toString()));
+                                    writeHeadThreadRaw.setSample_point(Integer.parseInt(mtv_sample_num.getText().toString()));
                                     writeHeadThreadRaw.setSample_wnd(Integer.parseInt(tv_timeWindow.getText().toString()));
                                     poolRaw.execute(writeHeadThreadRaw);
                                 }
@@ -629,11 +704,13 @@ public class MainActivity extends Activity {
                     if (counter == 0) {
                         writeHeadThread = new WriteHeadThread(mrafColor);
                         writeHeadThread.setTimedelay(Short.parseShort(tv_delay.getText().toString()));
+                        writeHeadThread.setSample_point(Integer.parseInt(mtv_sample_num.getText().toString()));
                         writeHeadThread.setSample_wnd(Integer.parseInt(tv_timeWindow.getText().toString()));
                         pool.execute(writeHeadThread);
                         if (IfSaveTheRadar == 1) {
                             writeHeadThreadRaw = new WriteHeadThread(mrafRaw);
                             writeHeadThreadRaw.setTimedelay(Short.parseShort(tv_delay.getText().toString()));
+                            writeHeadThreadRaw.setSample_point(Integer.parseInt(mtv_sample_num.getText().toString()));
                             writeHeadThreadRaw.setSample_wnd(Integer.parseInt(tv_timeWindow.getText().toString()));
                             poolRaw.execute(writeHeadThreadRaw);
                         }
@@ -733,6 +810,7 @@ public class MainActivity extends Activity {
         tv_timeWindow = (TextView) findViewById(R.id.tv_timeWindow);
         tv_frequency = (TextView) findViewById(R.id.tv_frequency);
         tv_delay = (TextView) findViewById(R.id.tv_delay);
+        mtv_sample_num = (TextView) findViewById(R.id.mtv_samplenum);
         tv_markNumber = (TextView) findViewById(R.id.tv_markNumber);
         tv_triigerMode = (TextView) findViewById(R.id.tv_theWayOfTrigger);
 //        tv_logo = (TextView) findViewById(R.id.tv_logo);
@@ -862,11 +940,13 @@ public class MainActivity extends Activity {
 //                                writeThread.setJudgeNumber(1);
                                         writeHeadThread = new WriteHeadThread(mrafColor);
                                         writeHeadThread.setTimedelay(Short.parseShort(tv_delay.getText().toString()));
+                                        writeHeadThread.setSample_point(Integer.parseInt(mtv_sample_num.getText().toString()));
                                         writeHeadThread.setSample_wnd(Integer.parseInt(tv_timeWindow.getText().toString()));
                                         pool.execute(writeHeadThread);
                                         if (IfSaveTheRadar == 1) {
                                             writeHeadThreadRaw = new WriteHeadThread(mrafRaw);
                                             writeHeadThreadRaw.setTimedelay(Short.parseShort(tv_delay.getText().toString()));
+                                            writeHeadThreadRaw.setSample_point(Integer.parseInt(mtv_sample_num.getText().toString()));
                                             writeHeadThreadRaw.setSample_wnd(Integer.parseInt(tv_timeWindow.getText().toString()));
                                             poolRaw.execute(writeHeadThreadRaw);
                                         }
@@ -955,11 +1035,13 @@ public class MainActivity extends Activity {
                             if (counter == 0) {
                                 writeHeadThread = new WriteHeadThread(mrafColor);
                                 writeHeadThread.setTimedelay(Short.parseShort(tv_delay.getText().toString()));
+                                writeHeadThread.setSample_point(Integer.parseInt(mtv_sample_num.getText().toString()));
                                 writeHeadThread.setSample_wnd(Integer.parseInt(tv_timeWindow.getText().toString()));
                                 pool.execute(writeHeadThread);
                                 if (IfSaveTheRadar == 1) {
                                     writeHeadThreadRaw = new WriteHeadThread(mrafRaw);
                                     writeHeadThreadRaw.setTimedelay(Short.parseShort(tv_delay.getText().toString()));
+                                    writeHeadThreadRaw.setSample_point(Integer.parseInt(mtv_sample_num.getText().toString()));
                                     writeHeadThreadRaw.setSample_wnd(Integer.parseInt(tv_timeWindow.getText().toString()));
                                     poolRaw.execute(writeHeadThreadRaw);
                                 }
@@ -1383,10 +1465,30 @@ public class MainActivity extends Activity {
             backgrdData[i] = shareBackgrdData.getInt(i + "", 1);
         }
 
-        shareSumColorData = getSharedPreferences("sumdata", 0);
-        for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
-            sumcolorData[i] = (short) shareSumColorData.getInt(i + "", 1);
+        shareGainData1024 = getSharedPreferences("gainData1024", 0);
+        for (int i = 0; i < Const_NumberOfVerticalDatas_1024; i++) {
+            gainData1024[i] = shareGainData1024.getInt(i + "", 1);
         }
+        shareBackgrdData1024 = getSharedPreferences("backgrdData1024", 0);
+        for (int i = 0; i < Const_NumberOfVerticalDatas_1024; i++) {
+            backgrdData1024[i] = shareBackgrdData1024.getInt(i + "", 1);
+        }
+
+
+
+        shareSumColorData = getSharedPreferences("sumdata", 0);
+        if (mtv_sample_num.getText().toString().equals("512")){
+            sumcolorData = new short[Const_NumberOfVerticalDatas];
+            for (int i = 0; i < sumcolorData.length; i++) {
+                sumcolorData[i] = (short) shareSumColorData.getInt(i + "", 1);
+            }
+        }else {
+            sumcolorData = new short[Const_NumberOfVerticalDatas_1024];
+            for (int i = 0; i < sumcolorData.length; i++) {
+                sumcolorData[i] = (short) shareSumColorData.getInt(i + "", 1);
+            }
+        }
+
 
 
         battery = (short) getSharedPreferences("battery", 0).getInt("battery", -1);
@@ -1439,6 +1541,7 @@ public class MainActivity extends Activity {
             tv_timeWindow.setText(mainPeremeterOrders.getString("timeWindow", "1"));
             tv_frequency.setText(mainPeremeterOrders.getString("frequency", "1"));
             tv_delay.setText(mainPeremeterOrders.getString("delay", "100"));
+            mtv_sample_num.setText(mainPeremeterOrders.getString("samplenum","512"));
             IfSaveTheRadar = mainPeremeterOrders.getInt("saveRadar", 1);
 //            writeThread.setAnoStart(IfSaveTheRadar);
             if (mainPeremeterOrders.getInt("triggerMode", 0) == 0) {

@@ -37,39 +37,34 @@ public class ParamsOfSetting implements Serializable {
     int timeWindow;
     int delay;
     boolean saveRaw;
-
-
-    @Override
-    public String toString() {
-        return "ParamsOfSetting{" +
-                "paramsName='" + paramsName + '\'' +
-                ", xRaw=" + Arrays.toString(xRaw) +
-                ", bRaw=" + Arrays.toString(bRaw) +
-                ", frequency=" + frequency +
-                ", timeWindow=" + timeWindow +
-                ", delay=" + delay +
-                ", saveRaw=" + saveRaw +
-                ", gain=" + gain +
-                ", gainCoe=" + gainCoe +
-                ", gainData=" + Arrays.toString(gainData) +
-                ", debackgrd=" + debackgrd +
-                ", backgrdData=" + Arrays.toString(backgrdData) +
-                ", filter=" + filter +
-                ", filterNum=" + filterNum +
-                ", filterstart=" + filterstart +
-                ", filterstop=" + filterstop +
-                '}';
-    }
-
     boolean gain;
     float gainCoe;
     int[] gainData;
+    int[] gainData1024;
     boolean debackgrd;
     int[] backgrdData;
+    int[] backgrdData1024;
     boolean filter;
     int filterNum;
     float filterstart;
     float filterstop;
+    public int[] getGainData1024() {
+        return gainData1024;
+    }
+
+    public void setGainData1024(int[] gainData1024) {
+        this.gainData1024 = gainData1024;
+    }
+
+    public int[] getBackgrdData1024() {
+        return backgrdData1024;
+    }
+
+    public void setBackgrdData1024(int[] backgrdData1024) {
+        this.backgrdData1024 = backgrdData1024;
+    }
+
+
 
     public int getFrequency() {
         return frequency;
@@ -173,5 +168,29 @@ public class ParamsOfSetting implements Serializable {
 
     public void setFilterstop(float filterstop) {
         this.filterstop = filterstop;
+    }
+
+    @Override
+    public String toString() {
+        return "ParamsOfSetting{" +
+                "paramsName='" + paramsName + '\'' +
+                ", xRaw=" + Arrays.toString(xRaw) +
+                ", bRaw=" + Arrays.toString(bRaw) +
+                ", frequency=" + frequency +
+                ", timeWindow=" + timeWindow +
+                ", delay=" + delay +
+                ", saveRaw=" + saveRaw +
+                ", gain=" + gain +
+                ", gainCoe=" + gainCoe +
+                ", gainData=" + Arrays.toString(gainData) +
+                ", gainData1024=" + Arrays.toString(gainData1024) +
+                ", debackgrd=" + debackgrd +
+                ", backgrdData=" + Arrays.toString(backgrdData) +
+                ", backgrdData1024=" + Arrays.toString(backgrdData1024) +
+                ", filter=" + filter +
+                ", filterNum=" + filterNum +
+                ", filterstart=" + filterstart +
+                ", filterstop=" + filterstop +
+                '}';
     }
 }

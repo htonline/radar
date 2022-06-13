@@ -77,43 +77,7 @@ public class ColoursView extends View{
 	private int intXx=0;
 	//随机数(测试数据用)
 	Random random=null;
-	//标记有几个list集合
-//	private int index=0;
-	//判断应该替换还是添加(0添加，大于0替换)
-//	private int judge=0;
 
-//	//获取view宽高
-//	private int viewHeight=getHeight();
-//	private int viewWidth=getWidth();
-
-//	public ArrayList<Integer> getList(){
-//		return coloursDataList;
-//	}
-//
-//	public void setList(ArrayList<Integer> coloursDataList){
-//		Log.d("11111111111", "in");
-//		this.coloursDataList=coloursDataList;
-//		if (judge==0) {
-//			listOfAllData.add(index,coloursDataList);
-//			Log.d("2222222222", index+"");
-//		}else {
-//			listOfAllData.set(index,coloursDataList);
-//		}
-//		if (getIndex()==700) {
-//			setIndex(0);
-//			judge++;
-//		}else
-//			setIndex(++index);
-//		invalidate();
-//	}
-//
-//	public int getIndex() {
-//		return index;
-//	}
-//
-//	public void setIndex(int index) {
-//		this.index = index;
-//	}
 
 	//初始化
 	private void init(){
@@ -181,45 +145,11 @@ public class ColoursView extends View{
 				//绘制数字
 				canvas.drawText(String.valueOf((double)(i)),0, viewHeight-(viewHeight-(viewHeight/timeWindow)*i)-intX, yTextPaint);
 
-//				Log.d(TAG, viewHeight-(viewHeight-(viewHeight/timeWindow)*i)+"");
 			}
-//			Log.d(TAG, viewHeight+"viewHeight==================");
-//			else if (i%(timeWindow/25)==0){
-//				//最短的横线
-//				canvas.drawLine(yTextPaint.measureText(2.0+"")+5, (viewHeight/timeWindow)*i, yTextPaint.measureText(2.0+"")+intXx+5, (viewHeight/timeWindow)*i, yPaint);
-//			}
 		}
 		//Y轴
 		canvas.drawLine(yTextPaint.measureText(2.0+"")+intXx+5, 0, yTextPaint.measureText(2.0+"")+intXx+5, viewHeight, yPaint);
 		canvas.drawBitmap(bitmap, 32, 0, pointPaint );
-
-
-
-		//height,25		canvas.drawText(intX+"", 200, 200, yPaint);
-//		canvas.drawText(yTextPaint.measureText(2.0+"")+intXx+5+"", 200, 200, yPaint);
-
-
-//		canvas.drawText(viewHeight-intX+"", 200, 200, yTextPaint);
-//		canvas.drawText(viewWidth-yTextPaint.measureText(2.0+"")-intXx-5+"", 200, 400, yTextPaint);
-//		for(int j=0;j<15;j++){
-//			for (int i = 0; i < 512; i++) {
-//				coloursDataList.add(i,random.nextInt(255));
-//			}
-//				listOfAllData.add(j, coloursDataList);
-//			
-//		}
-
-//		for(int j=0;j<listOfAllData.size();j++){
-//			
-//			for (int i = 0; i < coloursDataList.size(); i++) {
-//				pointPaint.setColor(Color.rgb(listOfAllData.get(j).get(i), listOfAllData.get(j).get(i), listOfAllData.get(j).get(i)));
-//				canvas.drawPoint(yTextPaint.measureText(2.0+"")+intXx+5+2*j+1, i*2, pointPaint);
-//				canvas.drawPoint(yTextPaint.measureText(2.0+"")+intXx+5+2*j+2, i*2, pointPaint);
-//				canvas.drawPoint(yTextPaint.measureText(2.0+"")+intXx+5+2*j+1, i*2+1, pointPaint);
-//				canvas.drawPoint(yTextPaint.measureText(2.0+"")+intXx+5+2*j+2, i*2+1, pointPaint);
-//			}
-//			
-//		}	
 	}
 
 	public void drawNewVertical(int[] colorList){
@@ -236,4 +166,23 @@ public class ColoursView extends View{
 		this.invalidate();
 	}
 
+    public void drawNewVertical1024(int[] colorList) {
+		if (drawHeight/1024.0>1) {
+			scale=(float) (1024.0/drawHeight);
+		}else {
+			scale=(float) (drawHeight/1024.0);
+		}
+		for(int i=0;i<drawHeight;i++){
+
+			bitmap.setPixel(currentVertical,i,colorList[(int) (i*scale)]);
+			if (currentVertical<drawWidth-2) {
+				bitmap.setPixel(currentVertical+1,i,0x0000FF);
+			}
+		}
+		currentVertical++;
+		if(currentVertical>=drawWidth){
+			currentVertical=0;
+		}
+		this.invalidate();
+    }
 }

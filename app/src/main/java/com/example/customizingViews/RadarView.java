@@ -30,8 +30,8 @@ public class RadarView extends View{
 	
 	private Paint pointPaint=null;
 	public static final int Const_height=512;
-	public static final int Const_numberOfDatas=512;
-	private short colorData[]=new short [Const_numberOfDatas];
+	public int Const_numberOfDatas=512;
+	private short colorData[] =new short [Const_numberOfDatas];
 	//小横线长度
 	private int intXx=15; 
 	int h;
@@ -46,7 +46,21 @@ public class RadarView extends View{
 		return colorData;
 	}
 	public void setColorData(short[] colorData) {
+		Const_numberOfDatas = 512;
+		this.colorData = new short[Const_numberOfDatas];
 		this.colorData = colorData;
+		this.xRawData=new int[Const_numberOfDatas];
+		invalidate();
+	}
+	public void setColorData1024(short[] colorData){
+		Const_numberOfDatas = 1024;
+		if (this.colorData.length != 1024){
+			this.colorData = new short[Const_numberOfDatas];
+		}
+		this.colorData = colorData;
+		if (this.xRawData.length != 1024){
+			this.xRawData=new int[Const_numberOfDatas];
+		}
 		invalidate();
 	}
 
@@ -76,7 +90,7 @@ public class RadarView extends View{
 		super.onDraw(canvas);
 //		canvas.drawText(h+"", 200, 200, pointPaint);
 //		canvas.drawText(w+"", 200, 400, pointPaint);
-		
+
 		h=getHeight();
 		w=getWidth();
 		mid=w/2;

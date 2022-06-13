@@ -12,6 +12,8 @@ import java.util.List;
 
 import com.example.backRadar.Entity.FileInfoInPath;
 import com.example.backRadar.Entity.ParamsOfSetting;
+import com.example.customizingViews.BackgrdCurveView;
+import com.example.customizingViews.GainCurveView;
 import com.example.fragments.LeftFragmentOfSettingActivity;
 import com.example.fragments.MiddleBackFragmentOfSettingActivity;
 import com.example.fragments.RightFragmentOfSettingActivity;
@@ -78,12 +80,18 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
     public RightFragmentOfSettingActivity rightFragmentOfSettingActivity;
     public MiddleBackFragmentOfSettingActivity middleBackFragmentOfSettingActivity;
     public static final int Const_NumberOfVerticalDatas = 512;
+    public static final int Const_Number_Data_1024 = 1024;
     public static final int Const_NumberOfXRawDatas = 17;
     public static final int Const_NumberOfBRawDatas = 17;
     public short colorGap[] = new short[Const_NumberOfVerticalDatas];
     public short sumcolorGap[] = new short[Const_NumberOfVerticalDatas];
     public int gainData[] = new int[Const_NumberOfVerticalDatas];
     public int backgrdData[] = new int[Const_NumberOfVerticalDatas];
+
+    public int gainData1024[] = new int[Const_Number_Data_1024];
+    public int backgrdData1024[] = new int[Const_Number_Data_1024];
+
+    public short colorGap1024[] = new short[Const_Number_Data_1024];
     public float xRaw[] = new float[17];
     public float bRaw[] = new float[17];
     public float coeGain = 1;
@@ -95,6 +103,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 
     public static final int Const_NEW_NUMBEROFDATA = 513;
     private short reciveData[] = new short[Const_NEW_NUMBEROFDATA];
+    private short reciveData1024[] = new short[Const_Number_Data_1024];
     private short battery;
 
     private ParamsOfSetting paramsOfSettingMain;
@@ -240,62 +249,105 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
             switch (msg.what) {
                 case 0:
                     countNumRadar++;
-                    reciveData = (short[]) msg.obj;
-                    for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
-                        colorGap[i] = reciveData[i];
-                    }
-
-                    if (countNumRadar == 2) {
-                        System.arraycopy(colorGap, 0, sumcolorGap, 0, Const_NumberOfVerticalDatas);
-                        battery = reciveData[512];
-                        getSharedPreferences("battery", 0).edit().putInt("battery", battery).commit();
-
-                    }
-                    if (tempBackgrd == 1) {
-                        short[] newnoise = new short[Const_NumberOfVerticalDatas];
+                    if (msg.arg2>0){
+                        reciveData = (short[]) msg.obj;
+                        Dataprocess.setM_samplelength(512);
                         for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
-                            newnoise[i] = (short) backgrdData[i];
+                            colorGap[i] = reciveData[i];
                         }
-                        float[] noise = dataprocess.calm_gainnoiseb(newnoise);
-                        colorGap = dataprocess.backgroundRemoveProcess(Const_NumberOfVerticalDatas, colorGap, noise, colorGap);
-                    }
+                        if (countNumRadar == 2) {
+                            sumcolorGap = new short[Const_NumberOfVerticalDatas];
+                            System.arraycopy(colorGap, 0, sumcolorGap, 0, Const_NumberOfVerticalDatas);
+                            battery = reciveData[512];
+                            getSharedPreferences("battery", 0).edit().putInt("battery", battery).commit();
 
-                    if (tempIffliter != 4) {
-                        dataprocess.setM_iffilter(true);
-                        dataprocess.m_filterP.setM_mode(tempIffliter);
-                        colorGap = dataprocess.dodataprocess(colorGap);
-                    }
-
-                    if (tempGain == 1) {
-                        colorGap = dataprocess.gainProcess(colorGap, gainData, coeGain, Const_NumberOfVerticalDatas);
-                        hardwaregainorders.send(gainData);
-                    }
-
-                    for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
-                        colorGap[i] = (short) (colorGap[i] / 256);
-                    }
-
-
-//				Log.d(TAG, dataprocess.m_filterP.getM_mode()+"");
-
-                    rightFragmentOfSettingActivity.drawRadarWave(colorGap);
-                    break;
-                case 1:
-                    if (Integer.parseInt(et_delay.getText().toString()) >= 10000) {
-                        et_delay.setText("100");
-                    } else {
-                        et_delay.setText(Integer.parseInt(et_delay.getText().toString()) + 100 + "");
-                    }
-                    pOrders.setDelay_time_DELAY(Short.parseShort(et_delay.getText().toString()));
-                    new Thread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            // TODO Auto-generated method stub
-                            pOrders.send();
                         }
-                    }).start();
+                        if (tempBackgrd == 1) {
+                            short[] newnoise = new short[Const_NumberOfVerticalDatas];
+                            for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
+                                newnoise[i] = (short) backgrdData[i];
+                            }
+                            float[] noise = dataprocess.calm_gainnoiseb(newnoise);
+                            colorGap = dataprocess.backgroundRemoveProcess(Const_NumberOfVerticalDatas, colorGap, noise, colorGap);
+                        }
+
+                        if (tempIffliter != 4) {
+                            dataprocess.setM_iffilter(true);
+                            dataprocess.m_filterP.setM_mode(tempIffliter);
+                            colorGap = dataprocess.dodataprocess(colorGap);
+                        }
+
+
+                        Log.d(TAG, "handleMessage:  -- tempGain"+tempGain);
+                        if (tempGain == 1) {
+                            colorGap = dataprocess.gainProcess(colorGap, gainData, coeGain, Const_NumberOfVerticalDatas);
+                            hardwaregainorders.send(gainData);
+                        }
+
+                        for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
+                            colorGap[i] = (short) (colorGap[i] / 256);
+                        }
+
+                        rightFragmentOfSettingActivity.drawRadarWave(colorGap);
+                        break;
+                    }else{//1024采样点
+                        reciveData1024 = (short[]) msg.obj;
+                        msg.arg2 = -msg.arg2;
+                        for (int i = 0; i < Const_Number_Data_1024; i++) {
+                            colorGap1024[i] = reciveData1024[i];
+                        }
+                        if (countNumRadar == 2) {
+                            sumcolorGap = new short[Const_Number_Data_1024];
+                            System.arraycopy(colorGap1024, 0, sumcolorGap, 0, Const_Number_Data_1024);
+//                            battery = reciveData[512];
+//                            getSharedPreferences("battery", 0).edit().putInt("battery", battery).commit();
+
+                        }
+                        Dataprocess.setM_samplelength(1024);
+                        if (tempBackgrd == 1) {
+                                short[] newnoise = new short[Const_Number_Data_1024];
+                            for (int i = 0; i < Const_Number_Data_1024; i++) {
+                                newnoise[i] = (short) backgrdData1024[i];
+                            }
+                            float[] noise = dataprocess.calm_gainnoiseb(newnoise);
+                            colorGap1024 = dataprocess.backgroundRemoveProcess(Const_Number_Data_1024, colorGap1024, noise, colorGap1024);
+                        }
+
+                        if (tempIffliter != 4) {
+                            dataprocess.setM_iffilter(true);
+                            dataprocess.m_filterP.setM_mode(tempIffliter);
+                            colorGap1024 = dataprocess.dodataprocess(colorGap1024);
+                        }
+//
+                        if (tempGain == 1) {
+                            colorGap1024 = dataprocess.gainProcess(colorGap1024, gainData1024, coeGain, Const_Number_Data_1024);
+//                            hardwaregainorders.send(gainData);
+                        }
+
+                        for (int i = 0; i < Const_Number_Data_1024; i++) {
+                            colorGap1024[i] = (short) (colorGap1024[i] / 256);
+                        }
+
+                        rightFragmentOfSettingActivity.drawRadarWave1024(colorGap1024);
+                    }
                     break;
+
+//                case 1:
+//                    if (Integer.parseInt(et_delay.getText().toString()) >= 10000) {
+//                        et_delay.setText("100");
+//                    } else {
+//                        et_delay.setText(Integer.parseInt(et_delay.getText().toString()) + 100 + "");
+//                    }
+//                    pOrders.setDelay_time_DELAY(Short.parseShort(et_delay.getText().toString()));
+//                    new Thread(new Runnable() {
+//
+//                        @Override
+//                        public void run() {
+//                            // TODO Auto-generated method stub
+//                            pOrders.send();
+//                        }
+//                    }).start();
+//                    break;
                 default:
                     break;
             }
@@ -546,78 +598,6 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         });
 
 
-//        //采样脉冲数改变监听
-//        et_numberOfPulse.setOnEditorActionListener(new OnEditorActionListener() {
-//
-//            @Override
-//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-//                // TODO Auto-generated method stub
-//
-//                int numberOfPulse = Integer.parseInt(et_numberOfPulse.getText().toString());
-//                int singlePulse = Integer.parseInt(et_singlePulse.getText().toString());
-//                float singleDistance = Float.parseFloat(et_singleDistance.getText().toString());
-//                if (actionId == EditorInfo.IME_ACTION_DONE) {
-//                    if (et_numberOfPulse.getText().toString().equals("")) {
-//                        Toast.makeText(SettingActivity.this, "采样脉冲数不能为空", Toast.LENGTH_SHORT).show();
-//                        et_numberOfPulse.setText("1");
-//                    } else if (Integer.parseInt(et_numberOfPulse.getText().toString()) <= 0) {
-//                        Toast.makeText(SettingActivity.this, "采样脉冲数必须为不等于0的非负数", Toast.LENGTH_SHORT).show();
-//                        et_numberOfPulse.setText("1");
-//                    }
-//
-//                    tv_none.setFocusable(true);
-//                    tv_none.setFocusableInTouchMode(true);
-//                    tv_none.requestFocus();
-//
-//                    numberOfPulse = Integer.parseInt(et_numberOfPulse.getText().toString());
-//                    et_samplingInterval.setText(String.valueOf(singleDistance * numberOfPulse / singlePulse));
-//                    pOrders.setNumberOfPulse(Integer.parseInt(et_numberOfPulse.getText().toString()));
-//                }
-//                return false;
-//            }
-//        });
-//
-//        et_numberOfPulse.setOnFocusChangeListener(new OnFocusChangeListener() {
-//
-//            @Override
-//            public void onFocusChange(View v, boolean hasFocus) {
-//                // TODO Auto-generated method stub
-//                if (hasFocus) {
-//
-//                } else {
-//                    InputMethodManager imm = (InputMethodManager) getSystemService(SettingActivity.INPUT_METHOD_SERVICE);
-//                    imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
-//                    Intent intent = new Intent(SettingActivity.this, NoneActivity.class);
-//                    startActivity(intent);
-//                }
-//            }
-//        });
-
-//		et_numberOfPulse.setOnKeyListener(new OnKeyListener() {
-//
-//			@Override
-//			public boolean onKey(View v, int keyCode, KeyEvent event) {
-//				// TODO Auto-generated method stub
-//				int numberOfPulse=Integer.parseInt(et_numberOfPulse.getText().toString());
-//				int singlePulse=Integer.parseInt(et_singlePulse.getText().toString());
-//				float singleDistance=Float.parseFloat(et_singleDistance.getText().toString());
-//				if (et_numberOfPulse.getText().toString().equals("")) {
-//					Toast.makeText(SettingActivity.this, "采样脉冲数不能为空", Toast.LENGTH_SHORT).show();
-//					et_numberOfPulse.setText("20");
-//				}if (Integer.parseInt(et_numberOfPulse.getText().toString())<=0) {
-//					Toast.makeText(SettingActivity.this, "采样脉冲数不能小于等于0", Toast.LENGTH_SHORT).show();
-//					et_numberOfPulse.setText("20");
-//				}
-//
-//					numberOfPulse=Integer.parseInt(et_numberOfPulse.getText().toString());
-//					et_samplingInterval.setText(String.valueOf(singleDistance*numberOfPulse/singlePulse));
-//					pOrders.setNumberOfPulse(Integer.parseInt(et_numberOfPulse.getText().toString()));
-//
-////				mainPeremeterOrdersEditor.putInt("numberOfPulse",numberOfPulse );
-//
-//				return false;
-//			}
-//		});
         mcb_saveAno.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -625,175 +605,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
                 else tempIfSaveTheRadar = 0;
             }
         });
-//        et_singleDistance.setOnEditorActionListener(new OnEditorActionListener() {
-//
-//            @Override
-//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-//                // TODO Auto-generated method stub
-//
-//                int numberOfPulse = Integer.parseInt(et_numberOfPulse.getText().toString());
-//                int singlePulse = Integer.parseInt(et_singlePulse.getText().toString());
-//                float singleDistance = Float.parseFloat(et_singleDistance.getText().toString());
-//                if (actionId == EditorInfo.IME_ACTION_DONE) {
-//                    if (Integer.parseInt(et_singleDistance.getText().toString()) <= 0) {
-//                        Toast.makeText(SettingActivity.this, "单圈距离必须为不等于0的非负数", Toast.LENGTH_SHORT).show();
-//                        et_singleDistance.setText("0.30");
-//                    } else if (et_singleDistance.getText().toString().equals("")) {
-//                        Toast.makeText(SettingActivity.this, "单圈距离不能为空", Toast.LENGTH_SHORT).show();
-//                        et_singleDistance.setText("0.30");
-//
-//                    }
-//
-//                    tv_none.setFocusable(true);
-//                    tv_none.setFocusableInTouchMode(true);
-//                    tv_none.requestFocus();
-//
-//                    singleDistance = Float.parseFloat(et_singleDistance.getText().toString());
-////                    et_samplingInterval.setText(String.valueOf(singleDistance * numberOfPulse / singlePulse));
-//                }
-//                return false;
-//            }
-//        });
 
-//        et_singleDistance.setOnFocusChangeListener(new OnFocusChangeListener() {
-//
-//            @Override
-//            public void onFocusChange(View v, boolean hasFocus) {
-//                // TODO Auto-generated method stub
-//                if (hasFocus) {
-//
-//                } else {
-//                    InputMethodManager imm = (InputMethodManager) getSystemService(SettingActivity.INPUT_METHOD_SERVICE);
-//                    imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
-//                    Intent intent = new Intent(SettingActivity.this, NoneActivity.class);
-//                    startActivity(intent);
-//                }
-//            }
-//        });
-
-//		et_singleDistance.setOnKeyListener(new OnKeyListener() {
-//
-//			@Override
-//			public boolean onKey(View v, int keyCode, KeyEvent event) {
-//				// TODO Auto-generated method stub
-//				int numberOfPulse=Integer.parseInt(et_numberOfPulse.getText().toString());
-//				int singlePulse=Integer.parseInt(et_singlePulse.getText().toString());
-//				float singleDistance=Float.parseFloat(et_singleDistance.getText().toString());
-//				if (Integer.parseInt(et_singleDistance.getText().toString())==0) {
-//					Toast.makeText(SettingActivity.this, "单圈距离不能为0", Toast.LENGTH_SHORT).show();
-//					et_singleDistance.setText("0.52");
-//				}else if (et_singleDistance.getText().toString().equals("")) {
-//					Toast.makeText(SettingActivity.this, "单圈距离不能为空", Toast.LENGTH_SHORT).show();
-//					et_singleDistance.setText("0.52");
-//
-//				}
-//					singleDistance=Float.parseFloat(et_singleDistance.getText().toString());
-//					et_samplingInterval.setText(String.valueOf(singleDistance*numberOfPulse/singlePulse));
-//
-//				return false;
-//			}
-//		});
-//        et_samplingInterval.addTextChangedListener(new );
-//        et_singlePulse.setOnEditorActionListener(new OnEditorActionListener() {
-//
-//            @Override
-//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-//                // TODO Auto-generated method stub
-//                int numberOfPulse = Integer.parseInt(et_numberOfPulse.getText().toString());
-//                int singlePulse = Integer.parseInt(et_singlePulse.getText().toString());
-//                float singleDistance = Float.parseFloat(et_singleDistance.getText().toString());
-//                if (actionId == EditorInfo.IME_ACTION_DONE) {
-//                    if (Integer.parseInt(et_singlePulse.getText().toString()) <= 0) {
-//                        Toast.makeText(SettingActivity.this, "单圈脉冲必须为不等于0的非负数", Toast.LENGTH_SHORT).show();
-//                        et_singlePulse.setText("100");
-//                    } else if (et_singlePulse.getText().toString().equals("")) {
-//                        Toast.makeText(SettingActivity.this, "单圈脉冲不能为空", Toast.LENGTH_SHORT).show();
-//                        et_singlePulse.setText("100");
-//                    }
-//
-//                    tv_none.setFocusable(true);
-//                    tv_none.setFocusableInTouchMode(true);
-//                    tv_none.requestFocus();
-//
-//                    singlePulse = Integer.parseInt(et_singlePulse.getText().toString());
-//                    et_samplingInterval.setText(String.valueOf(singleDistance * numberOfPulse / singlePulse));
-//                }
-//                return false;
-//            }
-//        });
-//
-//        et_singlePulse.setOnFocusChangeListener(new OnFocusChangeListener() {
-//
-//            @Override
-//            public void onFocusChange(View v, boolean hasFocus) {
-//                // TODO Auto-generated method stub
-//                if (hasFocus) {
-//
-//                } else {
-//                    InputMethodManager imm = (InputMethodManager) getSystemService(SettingActivity.INPUT_METHOD_SERVICE);
-//                    imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
-//                    Intent intent = new Intent(SettingActivity.this, NoneActivity.class);
-//                    startActivity(intent);
-//                }
-//            }
-//        });
-
-//		et_singlePulse.setOnKeyListener(new OnKeyListener() {
-//
-//			@Override
-//			public boolean onKey(View v, int keyCode, KeyEvent event) {
-//				// TODO Auto-generated method stub
-//				int numberOfPulse=Integer.parseInt(et_numberOfPulse.getText().toString());
-//				int singlePulse=Integer.parseInt(et_singlePulse.getText().toString());
-//				float singleDistance=Float.parseFloat(et_singleDistance.getText().toString());
-//				if (Integer.parseInt(et_singlePulse.getText().toString())==0) {
-//					Toast.makeText(SettingActivity.this, "单圈脉冲不能为0", Toast.LENGTH_SHORT).show();
-//					et_singlePulse.setText("100");
-//				}else if (et_singlePulse.getText().toString().equals("")) {
-//					Toast.makeText(SettingActivity.this, "单圈脉冲不能为空", Toast.LENGTH_SHORT).show();
-//					et_singlePulse.setText("100");
-//				}
-//					singlePulse=Integer.parseInt(et_singlePulse.getText().toString());
-//					et_samplingInterval.setText(String.valueOf(singleDistance*numberOfPulse/singlePulse));
-//
-//
-//				return false;
-//			}
-//		});
-
-        //单向触发方式点击事件
-//		sp_oneWay.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
-//
-//			@Override
-//			public void onItemSelected(AdapterView<?> parent, View view,
-//					int position, long id) {
-//				// TODO Auto-generated method stub
-//				switch (position) {
-//				case 1:
-//					pOrders.setValiddirection((byte)0);
-//					break;
-//				case 2:
-//					pOrders.setValiddirection((byte)1);
-//					break;
-//				default:
-//					break;
-//				}
-//				new Thread(new Runnable() {
-//
-//					@Override
-//					public void run() {
-//						// TODO Auto-generated method stub
-//						pOrders.send();
-//					}
-//				}).start();
-//			}
-//
-//			@Override
-//			public void onNothingSelected(AdapterView<?> parent) {
-//				// TODO Auto-generated method stub
-//
-//			}
-//		});
         //采样点点击事件
         sp_sampleponit.setOnItemSelectedListener(new Spinner.OnItemSelectedListener(){
             @Override
@@ -803,9 +615,13 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
                 switch (samplepoint){
                     case 512:
                         pOrders.setSamplePoint(512);
+                        GainCurveView.setIs512or1024(512);
+                        BackgrdCurveView.setIs512Or1024(512);
                         break;
                     case 1024:
                         pOrders.setSamplePoint(1024);
+                        GainCurveView.setIs512or1024(1024);
+                        BackgrdCurveView.setIs512Or1024(1024);
                         break;
                 }
                 new Thread(new Runnable() {
@@ -939,97 +755,6 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
             }
         });
 
-//		et_timeWindow.setOnKeyListener(new OnKeyListener() {
-//
-//			@Override
-//			public boolean onKey(View v, int keyCode, KeyEvent event) {
-//				// TODO Auto-generated method stub
-//				if (et_timeWindow.getText().toString().equals("")) {
-//						Toast.makeText(SettingActivity.this, "时间窗不能为空", Toast.LENGTH_SHORT).show();
-//						et_timeWindow.setText("70");
-//					}else if (Integer.parseInt(et_timeWindow.getText().toString())==0) {
-//						Toast.makeText(SettingActivity.this, "时间窗不能为0", Toast.LENGTH_SHORT).show();
-//						et_timeWindow.setText("70");
-//					}
-//
-//
-//				if (event.getAction()==event.ACTION_UP){
-//
-//						pOrders.setM_time_wnd(Short.parseShort(et_timeWindow.getText().toString()));
-//						new Thread(new Runnable() {
-//
-//							@Override
-//							public void run() {
-//								// TODO Auto-generated method stub
-//
-//								try {
-//									pOrders.send();
-//								} catch (Exception e) {
-//									// TODO Auto-generated catch block
-//									e.printStackTrace();
-//								}
-//							}
-//						}).start();
-//					}
-//
-//				return false;
-//
-//			}
-//		});
-
-//		et_delay.setOnKeyListener(new OnKeyListener() {
-//
-//			@Override
-//			public boolean onKey(View v, int keyCode, KeyEvent event) {
-//				// TODO Auto-generated method stub
-//				if (et_delay.getText().toString().equals("")) {
-//					Toast.makeText(SettingActivity.this, "延时不能为空", Toast.LENGTH_SHORT).show();
-//					et_delay.setText("2000");
-//				}else if (Integer.parseInt(et_delay.getText().toString())<0) {
-//					Toast.makeText(SettingActivity.this, "延时必须为非负数", Toast.LENGTH_SHORT).show();
-//					et_delay.setText("2000");
-//				}
-//
-//				if (event.getAction()==event.ACTION_UP) {
-//
-//					pOrders.setDelay_time_DELAY(Short.parseShort(et_delay.getText().toString()));
-//					new Thread(new Runnable() {
-//
-//						@Override
-//						public void run() {
-//							// TODO Auto-generated method stub
-//							try {
-//								pOrders.send();
-//							} catch (Exception e) {
-//								// TODO Auto-generated catch block
-//								e.printStackTrace();
-//							}
-//
-//						}
-//					}).start();
-//				}
-//
-//				return false;
-//			}
-//		});
-
-//        et_samplingInterval.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//                et_samplingInterval.setText(""+(int)((Double.valueOf(s.toString())*Integer.valueOf(et_singlePulse.getText().toString()))/
-//                        Double.valueOf(et_singleDistance.getText().toString())));
-//            }
-//        });
         et_singlePulse.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
         et_singlePulse.addTextChangedListener(new TextWatcher() {
@@ -1115,7 +840,6 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
                         public void run() {
                             // TODO Auto-generated method stub
                             try {
-                                Log.d(TAG, "run:  -- TriggerMode:" + pOrders.getTriggerMode() + "  Direction:" + pOrders.getTriggerDirection());
                                 pOrders.send();
                             } catch (Exception e) {
                                 // TODO Auto-generated catch block
@@ -1307,13 +1031,11 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         surefilename = et_nameOfMainFile.getText().toString() + et_serialNumberOfFile.getText().toString();
 
         SharedPreferences shareXRaw = getSharedPreferences("xRaw", 0);
-        SharedPreferences shareGainData = getSharedPreferences("gainData", 0);
 
         SharedPreferences shareCoeGain = getSharedPreferences("coeGain", 0);
         SharedPreferences shareBRaw = getSharedPreferences("bRaw", 0);
 
         SharedPreferences shareBackgrdData = getSharedPreferences("backgrdData", 0);
-        SharedPreferences shareSumData = getSharedPreferences("sumdata", 0);
 
         sharemfiltermode = getSharedPreferences("mfiltermode", 0);
         shareifgain = getSharedPreferences("ifgain", 0);
@@ -1406,23 +1128,10 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
             }
 
         }
-        //初始化触发方式spinner数据
-//		listOfTheWayOfPulse=new ArrayList<String>();
-//		listOfTheWayOfPulse.add(" ");
-//		listOfTheWayOfPulse.add("正向");
-//		listOfTheWayOfPulse.add("反向");
-//		adapterOfTheWayOfPulse=new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, listOfTheWayOfPulse);
-//		sp_oneWay.setAdapter(adapterOfTheWayOfPulse);
-
-        //文件名、序列号、总文件名、存储路径赋值
-//		Map<String,?> key_Value=(Map<String, ?>) mainPeremeterOrders.getAll();
-//		Toast.makeText(this, key_Value.size()+"", Toast.LENGTH_SHORT).show();
-//		Toast.makeText(this, mainPeremeterOrders.getString("nameOfMainFile", "file"), Toast.LENGTH_LONG).show();
         et_nameOfMainFile.setText(mainPeremeterOrders.getString("nameOfMainFile", "file"));
         et_serialNumberOfFile.setText(mainPeremeterOrders.getInt("serialNumberOfFile", 1) + "");
         tv_storeFile.setText(surefilename + type);
         tv_settingPath.setText(mainPeremeterOrders.getString("path", " "));
-//		Log.d(TAG, mainPeremeterOrders.getString("path", " ")+"----------------");
 //
         tempIfSaveTheRadar = mainPeremeterOrders.getInt("saveRadar", 1);
         btn_sendTripNum.setOnClickListener(new View.OnClickListener() {
@@ -1462,13 +1171,19 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         switch (samplepoint){
             case 512:
                 pOrders.setSamplePoint(512);
+                GainCurveView.setIs512or1024(512);
+                BackgrdCurveView.setIs512Or1024(512);
                 break;
             case 1024:
                 pOrders.setSamplePoint(1024);
+                GainCurveView.setIs512or1024(1024);
+                BackgrdCurveView.setIs512Or1024(1024);
                 break;
         }
 
-
+        Arrays.fill(gainData, 1);
+        Arrays.fill(gainData1024,1);
+        Arrays.fill(backgrdData, 1);
         if (frequency == 10) {
             pOrders.setFrequency((short) 0x0a00);
         } else if (frequency == 20) {
@@ -1499,7 +1214,6 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
           mainPeremeterOrdersEditor.putString("singleDistance",et_singleDistance.getText().toString());
           mainPeremeterOrdersEditor.putString("samplingInterval",et_samplingInterval.getText().toString());
         * */
-        Log.d(TAG, "init: ----- " + mainPeremeterOrders.getString("numberOfPulse", "20"));
         et_numberOfPulse.setText(mainPeremeterOrders.getString("numberOfPulse", "20"));
         et_singlePulse.setText(mainPeremeterOrders.getString("singlePulse", "500"));
         et_singleDistance.setText(mainPeremeterOrders.getString("singleDistance", "0.3"));
@@ -1517,9 +1231,18 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 
             @Override
             public void gainData(int[] gaindata, float[] xRaw) {
-
+                Log.d(TAG, "setting:  --> achieveGain "+Arrays.toString(gaindata));
                 // TODO Auto-generated method stub
                 System.arraycopy(gaindata, 0, gainData, 0, gaindata.length);
+                System.arraycopy(xRaw, 0, SettingActivity.this.xRaw, 0, xRaw.length);
+//				tempGain=1;
+                coeGain = (Float.parseFloat(et_horiGain_coe.getText().toString()));
+            }
+
+            @Override
+            public void gainData1024(int[] gaindata, float[] xRaw) {
+                // TODO Auto-generated method stub
+                System.arraycopy(gaindata, 0, gainData1024, 0, gaindata.length);
                 System.arraycopy(xRaw, 0, SettingActivity.this.xRaw, 0, xRaw.length);
 //				tempGain=1;
                 coeGain = (Float.parseFloat(et_horiGain_coe.getText().toString()));
@@ -1528,7 +1251,11 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         middleBackFragmentOfSettingActivity.setCallBackGroudData(new CallBackBackgrdData() {
             @Override
             public void backgrdData(int[] backgrddata, float[] bRaw) {
-                System.arraycopy(backgrddata, 0, backgrdData, 0, backgrdData.length);
+                if (backgrddata.length == 512){
+                    System.arraycopy(backgrddata, 0, backgrdData, 0, backgrddata.length);
+                }else {
+                    System.arraycopy(backgrddata, 0, backgrdData1024, 0, backgrddata.length);
+                }
                 System.arraycopy(bRaw, 0, SettingActivity.this.bRaw, 0, bRaw.length);
 //				tempBackgrd=1;
             }
@@ -1537,9 +1264,9 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         for (int i = 0; i < Const_NumberOfXRawDatas; i++) {
             xRaw[i] = shareXRaw.getFloat(i + "", 10);
         }
-        for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
-            gainData[i] = shareGainData.getInt(i + "", 1);
-        }
+//        for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
+//            gainData[i] = shareGainData.getInt(i + "", 1);
+//        }
 
         for (int i = 0; i < Const_NumberOfXRawDatas; i++) {
             bRaw[i] = shareBRaw.getFloat(i + "", 10);
@@ -1548,8 +1275,16 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
             backgrdData[i] = shareBackgrdData.getInt(i + "", 1);
         }
 //		middleBackFragmentOfSettingActivity.setBRaw(bRaw);
-        leftFragmentOfSettingActivity.set(xRaw, gainData);
-        middleBackFragmentOfSettingActivity.set(bRaw, backgrdData);
+        if (GainCurveView.getIs512or1024() == 512){
+            leftFragmentOfSettingActivity.set(xRaw, gainData);
+        }else {
+            leftFragmentOfSettingActivity.set(xRaw,gainData1024);
+        }
+        if (BackgrdCurveView.getIs512Or1024() == 512){
+            middleBackFragmentOfSettingActivity.set(bRaw, backgrdData);
+        }else {
+            middleBackFragmentOfSettingActivity.set(bRaw, backgrdData1024);
+        }
 
 
     }
@@ -1654,7 +1389,9 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         leftFragmentOfSettingActivity.setXRaw(xRaw);
         middleBackFragmentOfSettingActivity.setBRaw(bRaw);
         Arrays.fill(gainData, 1);
+        Arrays.fill(gainData1024,1);
         Arrays.fill(backgrdData, 1);
+        Arrays.fill(backgrdData1024, 1);
         tempGain = 0;
         tempIffliter = 4;
         tempBackgrd = 0;
@@ -1713,9 +1450,11 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
                     }
 
                     SharedPreferences.Editor shareGainData = getSharedPreferences("gainData", 0).edit();
+
                     SharedPreferences.Editor shareXRaw = getSharedPreferences("xRaw", 0).edit();
                     SharedPreferences.Editor shareJudge = getSharedPreferences("judge", 0).edit();
                     SharedPreferences.Editor shareBackgrdData = getSharedPreferences("backgrdData", 0).edit();
+
                     SharedPreferences.Editor shareBRaw = getSharedPreferences("bRaw", 0).edit();
                     SharedPreferences.Editor shareCoeGain = getSharedPreferences("coeGain", 0).edit();
 
@@ -1727,7 +1466,16 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
                     for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
                         shareBackgrdData.putInt(i + "", backgrdData[i]);
                     }
-                    for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
+                    SharedPreferences.Editor shareBackgrdData1024 = getSharedPreferences("backgrdData1024", 0).edit();
+                    SharedPreferences.Editor shareGainData1024 = getSharedPreferences("gainData1024", 0).edit();
+                    for (int i = 0; i < Const_Number_Data_1024; i++) {
+                        shareGainData1024.putInt(i + "", gainData1024[i]);
+                    }
+                    for (int i = 0; i < Const_Number_Data_1024; i++) {
+                        shareBackgrdData1024.putInt(i + "", backgrdData1024[i]);
+                    }
+
+                    for (int i = 0; i < sumcolorGap.length; i++) {
                         shareSumData.putInt(i + "", sumcolorGap[i]);
                     }
 
@@ -1748,6 +1496,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
                     mainPeremeterOrdersEditor.putString("nameOfMainFile", et_nameOfMainFile.getText().toString());
                     mainPeremeterOrdersEditor.putInt("serialNumberOfFile", Integer.parseInt(et_serialNumberOfFile.getText().toString()));
                     mainPeremeterOrdersEditor.putInt("saveRadar", tempIfSaveTheRadar);
+                    mainPeremeterOrdersEditor.putString("samplenum",samplepoint+"");
                     sharemfiltermodeEd.putInt("mfiltermode", tempIffliter);
                     shareifgainEd.putInt("ifgain", tempGain);
                     shareifbackremoveEd.putInt("ifbackremove", tempBackgrd);
@@ -1756,9 +1505,11 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
                     sharemlowfEd.putFloat("mlowf", lowf);
 
                     shareGainData.commit();
+                    shareGainData1024.commit();
                     shareXRaw.commit();
                     shareJudge.commit();
                     shareBackgrdData.commit();
+                    shareBackgrdData1024.commit();
                     shareBRaw.commit();
                     shareCoeGain.commit();
 
@@ -1833,14 +1584,21 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
             SharedPreferences.Editor shareCoeGain = getSharedPreferences("coeGain", 0).edit();
 
             SharedPreferences.Editor shareSumData = getSharedPreferences("sumdata", 0).edit();
-
+            SharedPreferences.Editor shareBackgrdData1024 = getSharedPreferences("backgrdData1024", 0).edit();
+            SharedPreferences.Editor shareGainData1024 = getSharedPreferences("gainData1024", 0).edit();
+            for (int i = 0; i < Const_Number_Data_1024; i++) {
+                shareGainData1024.putInt(i + "", gainData1024[i]);
+            }
+            for (int i = 0; i < Const_Number_Data_1024; i++) {
+                shareBackgrdData1024.putInt(i + "", backgrdData1024[i]);
+            }
             for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
                 shareGainData.putInt(i + "", gainData[i]);
             }
             for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
                 shareBackgrdData.putInt(i + "", backgrdData[i]);
             }
-            for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
+            for (int i = 0; i < sumcolorGap.length; i++) {
                 shareSumData.putInt(i + "", sumcolorGap[i]);
 
             }
@@ -1861,6 +1619,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
             mainPeremeterOrdersEditor.putString("nameOfMainFile", et_nameOfMainFile.getText().toString());
             mainPeremeterOrdersEditor.putInt("serialNumberOfFile", Integer.parseInt(et_serialNumberOfFile.getText().toString()));
             mainPeremeterOrdersEditor.putInt("saveRadar", tempIfSaveTheRadar);
+            mainPeremeterOrdersEditor.putString("samplenum",samplepoint+"");
             sharemfiltermodeEd.putInt("mfiltermode", tempIffliter);
             shareifgainEd.putInt("ifgain", tempGain);
             shareifbackremoveEd.putInt("ifbackremove", tempBackgrd);
@@ -1869,9 +1628,11 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
 
             sharemhighfEd.commit();
             sharemlowfEd.commit();
+            shareGainData1024.commit();
             shareGainData.commit();
             shareXRaw.commit();
             shareJudge.commit();
+            shareBackgrdData1024.commit();
             shareBackgrdData.commit();
             shareBRaw.commit();
             shareCoeGain.commit();
@@ -2102,6 +1863,8 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
         paramsOfSetting.setGain(tempGain == 1);
         paramsOfSetting.setGainCoe(Float.parseFloat(et_horiGain_coe.getText().toString()));
         paramsOfSetting.setGainData(gainData);
+        paramsOfSetting.setGainData1024(gainData1024);
+        paramsOfSetting.setBackgrdData1024(backgrdData1024);
         paramsOfSetting.setDebackgrd(tempBackgrd == 1);
         paramsOfSetting.setBackgrdData(backgrdData);
         paramsOfSetting.setFilter(tempIffliter != 4);
@@ -2165,12 +1928,14 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
             xRaw = paramsOfSetting.getxRaw();
             leftFragmentOfSettingActivity.setXRaw(xRaw);
             gainData = paramsOfSetting.getGainData();
+            gainData1024 = paramsOfSetting.getGainData1024();
         } else {
             cb_gain.setChecked(false);
             tempGain = 0;
             Arrays.fill(xRaw, 10);
             leftFragmentOfSettingActivity.setXRaw(xRaw);
             Arrays.fill(gainData, 1);
+            Arrays.fill(gainData1024,1);
         }
         if (paramsOfSetting.isDebackgrd()) {
             cb_backremove.setChecked(true);
@@ -2182,6 +1947,7 @@ public class SettingActivity extends AppCompatActivity implements ISettingActivi
             cb_backremove.setChecked(false);
             tempBackgrd = 0;
             Arrays.fill(backgrdData, 1);
+            Arrays.fill(backgrdData1024, 1);
             Arrays.fill(bRaw, 10);
             middleBackFragmentOfSettingActivity.setBRaw(bRaw);
         }

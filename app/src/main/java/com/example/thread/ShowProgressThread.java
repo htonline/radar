@@ -84,7 +84,7 @@ public class ShowProgressThread extends Thread{
                 e.printStackTrace();
             }
             msg = Message.obtain();
-            msg.what = 1;
+//            msg.what = 1;
             msg.arg1 = (int) startnum;
             msg.arg2 = (int) position;
             handler.sendMessage(msg);

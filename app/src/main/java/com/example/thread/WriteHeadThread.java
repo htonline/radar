@@ -17,6 +17,15 @@ public class WriteHeadThread extends Thread{
     private int trace_num = 100;
     byte[] line_position = new byte[36];
     byte[] nouse = new byte[158];
+    private int sample_point = 512;
+
+    public  int getSample_point() {
+        return sample_point;
+    }
+
+    public  void setSample_point(int sample_point) {
+        this.sample_point = sample_point;
+    }
 
     public static void setSample_wnd(int msample_wnd) {
         sample_wnd = msample_wnd;
@@ -41,13 +50,13 @@ public class WriteHeadThread extends Thread{
                 mraf.write("yf  ".getBytes(StandardCharsets.UTF_8));
                 mraf.write(int2byte(sample_wnd));
                 mraf.write(int2byte(trace_num));
-                mraf.write(int2byte(512));
+                mraf.write(int2byte(sample_point));
                 mraf.write(int2byte(0));
                 mraf.write(int2byte(1));
 
                 mraf.write(line_position);
                 mraf.write(shortToByte((short) 1));
-                mraf.write(shortToByte((short) 512));
+                mraf.write(shortToByte((short) sample_point));
                 mraf.write(shortToByte((short) 0));
                 mraf.write(shortToByte(timedelay));
                 mraf.write(shortToByte((short) 1));

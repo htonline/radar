@@ -30,6 +30,8 @@ public class RightFragmentOfSettingActivity extends Fragment{
 	
 	public void drawRadarWave(short colorGap[]){
 		radarView.setColorData(colorGap);
-
+	}
+	public void drawRadarWave1024(short colorGap[]){
+		radarView.setColorData1024(colorGap);
 	}
 }

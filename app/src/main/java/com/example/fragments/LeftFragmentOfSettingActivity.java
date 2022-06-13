@@ -34,6 +34,17 @@ public class LeftFragmentOfSettingActivity extends Fragment {
                 // TODO Auto-generated method stub
                 callBackGainData.gainData(gainData, xRaw);
             }
+
+            @Override
+            public void onUp1024(int[] gainData, float[] xRaw) {
+                callBackGainData.gainData1024(gainData,xRaw);
+            }
+        });
+        gainCurveView.post(new Runnable() {
+            @Override
+            public void run() {
+                gainCurveView.refresh();
+            }
         });
         return view;
     }

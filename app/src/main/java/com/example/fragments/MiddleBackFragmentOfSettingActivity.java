@@ -29,9 +29,14 @@ public class MiddleBackFragmentOfSettingActivity extends Fragment {
 
             @Override
             public void onUp(int[] backgrdData, float[] bRaw) {
-                Log.d(TAG, "onUp: --------");
                 // TODO Auto-generated method stub
                 callBackBackgrdData.backgrdData(backgrdData, bRaw);
+            }
+        });
+        backgrdCurveView.post(new Runnable() {
+            @Override
+            public void run() {
+                backgrdCurveView.refresh();
             }
         });
         return view;

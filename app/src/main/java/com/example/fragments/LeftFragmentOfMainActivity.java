@@ -35,4 +35,8 @@ public class LeftFragmentOfMainActivity extends Fragment{
 	public void drawLines(int num){
 		coloursView.setTimeWindow(num);
 	}
+
+    public void drawNewVertical1024(int[] colorList) {
+		coloursView.drawNewVertical1024(colorList);
+    }
 }

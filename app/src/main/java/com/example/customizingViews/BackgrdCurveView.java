@@ -11,7 +11,16 @@ import android.view.View;
 import com.example.interfaces.OnUpActionBackgrdListener;
 
 public class BackgrdCurveView extends View{
-	private static final String TAG = "BackgrdCurveView ========================";
+	private static int is512Or1024 = 512;
+
+	public static int getIs512Or1024() {
+		return is512Or1024;
+	}
+
+	public static void setIs512Or1024(int is512Or1024) {
+		BackgrdCurveView.is512Or1024 = is512Or1024;
+	}
+
 	public BackgrdCurveView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		init();
@@ -26,7 +35,7 @@ public class BackgrdCurveView extends View{
 		// TODO Auto-generated constructor stub
 	}
 	
-	public static final int Const_NumberOfVerticalDatas=512;
+	public static int Const_NumberOfVerticalDatas=512;
 	//矩形中心的点
 	private float bRaw[]=new float [17];
 	private Paint paint=null;
@@ -55,13 +64,19 @@ public class BackgrdCurveView extends View{
 	}
 	public void setbRaw(float[] bRaw) {
 		this.bRaw = bRaw;
-//		Log.d(TAG, "setxRaw: ------"+bRaw[1]);
-//		Log.d("---------", "beforeInvalidate");
+		if (is512Or1024 == 512){
+			if (Const_NumberOfVerticalDatas != 512){
+				Const_NumberOfVerticalDatas = 512;
+				backgrdData = new int[Const_NumberOfVerticalDatas];
+			}
+		}else {
+			if (Const_NumberOfVerticalDatas != 1024){
+				Const_NumberOfVerticalDatas = 1024;
+				backgrdData = new int[Const_NumberOfVerticalDatas];
+			}
+		}
 		invalidate();
-//		Log.d("------------", Arrays.toString(xRaw));
-//		Log.d("---------", "afterInvalidate");
 		calculateBackData(bRaw);
-//		Log.d("------------", Arrays.toString(gainData));
 		mUp.onUp(backgrdData,bRaw);
 	}
 	public void init(){
@@ -70,16 +85,44 @@ public class BackgrdCurveView extends View{
 		paint.setColor(0xffffffff);
 	
 	}
+	public void refresh(){
+		invalidate();
+		calculateBackData(bRaw);
+		mUp.onUp(backgrdData, bRaw);
 
+	}
 	public void returnBackData(float[] bRaw, int[] backgrdData){
+		if (backgrdData.length == 512){
+			if (Const_NumberOfVerticalDatas != 512){
+				Const_NumberOfVerticalDatas = 512;
+				this.backgrdData = new int[Const_NumberOfVerticalDatas];
+			}
+		}else {
+			if (Const_NumberOfVerticalDatas != 1024){
+				Const_NumberOfVerticalDatas = 1024;
+				this.backgrdData = new int[Const_NumberOfVerticalDatas];
+			}
+		}
 		this.bRaw = bRaw;
 		this.backgrdData = backgrdData;
+		calculateBackData(bRaw);
 		invalidate();
-		mUp.onUp(backgrdData,bRaw);
+		mUp.onUp(this.backgrdData,bRaw);
 	}
 	
 	//计算每个点的坐标
 	public void calculateBackData(float bRaw[]){
+		if (is512Or1024 == 512){
+			if (Const_NumberOfVerticalDatas != 512){
+				Const_NumberOfVerticalDatas = 512;
+				backgrdData = new int[Const_NumberOfVerticalDatas];
+			}
+		}else {
+			if (Const_NumberOfVerticalDatas != 1024){
+				Const_NumberOfVerticalDatas = 1024;
+				backgrdData = new int[Const_NumberOfVerticalDatas];
+			}
+		}
 		for (int i = 0; i < 16; i++) {
 			if (bRaw[i]==bRaw[i+1]) {
 				for (int j = 0; j < 32; j++) {

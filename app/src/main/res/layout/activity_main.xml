@@ -276,6 +276,7 @@
                 android:textSize="@dimen/textNormSize" />
 
             <TextView
+                android:id="@+id/mtv_samplenum"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="512"

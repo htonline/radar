@@ -25,11 +25,12 @@ public class ReadThread implements Runnable {
     public Handler handler = null;
     public static final int Const_NUMBEROFDATA = 512;
     public static final int Const_NEW_NUMBEROFDATA = 513;
-
+    public static final int Const_NUMBER_1024 = 1024;
 
     Bundle bundle = new Bundle();
     short arrayListOfColour[] = new short[Const_NUMBEROFDATA];
     short arrayListOfNewColour[] = new short[Const_NEW_NUMBEROFDATA];
+    short arrayListOfNewColour_1024[] = new short[Const_NUMBER_1024];
 
     //记录当前数据是第几道
     private int numberOfLogo;
@@ -75,13 +76,6 @@ public class ReadThread implements Runnable {
     File file = new File("storage/emulated/0/ok");
     FileOutputStream os;
     public void init() {
-
-//    	try {
-//    		if (ds==null) {
-//    			ds=new DatagramSocket(null);
-//    			ds.setReuseAddress(true);
-//    			ds.bind(new InetSocketAddress(6000));
-//			}
         dp = new DatagramPacket(b1, b1.length);
     }
     int tempnum=1;
@@ -107,9 +101,7 @@ public class ReadThread implements Runnable {
         while (true) {
             if (judge) {
                 try {
-//        			ds.setSoTimeout(2000);
                     ds.receive(dp);
-//    				Log.e("(((((((((((((((", Arrays.toString(b1));
                     System.arraycopy(b1, 0, receive, 0, 4);
                     System.arraycopy(b1,0,receiveCC,0,2);
                     if (Arrays.equals(receive, creatLink)) {
@@ -127,59 +119,41 @@ public class ReadThread implements Runnable {
                     } else if (Arrays.equals(receive, stopCollect)) {
                         judge_stopCollect++;
                     } else if(Arrays.equals(receiveCC,martCC)){
-//                        MainActivity.judge_MartOrNot = true;
-//                        arrayListOfColour = new short[512];
-////                        judge_cc_Mart++;
-//                        message = Message.obtain();
-//                        message.what = 6;
-////                        message.arg1 = judge_cc_Mart;
-//                        message.obj = arrayListOfColour;
-//                        handler.sendMessage(message);
                         tempJudge=1;
                     }
                     else //if (receive[0]==0xee&&receive[1]==0xee){
                     {
                         byte[] precision = Arrays.copyOfRange(b1,9,10);
-                        if (precision[0] == 0x01){
-                            Log.d(TAG, "run: --------- pr"+precision[0]);
-                        }else if (precision[0] == 0x02){
-                            Log.d(TAG, "run: --------- opr"+precision[0]);
-                        }
-//                        os.write(b1);
                         arrayListOfNewColour = toShortArray(Arrays.copyOfRange(b1, 10, 1036));
-//                        arrayListOfColour = toShortArray(Arrays.copyOfRange(b1, 10, 1036));
-                        byte [] neby = new byte[2];
-                        neby = Arrays.copyOfRange(b1,1034,1036);
-                        short [] sb = new short[1];
-                        sb = toShortArray(neby);
-//                        Log.d(TAG, "run: --> "+Arrays.toString(sb));
-//                        numberOfLogo = bytesToInt(Arrays.copyOfRange(b1, 4, 8), 0);
-
-//                        if (tempnum==1){
-//                            for (int k = 0; k < Const_NEW_NUMBEROFDATA; k++) {
-//                                Log.d(TAG, "run: -->before arrayListOfNewColour[k] --> "+"["+k+"]"+arrayListOfNewColour[k]);;
-//                            }
-//                            tempnum++;
-//                        }
-//                        for (int k = 0; k < Const_NEW_NUMBEROFDATA; k++) {
-//                            arrayListOfNewColour[k] = LowToShort(arrayListOfNewColour[k]);
-//                        }
-//                        if (tempnum==1){
-//                            for (int k = 0; k < Const_NEW_NUMBEROFDATA; k++) {
-//                                Log.d(TAG, "run: -->after arrayListOfNewColour[k] --> "+"["+k+"]"+arrayListOfNewColour[k]);;
-//                            }
-//                            tempnum++;
-//                        }
-
-                        numberOfReceive++;
-                        message = Message.obtain();
-                        message.what = 0;
-//                        Log.d(TAG, "run: --> numberOfLogo --> "+ numberOfLogo);
-                        message.arg1 = tempJudge;
-                        message.arg2 = numberOfReceive;
-                        message.obj = arrayListOfNewColour;
-                        handler.sendMessage(message);
-                        tempJudge=0;
+                        if (precision[0] == 0x01){
+                            numberOfReceive++;
+                            message = Message.obtain();
+                            message.what = 0;
+                            message.arg1 = tempJudge;
+                            message.arg2 = numberOfReceive;
+                            message.obj = arrayListOfNewColour;
+                            handler.sendMessage(message);
+                            tempJudge=0;
+                        }else if (precision[0] == 0x02){
+                            byte[] precinum = Arrays.copyOfRange(b1,8,9);
+                            if (precinum[0] == 0x00){
+                                Arrays.fill(arrayListOfNewColour_1024, (short) 0);
+                                System.arraycopy(arrayListOfNewColour,0,arrayListOfNewColour_1024,0,512);
+                                continue;
+                            }
+                            if (precinum[0] == 0x01){
+                                System.arraycopy(arrayListOfNewColour,0,arrayListOfNewColour_1024,512,512);
+                                numberOfReceive++;
+                                message = Message.obtain();
+                                message.what = 0;
+                                message.arg1 = tempJudge;
+                                message.arg2 = -numberOfReceive;
+                                message.obj = arrayListOfNewColour_1024;
+                                handler.sendMessage(message);
+                                tempJudge=0;
+                                continue;
+                            }
+                        }
                     }
                 } catch (IOException e1) {
                     // TODO Auto-generated catch block

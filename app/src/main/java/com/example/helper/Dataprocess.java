@@ -56,6 +56,10 @@ public class Dataprocess {
 
     public static FILTERPARA m_filterP = new FILTERPARA();
 
+    public static void setM_samplelength(int m_samplelength) {
+        Dataprocess.m_samplelength = m_samplelength;
+    }
+
     public static void calassist(){
         m_sampletime =  m_timelength / m_samplelength;
         m_fmax = (float) (1/(m_sampletime/1000.0)/2);
@@ -82,8 +86,8 @@ public class Dataprocess {
     }
 
     public float[] calm_gainnoiseb(short[] backgrd){
-        float backDataOne[]=new float[512];
-        for(int i =0;i<512;i++){
+        float backDataOne[]=new float[m_samplelength];
+        for(int i =0;i<m_samplelength;i++){
             backDataOne[i]= (float) (backgrd[i]/17.0);
         }
         return backDataOne;

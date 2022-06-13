@@ -17,11 +17,25 @@ import android.widget.Toast;
 
 public class GainCurveView extends View {
     private static final String TAG = "GainCurveView  =========================";
+    private static int is512or1024 = 512;
 
     public GainCurveView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
         // TODO Auto-generated constructor stub
+    }
+
+    public static int getIs512or1024() {
+        return is512or1024;
+    }
+
+    public static void setIs512or1024(int is512or1024) {
+        GainCurveView.is512or1024 = is512or1024;
+        if (is512or1024 == 512) {
+            Const_NumberOfVerticalDatas = 512;
+        } else {
+            Const_NumberOfVerticalDatas = 1024;
+        }
     }
 
     public GainCurveView(Context context, AttributeSet attrs) {
@@ -34,7 +48,7 @@ public class GainCurveView extends View {
         // TODO Auto-generated constructor stub
     }
 
-    public static final int Const_NumberOfVerticalDatas = 512;
+    public static int Const_NumberOfVerticalDatas = 512;
     //矩形中心的点
     private float xRaw[] = new float[17];
     private Paint paint = null;
@@ -55,27 +69,79 @@ public class GainCurveView extends View {
     }
 
     public void setGainData(int[] gainData) {
+        if (this.gainData.length != 512) {
+            Const_NumberOfVerticalDatas = 512;
+            gainData = new int[Const_NumberOfVerticalDatas];
+        }
+        this.gainData = gainData;
+    }
+
+    public void setGainData1024(int[] gainData) {
+        if (this.gainData.length != 1024) {
+            Const_NumberOfVerticalDatas = 512;
+            gainData = new int[Const_NumberOfVerticalDatas];
+        }
         this.gainData = gainData;
     }
 
     public void returnGainData(float[] xRaw, int[] gainData) {
-        this.xRaw = xRaw;
-        this.gainData = gainData;
-        invalidate();
-        mUp.onUp(gainData, xRaw);
+        if (gainData.length == 512) {
+            if (Const_NumberOfVerticalDatas != 512) {
+                Const_NumberOfVerticalDatas = 512;
+                this.gainData = new int[Const_NumberOfVerticalDatas];
+            }
+            this.xRaw = xRaw;
+            this.gainData = gainData;
+            calculateGainData(xRaw);
+            invalidate();
+            mUp.onUp(this.gainData, xRaw);
+        }else{
+            if (Const_NumberOfVerticalDatas != 1024) {
+                Const_NumberOfVerticalDatas = 1024;
+                this.gainData = new int[Const_NumberOfVerticalDatas];
+            }
+            this.xRaw = xRaw;
+            this.gainData = gainData;
+            calculateGainData(xRaw);
+            invalidate();
+            mUp.onUp1024(this.gainData, xRaw);
+        }
     }
 
 
     public float[] getxRaw() {
         return xRaw;
     }
+    public void refresh(){
+        invalidate();
+        calculateGainData(xRaw);
+        if (gainData.length == 512) {
+            mUp.onUp(gainData, xRaw);
+        } else {
+            mUp.onUp1024(gainData, xRaw);
+        }
+    }
 
     public void setxRaw(float[] mxRaw) {
+        if (is512or1024 == 1024) {
+            if (this.gainData.length != 1024) {
+                Const_NumberOfVerticalDatas = 512;
+                gainData = new int[Const_NumberOfVerticalDatas];
+            }
+        } else {
+            if (this.gainData.length != 512) {
+                Const_NumberOfVerticalDatas = 512;
+                gainData = new int[Const_NumberOfVerticalDatas];
+            }
+        }
         this.xRaw = mxRaw;
         invalidate();
         calculateGainData(xRaw);
-
-        mUp.onUp(gainData, xRaw);
+        if (gainData.length == 512) {
+            mUp.onUp(gainData, xRaw);
+        } else {
+            mUp.onUp1024(gainData, xRaw);
+        }
     }
 
     public void init() {
@@ -87,6 +153,10 @@ public class GainCurveView extends View {
 
     //计算每个点的坐标
     public void calculateGainData(float xRaw[]) {
+        if (gainData.length != Const_NumberOfVerticalDatas) {
+            gainData = new int[Const_NumberOfVerticalDatas];
+        }
+        int tempjiange = Const_NumberOfVerticalDatas / 16;
 
 
 //        gainData[0]= (int) ((xRaw[0]+20)/30);
@@ -104,27 +174,23 @@ public class GainCurveView extends View {
 //        }
 
 
-
-
         for (int i = 0; i < 16; i++) {
             if (xRaw[i] == xRaw[i + 1]) {
-                for (int j = 0; j < 32; j++) {
-                    gainData[32 * i + j] = (int) ((xRaw[i] + 20) / 30);
+                for (int j = 0; j < tempjiange; j++) {
+                    gainData[tempjiange * i + j] = (int) ((xRaw[i] + 20) / 30);
                 }
             } else {
                 float k = (ySpace / (xRaw[i + 1] - xRaw[i]));
                 float b = (ySpace * (i + 1) - k * (xRaw[i + 1] + 20));
-                for (int j = 0; j < 32; j++) {
+                for (int j = 0; j < tempjiange; j++) {
                     if (j == 0) {
-                        gainData[32 * i] = (int) ((xRaw[i] + 20) / 30);
+                        gainData[tempjiange * i] = (int) ((xRaw[i] + 20) / 30);
                     } else {
-                        gainData[32 * i + j] = (int) ((i * ySpace + j * ySpace / 32 - b) / k / 30);
+                        gainData[tempjiange * i + j] = (int) ((i * ySpace + j * ySpace / 32 - b) / k / 30);
                     }
                 }
             }
         }
-
-
 
 
     }
@@ -160,7 +226,11 @@ public class GainCurveView extends View {
                     }
                     invalidate();
                     calculateGainData(xRaw);
-                    mUp.onUp(gainData, xRaw);
+                    if (gainData.length == 512) {
+                        mUp.onUp(gainData, xRaw);
+                    } else {
+                        mUp.onUp1024(gainData, xRaw);
+                    }
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -192,7 +262,11 @@ public class GainCurveView extends View {
                     invalidate();
 
                     calculateGainData(xRaw);
-                    mUp.onUp(gainData, xRaw);
+                    if (gainData.length == 512) {
+                        mUp.onUp(gainData, xRaw);
+                    } else {
+                        mUp.onUp1024(gainData, xRaw);
+                    }
                 }
                 isDown = false;
                 break;
