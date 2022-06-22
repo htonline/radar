@@ -73,30 +73,30 @@ public class ReadThread implements Runnable {
         this.ds = ds;
         init();
     }
-    File file = new File("storage/emulated/0/ok");
-    FileOutputStream os;
+//    File file = new File("storage/emulated/0/ok");
+//    FileOutputStream os;
     public void init() {
         dp = new DatagramPacket(b1, b1.length);
     }
     int tempnum=1;
 
     public void run() {
-        if (!file.exists()){
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+//        if (!file.exists()){
+//            try {
+//                file.createNewFile();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
 //		} catch (SocketException e) {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
-        try {
-            os = new FileOutputStream(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            os = new FileOutputStream(file);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
 
         while (true) {
             if (judge) {

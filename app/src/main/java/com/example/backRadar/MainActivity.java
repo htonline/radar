@@ -9,6 +9,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -88,7 +89,7 @@ public class MainActivity extends Activity {
     private EditText metv_ddcf;
     private int ddcf_sum = 0;
     private boolean isDDCF = false;
-    private int temp_ddcf_sum = 1;
+    private int temp_ddcf_sum = 0;
 
 
     private static RandomAccessFile mrafRaw;
@@ -252,6 +253,10 @@ public class MainActivity extends Activity {
     private byte[] Rwcolorgap1024 = new byte[Const_NumberOfVerticalDatas_1024 * 2];
     private byte[] colorgap1024 = new byte[Const_NumberOfVerticalDatas_1024 * 2];
 
+    private int[] tempcolorgap = new int[Const_NumberOfVerticalDatas];
+    private int[] tempcolorgap1024 = new int[Const_NumberOfVerticalDatas_1024];
+
+    private List<short[]> datasumlist = new ArrayList<>();
     int ddi = 0;
     //记录当前数据是第几道
     private int numberOfLogo;
@@ -272,14 +277,7 @@ public class MainActivity extends Activity {
                 case 0:
                     if (clickOrNot != 0) {
                         Dataprocess.setM_samplelength(512);
-                        if (isDDCF){
-                            temp_ddcf_sum ++;
-                            if (temp_ddcf_sum == ddcf_sum){
-                                temp_ddcf_sum = 1;
-                                touchsuspend();
-                            }
-                        }
-                        if (msg.arg2>0){
+                        if (msg.arg2>0){//512采样点
                             reciveData = (short[]) msg.obj;
                             int tempJudge = msg.arg1;
                             if (tempJudge == 1) {
@@ -293,6 +291,7 @@ public class MainActivity extends Activity {
                                 Rwcolorgap[2 * i] = shortToByte(reciveData[i])[0];
                                 Rwcolorgap[2 * i + 1] = shortToByte(reciveData[i])[1];
                             }
+                            if (IfSaveTheRadar == 1) {
                             if (judge_MartOrNot) {
                                 Rwcolorgap[0] = (byte) 0xff;
                                 Rwcolorgap[1] = (byte) 0x00;
@@ -303,7 +302,6 @@ public class MainActivity extends Activity {
                                 Rwcolorgap[6] = (byte) 0xff;
                                 Rwcolorgap[7] = (byte) 0x00;
                             }
-//                    if (mrafRaw == null) Log.d(TAG, "handleMessage: !!!!!!!!!!!");
                             writeBodyThreadRaw = new WriteBodyThread(mrafRaw, Rwcolorgap);
                             writeBodyThreadRaw.setGetCallBack(new GetCallBack() {
                                 @Override
@@ -311,16 +309,37 @@ public class MainActivity extends Activity {
                                     GetCallBack.super.doThing();
                                 }
                             });
-                            if (IfSaveTheRadar == 1) {
                                 poolRaw.execute(writeBodyThreadRaw);
                             }
-//                    writeThread.setRwcolorgap(Rwcolorgap);
                             battery = reciveData[512];
-//                    Log.d(TAG, "handleMessage:  --> battery --> "+battery);
                             int mbtr_num = (int) ((float) (battery / 100) * 1.1 - 20) * 10;
                             myBatterView.setPro(mbtr_num);
-//				judgeHaveThread.setColorGap(colorGap);
-//				judgeMetalThread.setColorGap(colorGap);
+                            if (isDDCF){
+                                temp_ddcf_sum ++;
+                                datasumlist.add(colorGap);
+                                if (temp_ddcf_sum == ddcf_sum){
+                                    Arrays.fill(tempcolorgap,(int)0);
+                                    for (short[] s : datasumlist){
+                                        for (int tempi = 0;tempi<512;tempi++){
+                                            tempcolorgap[tempi] = (int)tempcolorgap[tempi]+(int)s[tempi];
+                                        }
+                                    }
+                                    for (int tempi = 0;tempi<512;tempi++){
+                                        tempcolorgap[tempi] = tempcolorgap[tempi]/datasumlist.size();
+                                        colorGap[tempi] = (short) tempcolorgap[tempi];
+
+                                    }
+                                    datasumlist.clear();
+                                    temp_ddcf_sum = 0;
+                                    touchsuspend();
+                                }else if (temp_ddcf_sum>ddcf_sum){
+                                    touchsuspend();
+                                    datasumlist.clear();
+                                }else {
+                                    break;
+                                }
+                            }
+
                             if (tempifbackremove == 1) {
                                 short[] newnoise = new short[Const_NumberOfVerticalDatas];
                                 for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
@@ -343,20 +362,17 @@ public class MainActivity extends Activity {
 //                        Log.d(TAG, "--------tempifgain----------");
                                 colorGap = dataprocessMain.gainProcess(colorGap, gainData, coeGain, Const_NumberOfVerticalDatas);
                             }
-
-                            if (judge_MartOrNot) {
-                                for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
+                            for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
+                                if (judge_MartOrNot) {
                                     colorList[i] = 0x0000ff;
-                                    colorGap[i] = (short) (colorGap[i]);
-                                }
-                            } else {
-                                for (int i = 0; i < Const_NumberOfVerticalDatas; i++) {
+                                }else {
                                     int color = ((colorGap[i]) / 256) + 128;
                                     colorList[i] = Color.rgb(color, color, color);
-                                    colorgap[2 * i] = shortToByte(colorGap[i])[0];
-                                    colorgap[2 * i + 1] = shortToByte(colorGap[i])[1];
                                 }
+                                colorgap[2 * i] = shortToByte(colorGap[i])[0];
+                                colorgap[2 * i + 1] = shortToByte(colorGap[i])[1];
                             }
+
                             if (judge_MartOrNot) {
                                 colorgap[0] = (byte) 0xff;
                                 colorgap[1] = (byte) 0x00;
@@ -401,6 +417,8 @@ public class MainActivity extends Activity {
                                 Rwcolorgap1024[2 * i] = shortToByte(reciveData1024[i])[0];
                                 Rwcolorgap1024[2 * i + 1] = shortToByte(reciveData1024[i])[1];
                             }
+
+                            if (IfSaveTheRadar == 1) {
                             if (judge_MartOrNot) {
                                 Rwcolorgap1024[0] = (byte) 0xff;
                                 Rwcolorgap1024[1] = (byte) 0x00;
@@ -419,12 +437,37 @@ public class MainActivity extends Activity {
                                     GetCallBack.super.doThing();
                                 }
                             });
-                            if (IfSaveTheRadar == 1) {
+
                                 poolRaw.execute(writeBodyThreadRaw);
                             }
 //                            battery = reciveData[512];
 //                            int mbtr_num = (int) ((float) (battery / 100) * 1.1 - 20) * 10;
 //                            myBatterView.setPro(mbtr_num);
+
+                            if (isDDCF){
+                                temp_ddcf_sum ++;
+                                datasumlist.add(colorGap1024);
+                                if (temp_ddcf_sum == ddcf_sum){
+                                    Arrays.fill(tempcolorgap1024,(int)0);
+                                    for (short[] s : datasumlist){
+                                        for (int tempi = 0;tempi<Const_NumberOfVerticalDatas_1024;tempi++){
+                                            tempcolorgap1024[tempi] = (int)tempcolorgap1024[tempi]+(int)s[tempi];
+                                        }
+                                    }
+                                    for (int tempi = 0;tempi<Const_NumberOfVerticalDatas_1024;tempi++){
+                                        tempcolorgap1024[tempi] = tempcolorgap1024[tempi]/datasumlist.size();
+                                        colorGap1024[tempi] = (short) tempcolorgap1024[tempi];
+                                    }
+                                    datasumlist.clear();
+                                    temp_ddcf_sum = 0;
+                                    touchsuspend();
+                                }else if (temp_ddcf_sum>ddcf_sum){
+                                    touchsuspend();
+                                    datasumlist.clear();
+                                }else {
+                                    break;
+                                }
+                            }
                             if (tempifbackremove == 1) {
                                 short[] newnoise = new short[Const_NumberOfVerticalDatas_1024];
                                 for (int i = 0; i < Const_NumberOfVerticalDatas_1024; i++) {
@@ -435,7 +478,6 @@ public class MainActivity extends Activity {
                             }
 
                             if (tempShare != 4) {
-//                        Log.d(TAG, "--------tempShare----------");
                                 dataprocessMain.m_filterP.setM_low_f(numlowf);
                                 dataprocessMain.m_filterP.setM_high_f(numhighf);
                                 dataprocessMain.setM_iffilter(true);
@@ -445,20 +487,15 @@ public class MainActivity extends Activity {
                             if (tempifgain == 1) {
                                 colorGap1024 = dataprocessMain.gainProcess(colorGap1024, gainData1024, coeGain, Const_NumberOfVerticalDatas_1024);
                             }
-
-                            if (judge_MartOrNot) {
-                                for (int i = 0; i < Const_NumberOfVerticalDatas_1024; i++) {
+                            for (int i = 0; i < Const_NumberOfVerticalDatas_1024; i++) {
+                                if (judge_MartOrNot) {
                                     colorList1024[i] = 0x0000ff;
-                                    colorGap1024[i] = (short) (colorGap1024[i]);
-                                }
-                            } else {
-                                for (int i = 0; i < Const_NumberOfVerticalDatas_1024; i++) {
+                                }else {
                                     int color = ((colorGap1024[i]) / 256) + 128;
                                     colorList1024[i] = Color.rgb(color, color, color);
-//                            TempColorList[i] = (short) (colorGap[i]);
-                                    colorgap1024[2 * i] = shortToByte(colorGap1024[i])[0];
-                                    colorgap1024[2 * i + 1] = shortToByte(colorGap1024[i])[1];
                                 }
+                                colorgap1024[2 * i] = shortToByte(colorGap1024[i])[0];
+                                colorgap1024[2 * i + 1] = shortToByte(colorGap1024[i])[1];
                             }
                             if (judge_MartOrNot) {
                                 colorgap1024[0] = (byte) 0xff;
@@ -474,6 +511,7 @@ public class MainActivity extends Activity {
 //                    writeThread.setJudgeIfRepeat(false);
 //                    writeThread.setJudgeNumber(3);
 //                    writeThread.setJudgeIfRepeat(true);
+//                            Log.d(TAG, "handleMessage: -- "+Arrays.toString(colorgap1024));
                             writeBodyThread = new WriteBodyThread(mrafColor, colorgap1024);
                             writeBodyThread.setGetCallBack(new GetCallBack() {
                                 @Override
@@ -539,6 +577,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
+                temp_ddcf_sum = 0;
                 isDDCF = false;
                 // TODO Auto-generated method stub
                 //第一次点击开启碎片
@@ -853,7 +892,7 @@ public class MainActivity extends Activity {
         });
         mbtn_ddcf = findViewById(R.id.mbtn_ddcf);
         metv_ddcf = findViewById(R.id.met_ddcf);
-        String ddcfsumd = mainPeremeterOrders.getString("ddcf", "100");
+        String ddcfsumd = mainPeremeterOrders.getString("ddcf", "10");
         metv_ddcf.setText(ddcfsumd);
         mbtn_ddcf.setOnClickListener(new OnClickListener() {
             @Override
@@ -863,12 +902,14 @@ public class MainActivity extends Activity {
                     return;
                 }
                 if (metv_ddcf.getText() != null) {
-                    judge_MartOrNot = true;
-                    markNumber++;
-                    tv_markNumber.setText(markNumber + "");
                     if (!TextUtils.isEmpty(metv_ddcf.getText().toString())) {
+                        temp_ddcf_sum = 0;
                         isDDCF = true;
-                        ddcf_sum = Integer.parseInt(metv_ddcf.getText().toString());
+                        try{
+                            ddcf_sum = Integer.parseInt(metv_ddcf.getText().toString());
+                        }catch (Exception e){
+                            Toast.makeText(MainActivity.this,"请输入数字！确认没有空格以及其他字符",Toast.LENGTH_SHORT).show();
+                        }
                         mainPeremeterOrdersEditor.putString("ddcf", String.valueOf(ddcf_sum));
                         mainPeremeterOrdersEditor.commit();
                         // TODO Auto-generated method stub
@@ -1814,7 +1855,6 @@ public class MainActivity extends Activity {
             }).start();
             ibtn_startAndSuspend.setImageResource(R.drawable.startgreen2);
         }
-
         ibtn_setting.setImageResource(R.drawable.settinggray2);
         ibtn_stop.setImageResource(R.drawable.stopred2);
         ibtn_stop.setEnabled(true);

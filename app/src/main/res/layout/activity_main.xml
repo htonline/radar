@@ -48,33 +48,9 @@
             android:layout_gravity="center"
             android:onClick="uploadIbtn" />
 
-        <Button
-            android:id="@+id/btn_mark"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="right"
-            android:onClick="btnMark"
-            android:text="打标"
-            android:textSize="@dimen/textSize" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/mbtn_ddcf"
-                android:text="单点触发"></Button>
 
-            <EditText
-                android:id="@+id/met_ddcf"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:imeOptions="actionDone"
-                android:text="100" />
-        </LinearLayout>
 
         <TextView
             android:layout_width="0dp"
@@ -109,7 +85,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="68dp"
                 android:orientation="horizontal"
-                android:visibility="invisible">
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -185,11 +161,23 @@
         android:layout_weight="1.5"
         android:orientation="vertical">
 
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:orientation="horizontal">
 
+            <Button
+                android:id="@+id/btn_mark"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="right"
+                android:onClick="btnMark"
+                android:text="打标"
+                android:textSize="@dimen/textSize" />
+            <View
+                android:layout_width="30dp"
+                android:layout_height="match_parent"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -236,7 +224,30 @@
                 android:layout_height="wrap_content"
                 android:text="0"
                 android:textSize="@dimen/textNormSize" />
+            <View
+                android:layout_width="35dp"
+                android:layout_height="match_parent"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/mbtn_ddcf"
+                    android:textSize="@dimen/textNormSize"
+                    android:text="单点触发"></Button>
+
+                <EditText
+                    android:id="@+id/met_ddcf"
+                    android:inputType="number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionDone"
+                    android:textSize="@dimen/textNormSize"
+                    android:text="10" />
+            </LinearLayout>
 
         </LinearLayout>
 
