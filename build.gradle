@@ -14,6 +14,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.4'
+        classpath "com.tencent.tinker:tinker-patch-gradle-plugin:1.9.1"
     }
 }
 

@@ -1,5 +1,7 @@
 
 apply plugin: 'com.android.application'
+apply from: 'tinker.gradle'
+
 def urls = rootProject.ext.url
 def isRealse = rootProject.ext.isRealead
 android {
@@ -8,7 +10,7 @@ android {
     compileOptions.encoding = "UTF-8"
     defaultConfig {
         applicationId "com.example.ladarmonitor"
-        minSdkVersion 26
+        minSdkVersion 20
         targetSdkVersion 28
         ndk {
             abiFilters 'armeabi-v7a'
@@ -19,6 +21,11 @@ android {
         }else {
             buildConfigField("String","URL", urls.debugUrl)
         }
+        javaCompileOptions { annotationProcessorOptions { includeCompileClasspath = true } }
+        multiDexEnabled true
+        buildConfigField "String", "MESSAGE", "\"I am the base apk\""
+        buildConfigField "String", "TINKER_ID", "\"${TINKER_ID}\""
+        buildConfigField "String", "PLATFORM", "\"all\""
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -70,6 +77,9 @@ android {
             v2SigningEnabled false;
         }
     }
+    dexOptions {
+        jumboMode = true
+    }
 
 }
 
@@ -111,4 +121,14 @@ dependencies {
     api 'com.squareup.retrofit2:converter-gson:2.3.0'
     api 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     api 'com.squareup.okhttp3:logging-interceptor:3.10.0'
+
+
+    annotationProcessor("com.tencent.tinker:tinker-android-anno:1.9.14.5") { changing = true }
+    compileOnly("com.tencent.tinker:tinker-android-anno:1.9.14.5") { changing = true }
+
+    //tinker's main Android lib
+    implementation('com.tencent.tinker:tinker-android-lib:1.9.14.5')
+
+    //dex分包
+    implementation "androidx.multidex:multidex:2.0.1"
 }

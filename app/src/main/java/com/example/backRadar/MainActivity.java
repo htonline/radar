@@ -31,6 +31,7 @@ import com.example.thread.ReadThread;
 import com.example.thread.WriteBodyThread;
 import com.example.thread.WriteHeadThread;
 import com.example.thread.WriteRearThread;
+import com.tencent.tinker.lib.tinker.TinkerInstaller;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -44,6 +45,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -560,6 +562,8 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: ---===========================");
+        loadPatch();
         mainPeremeterOrders = getSharedPreferences("mainPeremeterOrders", 0);
         mainPeremeterOrdersEditor = mainPeremeterOrders.edit();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -1426,7 +1430,7 @@ public class MainActivity extends Activity {
     //wifi的点击事件
     public void wifiIbtn(View view) {
         checkPermission();
-
+//        getException();
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo wifiNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 //		WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
@@ -1862,5 +1866,15 @@ public class MainActivity extends Activity {
         counter++;
 
     }
+    private void loadPatch() {
+        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/patch_signed_7zip.apk");
+        if (file.exists()){
+            Log.d(TAG, "loadPatch: ------------ File exits");
+            TinkerInstaller.onReceiveUpgradePatch(getApplicationContext(), Environment.getExternalStorageDirectory().getAbsolutePath() + "/patch_signed_7zip.apk");
+        }
+    }
 
+    private Exception getException(){
+        throw new RuntimeException("Eeeeeeeee");
+    }
 }
