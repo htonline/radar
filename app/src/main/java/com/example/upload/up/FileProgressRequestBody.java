@@ -53,16 +53,13 @@ public class FileProgressRequestBody extends RequestBody {
         Source source = null;
         try {
             source = Okio.source(file);
-            long total = 0;
-
             long read;
             while ((read = source.read(sink.buffer(), SEGMENT_SIZE)) != -1) {
-                total += read;
                 sink.flush();
-
-                if (!ispercent && sum > 1){
-                    if (null != subscribe)subscribe.onRead(read);
-                }
+                subscribe.onRead(read);
+//                if (!ispercent && sum > 1){
+//                    if (null != subscribe)
+//                }
             }
         } finally {
             Util.closeQuietly(source);

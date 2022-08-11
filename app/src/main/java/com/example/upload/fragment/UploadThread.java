@@ -178,7 +178,8 @@ public class UploadThread extends Thread {
                 .readTimeout(60000, TimeUnit.SECONDS)
                 .writeTimeout(60000, TimeUnit.SECONDS)
 //                .addInterceptor(getHeader())
-                .addNetworkInterceptor(getResponseIntercept()).build();
+//                .addNetworkInterceptor(getResponseIntercept())
+                .build();
         Retrofit mretrofit = new Retrofit.Builder()
                 .baseUrl(FileUtils.IP)
                 .client(client)
@@ -238,7 +239,8 @@ public class UploadThread extends Thread {
                 .readTimeout(60000, TimeUnit.MILLISECONDS)
                 .writeTimeout(60000, TimeUnit.MILLISECONDS)
 //                .addInterceptor(getHeader())
-                .addNetworkInterceptor(getResponseIntercept()).build();
+//                .addNetworkInterceptor(getResponseIntercept())
+                .build();
         Retrofit retrofit = new Retrofit.Builder()
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(new FileConverterFactory())
