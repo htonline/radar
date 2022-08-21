@@ -1,1 +1,2 @@
 include ':app', ':app_pc'
+include ':uploadmodule'

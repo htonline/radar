@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.example.interfaces.GetCallBack;
-import com.example.upload.MyDialogActivity;
+
 import com.example.customizingViews.ColoursView;
 import com.example.customizingViews.MyBatterView;
 import com.example.customizingViews.RadarView;
@@ -31,6 +31,7 @@ import com.example.thread.ReadThread;
 import com.example.thread.WriteBodyThread;
 import com.example.thread.WriteHeadThread;
 import com.example.thread.WriteRearThread;
+import com.example.uploadmodule.upload.MyDialogActivity;
 import com.tencent.tinker.lib.tinker.TinkerInstaller;
 
 import android.Manifest;
@@ -39,7 +40,10 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.LinkAddress;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
+import android.net.NetworkRequest;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -574,6 +578,7 @@ public class MainActivity extends Activity {
         fManager = getFragmentManager();
         lFragment = new LeftFragmentOfMainActivity();
         init();
+        initConnected();
         poolRaw = null;
         pool = null;
 
@@ -831,6 +836,26 @@ public class MainActivity extends Activity {
 
             }
         });
+    }
+
+    private void initConnected() {
+        if(Build.VERSION.SDK_INT >= 21){
+            final ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkRequest.Builder builder = new NetworkRequest.Builder();
+            builder.addTransportType(NetworkCapabilities.TRANSPORT_WIFI);
+            NetworkRequest request = builder.build();
+            ConnectivityManager.NetworkCallback callback = new ConnectivityManager.NetworkCallback() {
+                @Override
+                public void onAvailable(Network network) {
+                    if (Build.VERSION.SDK_INT >= 23) {
+                        connectivityManager.bindProcessToNetwork(network);
+                    } else {
+                        ConnectivityManager.setProcessDefaultNetwork(network);
+                    }
+                }
+            };
+            connectivityManager.requestNetwork(request, callback);
+        }
     }
 
     private void init() {

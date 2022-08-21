@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.uploadmodule">
+
+    <application>
+        <activity
+            android:name=".upload.SelectPicActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/DialogStyleBottom"
+            android:process="com.radar.upload"
+            />
+
+        <activity
+            android:name=".upload.MyDialogActivity"
+            android:theme="@style/share_activity_styles"
+            android:process="com.radar.upload"
+            />
+        <activity
+            android:name=".helper.zbar.CaptureActivity"
+            android:screenOrientation="fullSensor"
+            android:process="com.radar.upload"
+            android:theme="@style/scanzbar" />
+        <activity
+            android:process="com.radar.upload"
+            android:name=".upload.FileListMyDialogManager"
+            android:label="@string/title_activity_my_file_manager"
+            android:theme="@android:style/Theme.Dialog" />
+    </application>
+
+</manifest>

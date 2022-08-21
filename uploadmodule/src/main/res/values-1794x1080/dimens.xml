@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="textsSmallSize">4sp</dimen>
+    <dimen name="textSmallSize">6sp</dimen>
+    <dimen name="textSize">10sp</dimen>
+    <dimen name="mydialogWidth">600dp</dimen>
+    <dimen name="mydialogHeight">300dp</dimen>
+
+    <dimen name="batteryNomalWidth">80dp</dimen>
+    <dimen name="batteryNomalHeight">20dp</dimen>
+
+</resources>
