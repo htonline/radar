@@ -1309,6 +1309,7 @@ public class MainActivity extends Activity {
         judge_MartOrNot = true;
         markNumber++;
         tv_markNumber.setText(markNumber + "");
+//        throw new RuntimeException("test");
     }
 
     //停止按钮点击事件，下位机停止发送数据，碎片出栈,计数器counter恢复为0；

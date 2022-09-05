@@ -43,7 +43,7 @@ public class MyDialogActivity extends FragmentActivity {
         fragmentManager = getSupportFragmentManager();
 //        if (staticuserInfoLogin == null){
             FragmentTransaction transaction = fragmentManager.beginTransaction();
-            LoginFragment mFragment = new LoginFragment(this);
+            LoginFragment mFragment = new LoginFragment(this,type);
             mFragment.setGetCallBack(new GetCallBack<UserInfoLogin>() {
                 @Override
                 public void success(UserInfoLogin userInfoLogin) {
