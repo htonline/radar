@@ -48,6 +48,13 @@
             android:layout_gravity="center"
             android:onClick="uploadIbtn" />
 
+        <ImageButton
+            android:id="@+id/ibtn_detect"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:onClick="detectIbtn" />
+
 
 
 
@@ -147,11 +154,17 @@
         android:layout_weight="6"
         android:orientation="horizontal">
 
+
         <FrameLayout
             android:id="@+id/fl_containerLeft"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"></FrameLayout>
-
+            android:layout_height="match_parent">
+        </FrameLayout>
+<!--        <ImageView-->
+<!--            android:id="@+id/iv_testLeft"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent">-->
+<!--        </ImageView>-->
 
     </LinearLayout>
 

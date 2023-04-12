@@ -32,12 +32,14 @@ import com.example.thread.WriteBodyThread;
 import com.example.thread.WriteHeadThread;
 import com.example.thread.WriteRearThread;
 import com.example.uploadmodule.upload.MyDialogActivity;
+import com.example.yolov5.YOLOv5;
 import com.tencent.tinker.lib.tinker.TinkerInstaller;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.media.Image;
 import android.net.ConnectivityManager;
 import android.net.LinkAddress;
 import android.net.Network;
@@ -77,6 +79,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -90,13 +93,15 @@ import org.w3c.dom.Text;
 
 public class MainActivity extends Activity {
     private int tagForCloseSetting = 0;
+    private ImageView iv_test;
+
 
     private Button mbtn_ddcf;
     private EditText metv_ddcf;
     private int ddcf_sum = 0;
     private boolean isDDCF = false;
     private int temp_ddcf_sum = 0;
-
+    private boolean detectinit = false;
 
     private static RandomAccessFile mrafRaw;
     private static RandomAccessFile mrafColor;
@@ -120,6 +125,7 @@ public class MainActivity extends Activity {
     private ImageButton ibtn_setting;
     private ImageButton ibtn_stop;
     private ImageButton ibtn_upload;
+    private ImageButton ibtn_detect;
     private ColoursView coloursView = null;
     private RadarView radarView = null;
     private int IfSaveTheRadar = 0;
@@ -535,6 +541,7 @@ public class MainActivity extends Activity {
                             pool.execute(writeBodyThread);
                             tv_numberOfReceive.setText(Math.abs(msg.arg2) + "");
                             lFragment.drawNewVertical1024(colorList1024);
+
                             judge_MartOrNot = false;
                             break;
                         }
@@ -579,6 +586,7 @@ public class MainActivity extends Activity {
         lFragment = new LeftFragmentOfMainActivity();
         init();
         initConnected();
+
         poolRaw = null;
         pool = null;
 
@@ -863,7 +871,13 @@ public class MainActivity extends Activity {
         Arrays.fill(colorGap, (short) 0);
         Arrays.fill(colorList, (short) 0);
         coeGain = 1;
-
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                YOLOv5.init(getResources().getAssets(), true);
+                YOLOv5.initCustomLayer(getResources().getAssets(), true);
+            }
+        }).start();
 
         wifiAdmin = new WifiTool(MainActivity.this);
 
@@ -873,6 +887,7 @@ public class MainActivity extends Activity {
         ibtn_setting = (ImageButton) findViewById(R.id.ibtn_setting);
         ibtn_stop = (ImageButton) findViewById(R.id.ibtn_stop);
         ibtn_upload = (ImageButton) findViewById(R.id.ibtn_upload);
+        ibtn_detect = (ImageButton) findViewById(R.id.ibtn_detect);
         tv_numberOfReceive = (TextView) findViewById(R.id.tv_numberOfReceive);
         tv_path = (TextView) findViewById(R.id.tv_path);
         tv_timeWindow = (TextView) findViewById(R.id.tv_timeWindow);
@@ -892,6 +907,7 @@ public class MainActivity extends Activity {
         ibtn_stop.setImageResource(R.drawable.stopgray2);
         ibtn_stop.setEnabled(false);
         ibtn_upload.setImageResource(R.drawable.upload);
+        ibtn_detect.setImageResource(R.drawable.detecticon);
         btn_mark.setEnabled(false);
         ibtn_setting.setEnabled(false);
 //        ibtn_setting.setEnabled(true);
@@ -912,6 +928,13 @@ public class MainActivity extends Activity {
 
         btn_wifi_open = findViewById(R.id.btn_openwifi);
         btn_wifi_connect = findViewById(R.id.btn_connect_wifi);
+        ibtn_detect.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                lFragment.showDetect();
+//                lFragment.showDetect(iv_test);
+            }
+        });
         btn_wifi_open.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -923,6 +946,7 @@ public class MainActivity extends Activity {
         metv_ddcf = findViewById(R.id.met_ddcf);
         String ddcfsumd = mainPeremeterOrders.getString("ddcf", "10");
         metv_ddcf.setText(ddcfsumd);
+//        iv_test = findViewById(R.id.iv_testLeft);
         mbtn_ddcf.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

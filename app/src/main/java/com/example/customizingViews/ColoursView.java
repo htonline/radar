@@ -106,14 +106,14 @@ public class ColoursView extends View{
 		viewWidth=getWidth();
 		viewHeight=getHeight();
 		init();
-		drawHeight=viewHeight-intX;
-		drawWidth= (viewWidth-32);
+		drawHeight=viewHeight;
+		drawWidth= viewWidth;
 		if (drawHeight/512.0>1) {
 			scale=(float) (512.0/drawHeight);
 		}else {
 			scale=(float) (drawHeight/512.0);
 		}
-		bitmap=Bitmap.createBitmap(drawWidth,drawHeight, Bitmap.Config.RGB_565);
+		bitmap=Bitmap.createBitmap(drawWidth,drawHeight, Bitmap.Config.ARGB_8888);
 		//填充颜色
 		bitmap.eraseColor(Color.parseColor("#FFFFFF"));
 	}
@@ -122,34 +122,7 @@ public class ColoursView extends View{
 	protected void onDraw(Canvas canvas) {
 		// TODO Auto-generated method stub
 		super.onDraw(canvas);
-		//获取上下左右边距
-//		int pl=getPaddingLeft();
-//		int pr=getPaddingRight();
-//		int pt=getPaddingTop();
-//		int pb=getPaddingBottom();
-
-
-		floatl=(viewHeight-intX)/25.0f;
-
-		//绘制Y轴和X轴
-		for (int i = 0; i <= timeWindow; i++) {
-			if (i%(timeWindow/5)==0) {
-				if (i!=timeWindow) {
-					//带数字的横线
-
-					canvas.drawLine(0, viewHeight-(viewHeight-(viewHeight/timeWindow)*i)-intX, yTextPaint.measureText(2.0+"")+intXx+5, viewHeight-(viewHeight-(viewHeight/timeWindow)*i)-intX, yPaint);
-				}else {
-					//X轴
-					canvas.drawLine(0, viewHeight-(viewHeight-(viewHeight/timeWindow)*i)-intX, viewWidth, viewHeight-(viewHeight-(viewHeight/timeWindow)*i)-intX, yPaint);
-				}
-				//绘制数字
-				canvas.drawText(String.valueOf((double)(i)),0, viewHeight-(viewHeight-(viewHeight/timeWindow)*i)-intX, yTextPaint);
-
-			}
-		}
-		//Y轴
-		canvas.drawLine(yTextPaint.measureText(2.0+"")+intXx+5, 0, yTextPaint.measureText(2.0+"")+intXx+5, viewHeight, yPaint);
-		canvas.drawBitmap(bitmap, 32, 0, pointPaint );
+		canvas.drawBitmap(bitmap, 0, 0, pointPaint );
 	}
 
 	public void drawNewVertical(int[] colorList){
@@ -185,4 +158,8 @@ public class ColoursView extends View{
 		}
 		this.invalidate();
     }
+
+	public synchronized int getCurrentVertical() {
+		return currentVertical;
+	}
 }
