@@ -379,6 +379,7 @@ public class MainActivity extends Activity {
                                     colorList[i] = 0x0000ff;
                                 }else {
                                     int color = ((colorGap[i]) / 256) + 128;
+                                    color = 255-color;
                                     colorList[i] = Color.rgb(color, color, color);
                                 }
                                 colorgap[2 * i] = shortToByte(colorGap[i])[0];
@@ -504,6 +505,7 @@ public class MainActivity extends Activity {
                                     colorList1024[i] = 0x0000ff;
                                 }else {
                                     int color = ((colorGap1024[i]) / 256) + 128;
+                                    color = 255-color;
                                     colorList1024[i] = Color.rgb(color, color, color);
                                 }
                                 colorgap1024[2 * i] = shortToByte(colorGap1024[i])[0];
@@ -917,7 +919,7 @@ public class MainActivity extends Activity {
         tv_numSave = findViewById(R.id.tv_numOfSave);
         tv_numSave.setText("" + 0);
         if (mainPeremeterOrders.getInt("triggerMode", 0) == 0) {
-            tv_triigerMode.setText("时间");
+            tv_triigerMode.setText("time");
         } else {
             tv_triigerMode.setText("测距轮");
         }
@@ -1640,7 +1642,7 @@ public class MainActivity extends Activity {
             IfSaveTheRadar = mainPeremeterOrders.getInt("saveRadar", 1);
 //            writeThread.setAnoStart(IfSaveTheRadar);
             if (mainPeremeterOrders.getInt("triggerMode", 0) == 0) {
-                tv_triigerMode.setText("时间");
+                tv_triigerMode.setText("time");
             } else {
                 tv_triigerMode.setText("测距轮");
             }

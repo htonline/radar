@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">无线地质雷达手机端采集系统</string>
+    <string name="app_name">GPR acquisition system</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_setting">SettingActivity</string>

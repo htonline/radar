@@ -2,6 +2,7 @@ package com.example.fragments;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -88,7 +89,7 @@ public class LeftFragmentOfMainActivity extends Fragment {
                     result = mergeBitmap(result, halfbitmap);
                     Bitmap transparentBitmap = getTransparentBitmap(result, 00);
                     Bitmap copy = transparentBitmap.copy(Bitmap.Config.ARGB_8888, true);
-                    Bitmap tempbitmap = drawBoxPeakRects(copy, boxPeaks);
+                    Bitmap tempbitmap = drawBoxPeakRects(copy, boxPeaks,result,0);
                     Bitmap finalResult = result;
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
@@ -109,11 +110,11 @@ public class LeftFragmentOfMainActivity extends Fragment {
                     List<BoxPeak> boxPeaksright = detectAndDraw(resultright);
                     Bitmap transparentBitmap = getTransparentBitmap(resultleft, 00);
                     Bitmap copyleft = transparentBitmap.copy(Bitmap.Config.ARGB_8888, true);
-                    Bitmap tempbitmapleft = drawBoxPeakRects(copyleft, boxPeaksleft);
+                    Bitmap tempbitmapleft = drawBoxPeakRects(copyleft, boxPeaksleft,resultleft,0);
 
                     Bitmap transparentBitmapright = getTransparentBitmap(resultright, 00);
                     Bitmap copyright = transparentBitmapright.copy(Bitmap.Config.ARGB_8888, true);
-                    Bitmap tempbitmapright = drawBoxPeakRects(copyright, boxPeaksright);
+                    Bitmap tempbitmapright = drawBoxPeakRects(copyright, boxPeaksright,resultright,tempbitmapleft.getWidth());
 
                     Bitmap tranrr = getTransparentBitmap(nrightbit, 00);
                     Bitmap tranrrbit = tranrr.copy(Bitmap.Config.ARGB_8888, true);
@@ -141,11 +142,11 @@ public class LeftFragmentOfMainActivity extends Fragment {
                     List<BoxPeak> boxPeaksright = detectAndDraw(resultright);
                     Bitmap transparentBitmap = getTransparentBitmap(resultleft, 00);
                     Bitmap copyleft = transparentBitmap.copy(Bitmap.Config.ARGB_8888, true);
-                    Bitmap tempbitmapleft = drawBoxPeakRects(copyleft, boxPeaksleft);
+                    Bitmap tempbitmapleft = drawBoxPeakRects(copyleft, boxPeaksleft,resultleft,0);
 
                     Bitmap transparentBitmapright = getTransparentBitmap(resultright, 00);
                     Bitmap copyright = transparentBitmapright.copy(Bitmap.Config.ARGB_8888, true);
-                    Bitmap tempbitmapright = drawBoxPeakRects(copyright, boxPeaksright);
+                    Bitmap tempbitmapright = drawBoxPeakRects(copyright, boxPeaksright,resultright,tempbitmapleft.getWidth());
 
                     Bitmap tranrr = getTransparentBitmap(nrightbit, 00);
                     Bitmap tranrrbit = tranrr.copy(Bitmap.Config.ARGB_8888, true);
@@ -170,7 +171,7 @@ public class LeftFragmentOfMainActivity extends Fragment {
                     result = mergeBitmap(result, nright);
                     Bitmap transparentBitmap = getTransparentBitmap(result, 00);
                     Bitmap copy = transparentBitmap.copy(Bitmap.Config.ARGB_8888, true);
-                    Bitmap tempbitmap = drawBoxPeakRects(copy, boxPeaks);
+                    Bitmap tempbitmap = drawBoxPeakRects(copy, boxPeaks,result,0);
                     Bitmap finalResult = result;
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
@@ -228,7 +229,7 @@ public class LeftFragmentOfMainActivity extends Fragment {
     }
 
 
-    protected Bitmap drawBoxPeakRects(Bitmap mutableBitmap, List<BoxPeak> results) {
+    protected Bitmap drawBoxPeakRects(Bitmap mutableBitmap, List<BoxPeak> results,Bitmap rawbitmap,int offset) {
         if (results == null || results.size() <= 0) {
             return mutableBitmap;
         }
@@ -239,20 +240,41 @@ public class LeftFragmentOfMainActivity extends Fragment {
         waipaint.setColor(Color.RED);
         waipaint.setStyle(Paint.Style.STROKE);
         boxPaint.setStyle(Paint.Style.FILL);
-        BoxPeak peakfirst = results.get(0);
-//		float last = (peakfirst.y0 + peakfirst.y1)/2;
         for (BoxPeak box : results) {
-//			if ((box.y0+box.y1)/2 - last > 10){
-//				continue;
-//			}
-//			Log.d(TAG, "drawBoxPeakRects: ---- "+box.x0);
-            canvas.drawCircle((box.x0 + box.x1) / 2, (box.y0 + box.y1) / 2, 4, waipaint);
-            canvas.drawCircle((box.x0 + box.x1) / 2, (box.y0 + box.y1) / 2, 8, waipaint);
-            canvas.drawCircle((box.x0 + box.x1) / 2, (box.y0 + box.y1) / 2, 12, waipaint);
-            canvas.drawCircle((box.x0 + box.x1) / 2, (box.y0 + box.y1) / 2, 2, boxPaint);
-            list.add("顶点位置:" + (box.x0 + box.x1) / 2 + "," + (box.y0 + box.y1) / 2 + "\n   ");
+            int x = (int) ((box.x0 + box.x1) / 2);
+//            int y = (int) ((box.y0 + box.y1) /2);
+            int y = gety(rawbitmap, x, (int) box.y0, (int) box.y1);
+            canvas.drawCircle(x, y, 4, waipaint);
+            canvas.drawCircle(x, y, 8, waipaint);
+            canvas.drawCircle(x, y, 12, waipaint);
+            canvas.drawCircle(x, y, 2, boxPaint);
+            list.add("Coordinate :" + (offset+x) + "," + y + "    " + "\n   ");
         }
         return mutableBitmap;
+    }
+
+    private int gety(Bitmap bitmap, int x, int y0, int y1) {
+        List<Integer> listd = new ArrayList<>();
+        int height = bitmap.getHeight();
+        int width = bitmap.getWidth();
+        int[] pixel = new int[width * height];
+        bitmap.getPixels(pixel, 0, width, 0, 0, width, height);
+        for (int i = y0; i <= y1; i++) {
+            int grey = pixel[width * i + x];
+            int red = ((grey & 0x00FF0000) >> 16);
+            int green = ((grey & 0x0000FF00) >> 8);
+            int blue = (grey & 0x000000FF);
+            grey = (int) ((float) red * 0.3 + (float) green * 0.59 + (float) blue * 0.11);
+            listd.add(grey);
+        }
+//        getActivity().runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Toast.makeText((Context) getActivity().getApplicationContext(), listd.toString(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
+        int maxNum = Collections.max(listd);
+        return y0 + listd.indexOf(maxNum);
     }
 
     public Bitmap getResBitmap(Bitmap bitmap, int x0, int y0, int x1, int y1) {
