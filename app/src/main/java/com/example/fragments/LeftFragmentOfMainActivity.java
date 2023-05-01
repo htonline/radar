@@ -204,7 +204,7 @@ public class LeftFragmentOfMainActivity extends Fragment {
         result = YOLOv5.detect(image, 0.4, 0.4);
         for (Box box : result) {
             Bitmap temp = getResBitmap(image, (int) (box.x0), (int) (box.y0), (int) (box.x1), (int) (box.y1));
-            BoxPeak[] tempresult = YOLOv5.detectCustomLayer(temp, 0.2, 0.2);
+            BoxPeak[] tempresult = YOLOv5.detectCustomLayer(temp, 0.3, 0.3);
             for (BoxPeak box1 : tempresult) {
                 box1.setBox(box);
                 box1.x0 += box.x0;
@@ -243,12 +243,13 @@ public class LeftFragmentOfMainActivity extends Fragment {
         for (BoxPeak box : results) {
             int x = (int) ((box.x0 + box.x1) / 2);
 //            int y = (int) ((box.y0 + box.y1) /2);
-            int y = gety(rawbitmap, x, (int) box.y0, (int) box.y1);
+//            int y = gety(rawbitmap, x, (int) box.y0, (int) box.y1);
+            int y = (int) ((box.y0 + box.y1) / 2);
             canvas.drawCircle(x, y, 4, waipaint);
             canvas.drawCircle(x, y, 8, waipaint);
             canvas.drawCircle(x, y, 12, waipaint);
             canvas.drawCircle(x, y, 2, boxPaint);
-            list.add("Coordinate :" + (offset+x) + "," + y + "    " + "\n   ");
+            list.add("顶点坐标  横坐标:" + (offset+x) + ", 纵坐标:" + y + "    " + "\n   ");
         }
         return mutableBitmap;
     }

@@ -118,7 +118,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="GPR acquisition system"
+                android:text="地质雷达采集系统"
                 android:textSize="@dimen/textTitleLargeSize" />
 
             <LinearLayout

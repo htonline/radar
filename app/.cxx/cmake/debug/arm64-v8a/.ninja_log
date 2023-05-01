@@ -1,0 +1,16 @@
+# ninja log v5
+90	989	700393725	CMakeFiles/yolov5.dir/jni_interface.cpp.o	a2122df591421f2
+0	1181	700393725	CMakeFiles/yolov5.dir/YoloV5.cpp.o	bfc3cbb1081e0479
+43	1210	700393725	CMakeFiles/yolov5.dir/YoloV5CustomLayer.cpp.o	a0c3290f42902d9f
+1210	5227	700393729	D:/android_proj/radar_copy/app/build/intermediates/cmake/debug/obj/arm64-v8a/libyolov5.so	ca715f33c9ad9f76
+3	906	700395102	CMakeFiles/yolov5.dir/jni_interface.cpp.o	a2122df591421f2
+907	2199	700395103	D:/android_proj/radar_copy/app/build/intermediates/cmake/debug/obj/arm64-v8a/libyolov5.so	ca715f33c9ad9f76
+2	1033	700395203	CMakeFiles/yolov5.dir/jni_interface.cpp.o	a2122df591421f2
+1033	2364	700395204	D:/android_proj/radar_copy/app/build/intermediates/cmake/debug/obj/arm64-v8a/libyolov5.so	ca715f33c9ad9f76
+157	1122	700395995	CMakeFiles/yolov5.dir/jni_interface.cpp.o	a2122df591421f2
+4	1311	700395995	CMakeFiles/yolov5.dir/YoloV5CustomLayer.cpp.o	a0c3290f42902d9f
+1311	2204	700395996	D:/android_proj/radar_copy/app/build/intermediates/cmake/debug/obj/arm64-v8a/libyolov5.so	ca715f33c9ad9f76
+8	1470	701153684	CMakeFiles/yolov5.dir/YoloV5CustomLayer.cpp.o	a0c3290f42902d9f
+1470	2927	701153685	D:/android_proj/radar_copy/app/build/intermediates/cmake/debug/obj/arm64-v8a/libyolov5.so	ca715f33c9ad9f76
+10	1059	701260746	CMakeFiles/yolov5.dir/YoloV5CustomLayer.cpp.o	a0c3290f42902d9f
+1059	2515	701260748	D:/android_proj/radar_copy/app/build/intermediates/cmake/debug/obj/arm64-v8a/libyolov5.so	ca715f33c9ad9f76

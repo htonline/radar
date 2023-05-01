@@ -1,0 +1,74 @@
+{
+  "variant": {
+    "module": {
+      "rootBuildGradleFolder": "D:\\android_proj\\radar_copy",
+      "sdkFolder": "C:\\Users\\wuxiaoxuan\\AppData\\Local\\Android\\Sdk",
+      "isNativeCompilerSettingsCacheEnabled": false,
+      "isBuildOnlyTargetAbiEnabled": true,
+      "splitsAbiFilterSet": [],
+      "intermediatesFolder": "D:\\android_proj\\radar_copy\\app\\build\\intermediates",
+      "gradleModulePathName": ":app",
+      "moduleRootFolder": "D:\\android_proj\\radar_copy\\app",
+      "makeFile": "D:\\android_proj\\radar_copy\\app\\src\\main\\cpp\\CMakeLists.txt",
+      "buildSystem": "CMAKE",
+      "compilerSettingsCacheFolder": "D:\\android_proj\\radar_copy\\.cxx",
+      "cxxFolder": "D:\\android_proj\\radar_copy\\app\\.cxx",
+      "ndkFolder": "C:\\Users\\wuxiaoxuan\\AppData\\Local\\Android\\Sdk\\ndk\\21.4.7075529",
+      "ndkVersion": "21.4.7075529",
+      "ndkSupportedAbiList": [
+        "ARMEABI_V7A",
+        "ARM64_V8A",
+        "X86",
+        "X86_64"
+      ],
+      "ndkDefaultAbiList": [
+        "ARMEABI_V7A",
+        "ARM64_V8A",
+        "X86",
+        "X86_64"
+      ],
+      "cmakeToolchainFile": "."
+    },
+    "buildSystemArgumentList": [
+      "-DANDROID_PLATFORM\u003dandroid-24",
+      "-DANDROID_STL\u003dc++_static",
+      "-DANDROID_STL\u003dc++_shared"
+    ],
+    "cFlagList": [],
+    "cppFlagsList": [
+      ""
+    ],
+    "variantName": "debug",
+    "soFolder": "D:\\android_proj\\radar_copy\\app\\build\\intermediates\\cmake\\debug\\lib",
+    "objFolder": "D:\\android_proj\\radar_copy\\app\\build\\intermediates\\cmake\\debug\\obj",
+    "jsonFolder": "D:\\android_proj\\radar_copy\\app\\.cxx\\cmake\\debug",
+    "gradleBuildOutputFolder": "D:\\android_proj\\radar_copy\\app\\.cxx\\cxx\\debug",
+    "isDebuggableEnabled": true,
+    "validAbiList": [
+      "ARMEABI_V7A",
+      "ARM64_V8A"
+    ],
+    "buildTargetSet": []
+  },
+  "abi": "ARM64_V8A",
+  "abiPlatformVersion": 21,
+  "cxxBuildFolder": "D:\\android_proj\\radar_copy\\app\\.cxx\\cmake\\debug\\arm64-v8a",
+  "jsonFile": "D:\\android_proj\\radar_copy\\app\\.cxx\\cmake\\debug\\arm64-v8a\\android_gradle_build.json",
+  "gradleBuildOutputFolder": "D:\\android_proj\\radar_copy\\app\\.cxx\\cxx\\debug\\arm64-v8a",
+  "objFolder": "D:\\android_proj\\radar_copy\\app\\build\\intermediates\\cmake\\debug\\obj\\arm64-v8a",
+  "buildCommandFile": "D:\\android_proj\\radar_copy\\app\\.cxx\\cmake\\debug\\arm64-v8a\\build_command.txt",
+  "buildOutputFile": "D:\\android_proj\\radar_copy\\app\\.cxx\\cmake\\debug\\arm64-v8a\\build_output.txt",
+  "modelOutputFile": "D:\\android_proj\\radar_copy\\app\\.cxx\\cmake\\debug\\arm64-v8a\\build_model.json",
+  "cmake": {
+    "cmakeListsWrapperFile": "D:\\android_proj\\radar_copy\\app\\.cxx\\cxx\\debug\\arm64-v8a\\CMakeLists.txt",
+    "toolchainWrapperFile": "D:\\android_proj\\radar_copy\\app\\.cxx\\cxx\\debug\\arm64-v8a\\android_gradle_build.toolchain.cmake",
+    "buildGenerationStateFile": "D:\\android_proj\\radar_copy\\app\\.cxx\\cxx\\debug\\arm64-v8a\\build_generation_state.json",
+    "cacheKeyFile": "D:\\android_proj\\radar_copy\\app\\.cxx\\cxx\\debug\\arm64-v8a\\compiler_cache_key.json",
+    "compilerCacheUseFile": "D:\\android_proj\\radar_copy\\app\\.cxx\\cxx\\debug\\arm64-v8a\\compiler_cache_use.json",
+    "compilerCacheWriteFile": "D:\\android_proj\\radar_copy\\app\\.cxx\\cxx\\debug\\arm64-v8a\\compiler_cache_write.json",
+    "toolchainSettingsFromCacheFile": "D:\\android_proj\\radar_copy\\app\\.cxx\\cxx\\debug\\arm64-v8a\\compiler_settings_cache.cmake",
+    "cmakeWrappingBaseFolder": "."
+  },
+  "jsonGenerationLoggingRecordFile": "D:\\android_proj\\radar_copy\\app\\.cxx\\cmake\\debug\\arm64-v8a\\json_generation_record.json",
+  "compileCommandsJsonFile": "D:\\android_proj\\radar_copy\\app\\.cxx\\cmake\\debug\\arm64-v8a\\compile_commands.json"
+}

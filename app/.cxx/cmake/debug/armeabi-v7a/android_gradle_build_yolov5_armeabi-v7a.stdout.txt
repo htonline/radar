@@ -1,0 +1,2 @@
+ninja: Entering directory `D:\android_proj\radar_copy\app\.cxx\cmake\debug\armeabi-v7a'
+ninja: no work to do.
