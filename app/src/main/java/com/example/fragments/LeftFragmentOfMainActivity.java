@@ -76,22 +76,35 @@ public class LeftFragmentOfMainActivity extends Fragment {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
+//                从原始bitmap对象中创建一个新的nleftbit位图对象。该位图是从原始位图的左边界开始，直到当前垂直位置（currentVertical），与原始位图的高度相同。
                 Bitmap nleftbit = Bitmap.createBitmap(bitmap, 0, 0, currentVertical, bitmap.getHeight());
                 Bitmap nright;
                 Bitmap result;
                 List<BoxPeak> boxPeaks;
+                // 如果当前垂直位置小于400, 就对图像进行空白填充, 使其大概满足YOLO输入图像640x640的要求;
+                // YOLO会对图像进行拉伸, 如果宽高差距太大，拉伸之后，钢筋图像的检测绝对会不准确.所以对宽高差距太大的图像，需要做空白填充。
                 if (currentVertical < 400) {
+//                    通过Bitmap.createBitmap()方法从原始bitmap对象中创建一个新的nright位图对象。该新位图是从原始位图的当前垂直位置（currentVertical）的下一行开始，直到原始位图的底部，宽度为512 - 当前垂直位置 - 1。
                     nright = Bitmap.createBitmap(bitmap, currentVertical + 1, 0, 512 - currentVertical - 1, bitmap.getHeight());
+//                    直达波去除
                     Bitmap chulibitmap = getChuli(nleftbit);
+//                     将处理后的图片与空白图片进行合并，是图像宽度达到512？
                     result = mergeBitmap(chulibitmap, nright);
+//                   用YOLOv5检测图片中的钢筋部分并进行裁剪, 并将裁剪后的图片再次用YOLOv5检测钢筋中的顶点部分.绘制
                     boxPeaks = detectAndDraw(result);
+//                    通过Bitmap.createBitmap()方法从原始bitmap对象中创建一个新的halfbitmap位图对象。该位图是从原始位图的第513列开始，直到原始位图的右边界，与原始位图的高度相同。
                     Bitmap halfbitmap = Bitmap.createBitmap(bitmap, 513, 0, bitmap.getWidth() - 513, bitmap.getHeight());
+//                    将处理后的result位图和halfbitmap位图进行合并，生成一个新的位图对象result。
                     result = mergeBitmap(result, halfbitmap);
+//                    调用getTransparentBitmap()方法对result位图进行处理，使其具有透明效果。
                     Bitmap transparentBitmap = getTransparentBitmap(result, 00);
+//                    创建transparentBitmap位图的副本copy。
                     Bitmap copy = transparentBitmap.copy(Bitmap.Config.ARGB_8888, true);
+//                    对copy位图进行绘制操作，并将boxPeaks参数传递给该方法。绘制的结果存储在tempbitmap位图对象中。
                     Bitmap tempbitmap = drawBoxPeakRects(copy, boxPeaks,result,0);
                     Bitmap finalResult = result;
                     getActivity().runOnUiThread(new Runnable() {
+//                        通过在UI线程上调用runOnUiThread()方法，将tempbitmap位图对象设置为显示在名为iv_showdetect的ImageView视图中。还有将list的内容转化为字符串并设置为tv_showrebar的文本内容。
                         @Override
                         public void run() {
                             iv_showdetect.setImageBitmap(tempbitmap);
@@ -198,20 +211,21 @@ public class LeftFragmentOfMainActivity extends Fragment {
         return result;
     }
 
+//    检测框并绘制
     protected List<BoxPeak> detectAndDraw(Bitmap image) {
         Box[] result = null;
         List<BoxPeak> list = new ArrayList<>();
-        result = YOLOv5.detect(image, 0.4, 0.4);
+        result = YOLOv5.detect(image, 0.4, 0.4);       // 找到钢筋
         for (Box box : result) {
-            Bitmap temp = getResBitmap(image, (int) (box.x0), (int) (box.y0), (int) (box.x1), (int) (box.y1));
-            BoxPeak[] tempresult = YOLOv5.detectCustomLayer(temp, 0.3, 0.3);
+            Bitmap temp = getResBitmap(image, (int) (box.x0), (int) (box.y0), (int) (box.x1), (int) (box.y1));  // 裁剪钢筋
+            BoxPeak[] tempresult = YOLOv5.detectCustomLayer(temp, 0.3, 0.3);    // 检测钢筋顶点
             for (BoxPeak box1 : tempresult) {
                 box1.setBox(box);
                 box1.x0 += box.x0;
                 box1.y0 += box.y0;
                 box1.x1 = box1.x1 + box.x0;
                 box1.y1 = box1.y1 + box.y0;
-                list.add(box1);
+                list.add(box1);     // 顶点数据存入list（之后绘制到主屏幕）
             }
         }
 //		drawBoxPeakRects(image,list);
@@ -229,6 +243,7 @@ public class LeftFragmentOfMainActivity extends Fragment {
     }
 
 
+//    绘制红色顶点和框框
     protected Bitmap drawBoxPeakRects(Bitmap mutableBitmap, List<BoxPeak> results,Bitmap rawbitmap,int offset) {
         if (results == null || results.size() <= 0) {
             return mutableBitmap;
@@ -282,6 +297,7 @@ public class LeftFragmentOfMainActivity extends Fragment {
         return Bitmap.createBitmap(bitmap, x0, y0, x1 - x0, y1 - y0);
     }
 
+//    两层Bitmap叠加，第一层透明度设为0,仅保留红点部分，叠加在第二层bitmap上。
     public static Bitmap getTransparentBitmap(Bitmap sourceImg, int number) {
         int[] argb = new int[sourceImg.getWidth() * sourceImg.getHeight()];
         sourceImg.getPixels(argb, 0, sourceImg.getWidth(), 0, 0, sourceImg.getWidth(), sourceImg.getHeight());// 得到圖片的ARGB值
@@ -295,6 +311,7 @@ public class LeftFragmentOfMainActivity extends Fragment {
     }
 
 
+//    直达波去除
     private Bitmap getChuli(Bitmap bitmap) {
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
@@ -333,7 +350,7 @@ public class LeftFragmentOfMainActivity extends Fragment {
                 if (grey < min_num) {
                     min_num = grey;
                 }
-                grey = alpha | (grey << 16) | (grey << 8) | grey;
+                grey = alpha | (grey << 16) | (grey << 8) | grey;// 透明度 | RGB
                 outpixel[width * i + j] = grey;
             }
         }

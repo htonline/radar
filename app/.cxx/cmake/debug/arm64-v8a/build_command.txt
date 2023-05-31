@@ -1,21 +1,21 @@
-Executable : C:\Users\wuxiaoxuan\AppData\Local\Android\Sdk\cmake\3.10.2.4988404\bin\cmake.exe
+Executable : C:\Users\98634\AppData\Local\Android\Sdk\cmake\3.10.2.4988404\bin\cmake.exe
 arguments : 
--HD:\android_proj\radar_copy\app\src\main\cpp
--BD:\android_proj\radar_copy\app\.cxx\cmake\debug\arm64-v8a
+-HD:\WorkFile\AndroidStudioProjects\radar_copy\app\src\main\cpp
+-BD:\WorkFile\AndroidStudioProjects\radar_copy\app\.cxx\cmake\debug\arm64-v8a
 -DANDROID_ABI=arm64-v8a
 -DANDROID_PLATFORM=android-21
--DCMAKE_LIBRARY_OUTPUT_DIRECTORY=D:\android_proj\radar_copy\app\build\intermediates\cmake\debug\obj\arm64-v8a
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=D:\WorkFile\AndroidStudioProjects\radar_copy\app\build\intermediates\cmake\debug\obj\arm64-v8a
 -DCMAKE_BUILD_TYPE=Debug
--DANDROID_NDK=C:\Users\wuxiaoxuan\AppData\Local\Android\Sdk\ndk\21.4.7075529
+-DANDROID_NDK=C:\Users\98634\AppData\Local\Android\Sdk\ndk\21.4.7075529
 -DCMAKE_CXX_FLAGS=
 -DCMAKE_SYSTEM_NAME=Android
 -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a
 -DCMAKE_SYSTEM_VERSION=21
 -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
--DCMAKE_ANDROID_NDK=C:\Users\wuxiaoxuan\AppData\Local\Android\Sdk\ndk\21.4.7075529
--DCMAKE_TOOLCHAIN_FILE=C:\Users\wuxiaoxuan\AppData\Local\Android\Sdk\ndk\21.4.7075529\build\cmake\android.toolchain.cmake
+-DCMAKE_ANDROID_NDK=C:\Users\98634\AppData\Local\Android\Sdk\ndk\21.4.7075529
+-DCMAKE_TOOLCHAIN_FILE=C:\Users\98634\AppData\Local\Android\Sdk\ndk\21.4.7075529\build\cmake\android.toolchain.cmake
 -G Ninja
--DCMAKE_MAKE_PROGRAM=C:\Users\wuxiaoxuan\AppData\Local\Android\Sdk\cmake\3.10.2.4988404\bin\ninja.exe
+-DCMAKE_MAKE_PROGRAM=C:\Users\98634\AppData\Local\Android\Sdk\cmake\3.10.2.4988404\bin\ninja.exe
 -DANDROID_PLATFORM=android-24
 -DANDROID_STL=c++_static
 -DANDROID_STL=c++_shared

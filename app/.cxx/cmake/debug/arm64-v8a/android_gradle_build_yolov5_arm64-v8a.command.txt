@@ -1,7 +1,7 @@
-Executable : C:\Users\wuxiaoxuan\AppData\Local\Android\Sdk\cmake\3.10.2.4988404\bin\ninja.exe
+Executable : C:\Users\98634\AppData\Local\Android\Sdk\cmake\3.10.2.4988404\bin\ninja.exe
 arguments : 
 -C
-D:\android_proj\radar_copy\app\.cxx\cmake\debug\arm64-v8a
+D:\WorkFile\AndroidStudioProjects\radar_copy\app\.cxx\cmake\debug\arm64-v8a
 yolov5
 jvmArgs : 
 

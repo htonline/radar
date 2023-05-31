@@ -22,12 +22,14 @@ JNIEXPORT void JNI_OnUnload(JavaVM *vm, void *reserved) {
     delete YoloV5::detector;
 }
 
+// 调用方法用到了JNI, 了解一下; 函数名要一样:三个文件LeftFragmentOfMainActivity.java, YOLOv5.java, jni_interface.cpp
 
 /*********************************************************************************************
                                          Yolov5
  ********************************************************************************************/
 extern "C" JNIEXPORT void JNICALL
 Java_com_example_yolov5_YOLOv5_init(JNIEnv *env, jclass, jobject assetManager, jboolean useGPU) {
+//
     if (YoloV5::detector != nullptr) {
         delete YoloV5::detector;
         YoloV5::detector = nullptr;

@@ -118,7 +118,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="地质雷达采集系统"
+                android:text="无线地质雷达采集系统"
                 android:textSize="@dimen/textTitleLargeSize" />
 
             <LinearLayout
@@ -154,17 +154,11 @@
         android:layout_weight="6"
         android:orientation="horizontal">
 
-
         <FrameLayout
             android:id="@+id/fl_containerLeft"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        </FrameLayout>
-<!--        <ImageView-->
-<!--            android:id="@+id/iv_testLeft"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent">-->
-<!--        </ImageView>-->
+            android:layout_height="match_parent"></FrameLayout>
+
 
     </LinearLayout>
 
@@ -186,7 +180,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="right"
                 android:onClick="btnMark"
-                android:text="mark"
+                android:text="打标"
                 android:textSize="@dimen/textSize" />
             <View
                 android:layout_width="30dp"
@@ -194,7 +188,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="save path:"
+                android:text="存储路径:"
                 android:textSize="@dimen/textNormSize" />
 
             <TextView
@@ -211,7 +205,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Mark num:"
+                android:text="打标数:"
                 android:textSize="@dimen/textNormSize" />
 
             <TextView
@@ -228,7 +222,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Receiving package num"
+                android:text="收包数量"
                 android:textSize="@dimen/textNormSize" />
 
             <TextView
@@ -250,7 +244,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/mbtn_ddcf"
                     android:textSize="@dimen/textNormSize"
-                    android:text="point"></Button>
+                    android:text="单点触发"></Button>
 
                 <EditText
                     android:id="@+id/met_ddcf"
@@ -272,7 +266,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Frequency："
+                android:text="采样频率："
                 android:textSize="@dimen/textNormSize" />
 
             <TextView
@@ -296,7 +290,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Point num:"
+                android:text="采样点数:"
                 android:textSize="@dimen/textNormSize" />
 
             <TextView
@@ -313,7 +307,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Time window"
+                android:text="时间窗:"
                 android:textSize="@dimen/textNormSize" />
 
             <TextView
@@ -332,7 +326,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Delay:"
+                android:text="延时:"
                 android:textSize="@dimen/textNormSize" />
 
             <TextView
@@ -349,14 +343,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Method:"
+                android:text="触发方式:"
                 android:textSize="@dimen/textNormSize" />
 
             <TextView
                 android:id="@+id/tv_theWayOfTrigger"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Time"
+                android:text="时间"
                 android:textSize="@dimen/textNormSize" />
 
             <TextView
@@ -366,7 +360,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="storage num:"
+                android:text="存道数量:"
                 android:textSize="@dimen/textNormSize" />
 
             <TextView
